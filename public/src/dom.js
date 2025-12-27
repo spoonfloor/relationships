@@ -2,6 +2,7 @@ export function getDom() {
   return {
     boardEl: document.getElementById("board"),
     statusEl: document.getElementById("status"),
+    vignetteEl: document.getElementById("vignette"),
     foundEl: document.getElementById("foundGroups"),
 
     newGameBtn: document.getElementById("newGameBtn"),

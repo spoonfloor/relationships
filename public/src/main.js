@@ -78,6 +78,7 @@ async function bootstrap() {
 
   function startPuzzle(puzzle) {
     state.activePuzzle = puzzle;
+    dom.vignetteEl.textContent = puzzle.vignette ?? "";
     initGameState(state);
     clearFoundGroups(dom);
     renderPaletteChips();
