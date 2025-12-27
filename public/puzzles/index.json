@@ -4,7 +4,7 @@
     { "id": "goth", "label": "Goth", "file": "goth.json" },
     { "id": "colors", "label": "Colors", "file": "colors.json" },
     { "id": "awe", "label": "awe", "file": "awe.json" },
-    { "id": "blanket", "label": "Bees", "file": "bees.json" },
+    { "id": "blanket", "label": "Blanket", "file": "blanket.json" },
     { "id": "forest", "label": "forest", "file": "forest.json" }
   ],
   "defaultId": "colors"
