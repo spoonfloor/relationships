@@ -1,10 +1,18 @@
 {
   "id": "goth",
+  "title": "Shadows and Fire",
+  "vignette": "Shadows from our small fire dance along the tree-lined shore, under a gibbous moon, while all in black, we whisper and giggle at each other’s stories, shivering at the odd unseen splash and the occasional crack of a twig under who-knows-whose foot from the woods.",
+  "url": "TBA",
+  "palette": {
+    "a": { "name": "Lilac Ash", "bg": "#DED9EB", "fg": "#6B1F3D", "accent": "#9B5A77" },
+    "b": { "name": "Amber",     "bg": "#F4B24D", "fg": "#215E6A", "accent": "#D98A2C" },
+    "c": { "name": "Deep Lake", "bg": "#2F6E84", "fg": "#E6F2F6", "accent": "#1F4E5F" },
+    "d": { "name": "Crypt",     "bg": "#4A1531", "fg": "#E3C6D3", "accent": "#2F0D1F" }
+  },
   "groups": [
-    { "color": "yellow", "category": "GOTH GIRLS", "words": ["ELVIRA", "LILITH", "OPHELIA", "WEDNESDAY"] },
-    { "color": "green", "category": "EERIE", "words": ["CURIOUS", "ELDRICH", "QUEER", "UNCANNY"] },
-    { "color": "blue", "category": "FAMOUS LAKES", "words": ["ERIE", "LOCH NESS", "SUPERIOR", "VICTORIA"] },
-    { "color": "purple", "category": "CRYPTIDS", "words": ["CHUPACABRA", "KRAKEN", "NOT-DEER", "SASQUATCH"] }
+    { "palette": "a", "category": "GOTH GIRLS", "words": ["ELVIRA", "LILITH", "OPHELIA", "WEDNESDAY"] },
+    { "palette": "b", "category": "EERIE ;)", "words": ["CURIOUS", "ELDRICH", "QUEER", "UNCANNY"] },
+    { "palette": "c", "category": "FAMOUS LAKES", "words": ["ERIE", "LOCH NESS", "SUPERIOR", "VICTORIA"] },
+    { "palette": "d", "category": "CRYPTIDS", "words": ["CHUPACABRA", "KRAKEN", "NOT-DEER", "SASQUATCH"] }
   ]
 }
-

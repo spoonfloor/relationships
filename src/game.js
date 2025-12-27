@@ -11,7 +11,7 @@ export function initGameState(state) {
   state.selected.clear();
 
   state.boardWords = pickPuzzleWords(state.activePuzzle)
-    .map(word => ({ word, lockedColor: null }));
+    .map(word => ({ word, lockedPalette: null }));
 }
 
 export function toggleSelect(state, word) {
@@ -41,7 +41,7 @@ export function isGroupFound(state, group) {
 
 export function lockWords(state, wordsArr, color) {
   for (const item of state.boardWords) {
-    if (wordsArr.includes(item.word)) item.lockedColor = color;
+    if (wordsArr.includes(item.word)) item.lockedPalette = color;
   }
 }
 
@@ -63,7 +63,7 @@ export function submitSelection(state) {
   }
 
   state.foundGroups.push(group);
-  lockWords(state, group.words, group.color);
+  lockWords(state, group.words, group.palette);
   state.selected.clear();
 
   const solved = state.foundGroups.length === 4;
@@ -74,7 +74,7 @@ export function submitSelection(state) {
   };
 }
 
-export function assignColorToSelection(state, color) {
+export function assignColorToSelection(state, palette) {
   if (state.selected.size !== 4) {
     return { ok: false, message: "Select exactly 4 words to assign a color." };
   }
@@ -82,18 +82,18 @@ export function assignColorToSelection(state, color) {
   const group = getGroupBySelection(state.activePuzzle, words);
   if (!group) return { ok: false, message: "That selection isn't a correct group (demo)." };
 
-  const forced = { ...group, color };
+  const forced = { ...group, palette };
   if (!isGroupFound(state, forced)) {
     state.foundGroups.push(forced);
-    lockWords(state, forced.words, forced.color);
+    lockWords(state, forced.words, forced.palette);
   }
   state.selected.clear();
-  return { ok: true, group: forced, message: `Locked as ${color.toUpperCase()}.` };
+  return { ok: true, group: forced, message: "Locked." };
 }
 
 export function shuffleUnlocked(state) {
-  const locked = state.boardWords.filter(b => b.lockedColor);
-  const unlocked = shuffle(state.boardWords.filter(b => !b.lockedColor));
+  const locked = state.boardWords.filter(b => b.lockedPalette);
+  const unlocked = shuffle(state.boardWords.filter(b => !b.lockedPalette));
   state.boardWords = shuffle([...unlocked, ...locked]);
 }
 
@@ -123,7 +123,7 @@ export function hintRevealWord(state) {
   const g = remainingGroups[Math.floor(Math.random() * remainingGroups.length)];
   const unlockedWords = g.words.filter(w => {
     const item = state.boardWords.find(b => b.word === w);
-    return item && !item.lockedColor;
+    return item && !item.lockedPalette;
   });
   if (unlockedWords.length === 0) {
     return { ok: false, message: "No revealable words in remaining groups." };

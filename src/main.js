@@ -42,6 +42,32 @@ async function bootstrap() {
   const state = createInitialState(await loadPuzzle(`./puzzles/${idToEntry.get(initialId).file}`));
   dom.puzzleSelect.value = initialId;
 
+  function renderPaletteChips() {
+    const pal = state.activePuzzle.palette || {};
+    dom.paletteChipsEl.innerHTML = "";
+    for (const [palette, entry] of Object.entries(pal)) {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.type = "button";
+      btn.textContent = entry.name ?? palette.toUpperCase();
+      if (entry.bg) btn.style.background = entry.bg;
+      if (entry.fg) btn.style.color = entry.fg;
+      btn.addEventListener("click", () => {
+        const res = assignColorToSelection(state, palette);
+        if (res.ok && res.group) {
+          appendFoundGroupCard(dom, res.group);
+          // color the last-added card
+          const last = dom.foundEl.lastElementChild;
+          if (last && entry.bg) last.style.background = entry.bg;
+          if (last && entry.fg) last.style.color = entry.fg;
+        }
+        renderBoard(dom, state, handlers);
+        renderStatus(dom, res.message);
+      });
+      dom.paletteChipsEl.appendChild(btn);
+    }
+  }
+
   const handlers = {
     onToggleSelect(word) {
       const res = toggleSelect(state, word);
@@ -54,6 +80,7 @@ async function bootstrap() {
     state.activePuzzle = puzzle;
     initGameState(state);
     clearFoundGroups(dom);
+    renderPaletteChips();
     renderBoard(dom, state, handlers);
     renderStatus(dom, "Pick 4 words.");
   }
@@ -65,19 +92,18 @@ async function bootstrap() {
 
   dom.submitBtn.addEventListener("click", () => {
     const res = submitSelection(state);
-    if (res.ok && res.group) appendFoundGroupCard(dom, res.group);
+    if (res.ok && res.group) {
+      appendFoundGroupCard(dom, res.group);
+      const palEntry = state.activePuzzle.palette?.[res.group.palette];
+      const last = dom.foundEl.lastElementChild;
+      if (last && palEntry?.bg) last.style.background = palEntry.bg;
+      if (last && palEntry?.fg) last.style.color = palEntry.fg;
+    }
     renderBoard(dom, state, handlers);
     renderStatus(dom, res.message);
   });
 
-  dom.colorChips.forEach(chip => {
-    chip.addEventListener("click", () => {
-      const res = assignColorToSelection(state, chip.dataset.color);
-      if (res.ok && res.group) appendFoundGroupCard(dom, res.group);
-      renderBoard(dom, state, handlers);
-      renderStatus(dom, res.message);
-    });
-  });
+  // (chips are now created dynamically in renderPaletteChips)
 
   dom.hintCategoryBtn.addEventListener("click", () => renderStatus(dom, hintRevealCategory(state).message));
   dom.hintWordBtn.addEventListener("click", () => { const res = hintRevealWord(state); renderBoard(dom, state, handlers); renderStatus(dom, res.message); });

@@ -1,26 +1,41 @@
 :root{
-  --bg: #0b0c10;
-  --panel: #12141a;
-  --text: #e7eaf0;
-  --muted: #a9b0c0;
-  --border: #252a36;
+  /* Page + surfaces */
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #fbfbfc;
 
+  /* Typography */
+  --text: #14161a;
+  --muted: #5b6472;
+
+  /* Lines + shadows */
+  --border: #d7dbe3;
+  --border-strong: #c6ccd8;
+  --shadow: 0 6px 22px rgba(20, 22, 26, 0.08);
+
+  /* Tiles */
+  --word: #ffffff;
+  --word-hover: #f4f6f9;
+  --selected: #e8eefc;
+
+  /* Accent (primary button, etc.) */
+  --accent: #2b5cff;
+  --accent-hover: #2450e3;
+
+  /* Optional legacy vars (harmless if unused) */
   --yellow: #f0d264;
   --green:  #86d18f;
   --blue:   #79a7ff;
   --purple: #c59bff;
-
-  --word: #1a1f2b;
-  --word-hover: #21283a;
-  --selected: #2a334a;
 }
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+
 body{
-  margin:0;
+  margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1200px 700px at 20% 0%, #141827 0%, var(--bg) 60%);
+  background: var(--bg);
   color: var(--text);
 }
 
@@ -36,17 +51,17 @@ body{
   letter-spacing: 0.2px;
 }
 .sub{
-  margin:0 0 18px;
+  margin: 0 0 18px;
   color: var(--muted);
 }
 
 .controls{
-  background: rgba(18,20,26,0.85);
+  background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 16px;
-  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow);
 }
 
 .row{
@@ -68,22 +83,26 @@ body{
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: #151a24;
+  background: var(--panel-2);
   color: var(--text);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 650;
 }
-.btn:hover{ background: #1b2130; }
+.btn:hover{
+  background: #f2f4f8;
+  border-color: var(--border-strong);
+}
 .btn:active{ transform: translateY(1px); }
 
 .btn-primary{
-  background: #2b5cff;
-  border-color: #2b5cff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
-.btn-primary:hover{ background: #2450e3; }
+.btn-primary:hover{ background: var(--accent-hover); border-color: var(--accent-hover); }
 
 .btn-secondary{
-  background: #141827;
+  background: #f3f5f8;
 }
 
 .status{
@@ -93,57 +112,80 @@ body{
   min-height: 20px;
 }
 
+.select{
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-weight: 650;
+}
+.select:hover{ border-color: var(--border-strong); }
+
 .board{
   display:grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
 }
 
+/* Word tiles */
 .word{
   background: var(--word);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 16px 12px;
-  text-align:center;
+  text-align: center;
   user-select: none;
-  cursor:pointer;
-  font-weight: 700;
+  cursor: pointer;
+  font-weight: 750;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+  box-shadow: 0 1px 0 rgba(20,22,26,0.03);
 }
-.word:hover{ background: var(--word-hover); }
+.word:hover{
+  background: var(--word-hover);
+  border-color: var(--border-strong);
+}
 
 .word.selected{
   background: var(--selected);
-  border-color: #3a4766;
+  border-color: #b8c8f6;
 }
 
 .word.locked{
   cursor: default;
-  opacity: 0.95;
+  opacity: 0.97;
   border-color: transparent;
+  box-shadow: none;
 }
 
-.lock-yellow{ background: color-mix(in srgb, var(--yellow) 30%, #151a24); }
-.lock-green { background: color-mix(in srgb, var(--green) 30%, #151a24); }
-.lock-blue  { background: color-mix(in srgb, var(--blue) 30%, #151a24); }
-.lock-purple{ background: color-mix(in srgb, var(--purple) 30%, #151a24); }
+/* Legacy locked classes (safe to keep if some puzzles still use them) */
+.lock-yellow{ background: color-mix(in srgb, var(--yellow) 35%, #ffffff); }
+.lock-green { background: color-mix(in srgb, var(--green) 35%, #ffffff); }
+.lock-blue  { background: color-mix(in srgb, var(--blue) 35%, #ffffff); }
+.lock-purple{ background: color-mix(in srgb, var(--purple) 35%, #ffffff); }
 
+/* Palette chips container (for dynamic chips) */
+.paletteChips{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Chips (your JS sets background/text color inline from palette) */
 .chip{
   padding: 8px 10px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  cursor:pointer;
+  cursor: pointer;
   font-weight: 800;
   font-size: 13px;
-  background: #151a24;
+  background: var(--panel-2);
   color: var(--text);
 }
-.chip-yellow{ border-color: color-mix(in srgb, var(--yellow) 60%, var(--border)); }
-.chip-green { border-color: color-mix(in srgb, var(--green) 60%, var(--border)); }
-.chip-blue  { border-color: color-mix(in srgb, var(--blue) 60%, var(--border)); }
-.chip-purple{ border-color: color-mix(in srgb, var(--purple) 60%, var(--border)); }
+.chip:hover{ border-color: var(--border-strong); }
 
+/* Found groups */
 .found{
   margin-top: 18px;
 }
@@ -152,6 +194,7 @@ body{
   margin: 0 0 10px;
   color: var(--muted);
 }
+
 .foundGroups{
   display:flex;
   flex-direction: column;
@@ -160,9 +203,10 @@ body{
 
 .groupCard{
   border: 1px solid var(--border);
-  background: rgba(18,20,26,0.7);
+  background: var(--panel);
   border-radius: 14px;
   padding: 12px;
+  box-shadow: var(--shadow);
 }
 .groupTitle{
   font-weight: 900;
@@ -170,14 +214,5 @@ body{
 }
 .groupWords{
   color: var(--muted);
-  font-weight: 700;
-}
-
-.select{
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #151a24;
-  color: var(--text);
-  font-weight: 700;
+  font-weight: 650;
 }

@@ -1,10 +1,20 @@
 {
   "id": "forest",
+  "title": "Dewy Dawn Forest",
+  "vignette": "Picking through the dewy dawn forest, having thrown something on over our nightshirts against the cold, looking for and leaving behind traces and delights.",
+  "url": "TBA",
+  "palette": {
+    "a": { "name": "Gossamer", "bg": "#E6DADF", "fg": "#6F2B47", "accent": "#A0647C" },
+    "b": { "name": "Thread",   "bg": "#B8B09C", "fg": "#3E3A2F", "accent": "#6E6954" },
+    "c": { "name": "Pine",     "bg": "#5F7442", "fg": "#E8EED9", "accent": "#3E5228" },
+    "d": { "name": "Loam",     "bg": "#6A5E4B", "fg": "#E6E0D5", "accent": "#4B4133" }
+  },
   "groups": [
-    { "color": "yellow", "category": "THIN, FINE TEXTURES", "words": ["COBWEBBY", "DIAPHANOUS", "GAUZY", "GOSSAMER"] },
-    { "color": "green",  "category": "THREADLIKE STRUCTURES", "words": ["CILIUM", "FIBRIL", "FILAMENT", "TENDRIL"] },
-    { "color": "blue",   "category": "COZY LAYERS", "words": ["SHAWL", "HOOD", "CLOAK", "BALACLAVA"] },
-    { "color": "purple", "category": "MUSHROOM PARTS", "words": ["CAP","GILL","HYPHAE","SPORE"] }
+    { "palette": "a", "category": "THIN, FINE TEXTURES", "words": ["COBWEBBY", "DIAPHANOUS", "GAUZY", "GOSSAMER"] },
+    { "palette": "b", "category": "THREADLIKE STRUCTURES", "words": ["CILIUM", "FIBRIL", "FILAMENT", "TENDRIL"] },
+    { "palette": "c", "category": "COZY LAYERS", "words": ["SHAWL", "HOOD", "CLOAK", "BALACLAVA"] },
+    { "palette": "d", "category": "MUSHROOM PARTS", "words": ["CAP", "GILL", "HYPHAE", "SPORE"] }
   ]
 }
+
 

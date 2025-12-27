@@ -12,7 +12,7 @@ export function getDom() {
     hintCategoryBtn: document.getElementById("hintCategoryBtn"),
     hintWordBtn: document.getElementById("hintWordBtn"),
 
-    colorChips: Array.from(document.querySelectorAll(".chip")),
+    paletteChipsEl: document.getElementById("paletteChips"),
     puzzleSelect: document.getElementById("puzzleSelect"),
   };
 }

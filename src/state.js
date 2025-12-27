@@ -2,7 +2,7 @@ export function createInitialState(puzzle) {
   return {
     activePuzzle: puzzle,
 
-    // boardWords: [{ word, lockedColor:null|color }]
+    // boardWords: [{ word, lockedPalette:null|color }]
     boardWords: [],
 
     // selected: Set<string>

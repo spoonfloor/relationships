@@ -1,4 +1,4 @@
-function wordButton({ word, selected, lockedColor, onClick }) {
+function wordButton({ word, selected, lockedPalette, paletteEntry, onClick }) {
   const btn = document.createElement("button");
   btn.className = "word";
   btn.type = "button";
@@ -6,9 +6,11 @@ function wordButton({ word, selected, lockedColor, onClick }) {
 
   if (selected) btn.classList.add("selected");
 
-  if (lockedColor) {
-    btn.classList.add("locked", `lock-${lockedColor}`);
+  if (lockedPalette) {
+    btn.classList.add("locked", `lock-${lockedPalette}`);
     btn.disabled = true;
+    if (paletteEntry?.bg) btn.style.background = paletteEntry.bg;
+    if (paletteEntry?.fg) btn.style.color = paletteEntry.fg;
   } else {
     btn.addEventListener("click", onClick);
   }
@@ -19,11 +21,13 @@ function wordButton({ word, selected, lockedColor, onClick }) {
 export function renderBoard({ boardEl }, state, handlers) {
   boardEl.innerHTML = "";
   for (const item of state.boardWords) {
+    const pal = item.lockedPalette ? state.activePuzzle?.palette?.[item.lockedPalette] : null;
     boardEl.appendChild(
       wordButton({
         word: item.word,
         selected: state.selected.has(item.word),
-        lockedColor: item.lockedColor,
+        lockedPalette: item.lockedPalette,
+        paletteEntry: pal,
         onClick: () => handlers.onToggleSelect(item.word),
       })
     );
@@ -40,7 +44,7 @@ export function appendFoundGroupCard({ foundEl }, group) {
 
   const title = document.createElement("div");
   title.className = "groupTitle";
-  title.textContent = `${group.category} (${group.color.toUpperCase()})`;
+  title.textContent = group.category;
 
   const words = document.createElement("div");
   words.className = "groupWords";
