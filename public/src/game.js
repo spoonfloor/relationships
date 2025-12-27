@@ -8,7 +8,15 @@ export function pickPuzzleWords(puzzle) {
 export function initGameState(state) {
   state.foundGroups = [];
   state.revealedCategories.clear();
+  state.revealedWords.clear();
   state.selected.clear();
+  state.wordToGroupMap.clear();
+
+  for (const group of state.activePuzzle.groups) {
+    for (const word of group.words) {
+      state.wordToGroupMap.set(word, group);
+    }
+  }
 
   state.boardWords = pickPuzzleWords(state.activePuzzle)
     .map(word => ({ word, lockedPalette: null }));
@@ -130,7 +138,7 @@ export function hintRevealWord(state) {
   }
 
   const w = unlockedWords[Math.floor(Math.random() * unlockedWords.length)];
-  state.selected.add(w);
-  return { ok: true, message: `Hint: selected “${w}”.` };
+  state.revealedWords.add(w);
+  return { ok: true, message: `Hint: revealed “${w}”.` };
 }
 

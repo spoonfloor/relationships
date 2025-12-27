@@ -1,10 +1,14 @@
-function wordButton({ word, selected, lockedPalette, paletteEntry, onClick }) {
+function wordButton({ word, selected, lockedPalette, paletteEntry, revealed, onClick }) {
   const btn = document.createElement("button");
   btn.className = "word";
   btn.type = "button";
   btn.textContent = word;
 
   if (selected) btn.classList.add("selected");
+  if (revealed) {
+    if (paletteEntry?.bg) btn.style.background = paletteEntry.bg;
+    if (paletteEntry?.fg) btn.style.color = paletteEntry.fg;
+  }
 
   if (lockedPalette) {
     btn.classList.add("locked", `lock-${lockedPalette}`);
@@ -21,13 +25,17 @@ function wordButton({ word, selected, lockedPalette, paletteEntry, onClick }) {
 export function renderBoard({ boardEl }, state, handlers) {
   boardEl.innerHTML = "";
   for (const item of state.boardWords) {
-    const pal = item.lockedPalette ? state.activePuzzle?.palette?.[item.lockedPalette] : null;
+    const isRevealed = state.revealedWords.has(item.word);
+    const paletteKey = item.lockedPalette || (isRevealed ? state.wordToGroupMap.get(item.word)?.palette : null);
+    const pal = paletteKey ? state.activePuzzle?.palette?.[paletteKey] : null;
+
     boardEl.appendChild(
       wordButton({
         word: item.word,
         selected: state.selected.has(item.word),
         lockedPalette: item.lockedPalette,
         paletteEntry: pal,
+        revealed: isRevealed,
         onClick: () => handlers.onToggleSelect(item.word),
       })
     );

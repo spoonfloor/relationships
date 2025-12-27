@@ -148,8 +148,9 @@ body{
 }
 
 .word.selected{
-  background: var(--selected);
-  border-color: #b8c8f6;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
 }
 
 .word.locked{

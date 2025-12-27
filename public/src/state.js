@@ -8,6 +8,12 @@ export function createInitialState(puzzle) {
     // selected: Set<string>
     selected: new Set(),
 
+    // revealedWords: Set<string>
+    revealedWords: new Set(),
+
+    // wordToGroupMap: Map<string, group>
+    wordToGroupMap: new Map(),
+
     // foundGroups: array of group objects
     foundGroups: [],
 
