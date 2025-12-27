@@ -1,0 +1,10 @@
+{
+  "id": "bees",
+  "groups": [
+    { "color": "yellow", "category": "ALL ABOUT THE BEES", "words": ["DRONE", "HIVE", "JELLY", "QUEEN"] },
+    { "color": "green", "category": "TERMS OF ENDEARMENT", "words": ["BABY", "DARLING", "HONEY", "SUGAR"] },
+    { "color": "blue", "category": "TASTE SENSATIONS", "words": ["CHEESY", "SALTY", "SWEET", "TANGY"] },
+    { "color": "purple", "category": "SENTIMENTAL TO THE MAX", "words": ["CORNY", "SAPPY", "SCHMALTZY", "SOPPY"] }
+  ]
+}
+

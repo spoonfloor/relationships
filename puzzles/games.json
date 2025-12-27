@@ -1,0 +1,10 @@
+{
+  "id": "games",
+  "groups": [
+    { "color": "yellow", "category": "CLEVER BEANS", "words": ["ACE", "CRACKERJACK", "SMARTY PANTS", "WHIZ"] },
+    { "color": "green", "category": "____ AROUND DOING NOTHING IN PARTICULAR", "words": ["LAZE", "LOAF", "LOUNGE", "PIDDLE"] },
+    { "color": "blue", "category": "SHALL WE PLAY A GAME?", "words": ["CHECKERS", "CHESS", "GO", "MANCALA"] },
+    { "color": "purple", "category": "KNEE HIGH TO A GRASSHOPPER", "words": ["ICKLE", "ITTY-BITTY", "PINTSIZE", "WEE"] }
+  ]
+}
+

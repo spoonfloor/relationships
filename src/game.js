@@ -1,0 +1,136 @@
+import { shuffle } from "./utils.js";
+
+export function pickPuzzleWords(puzzle) {
+  const words = puzzle.groups.flatMap(g => g.words);
+  return shuffle(words);
+}
+
+export function initGameState(state) {
+  state.foundGroups = [];
+  state.revealedCategories.clear();
+  state.selected.clear();
+
+  state.boardWords = pickPuzzleWords(state.activePuzzle)
+    .map(word => ({ word, lockedColor: null }));
+}
+
+export function toggleSelect(state, word) {
+  if (state.selected.has(word)) {
+    state.selected.delete(word);
+    return { ok: true };
+  }
+  if (state.selected.size >= 4) {
+    return { ok: false, message: "You can only select 4 at a time." };
+  }
+  state.selected.add(word);
+  return { ok: true };
+}
+
+export function clearSelection(state) {
+  state.selected.clear();
+}
+
+export function getGroupBySelection(puzzle, wordsArr) {
+  const sel = new Set(wordsArr);
+  return puzzle.groups.find(g => g.words.every(w => sel.has(w)));
+}
+
+export function isGroupFound(state, group) {
+  return state.foundGroups.some(g => g.category === group.category);
+}
+
+export function lockWords(state, wordsArr, color) {
+  for (const item of state.boardWords) {
+    if (wordsArr.includes(item.word)) item.lockedColor = color;
+  }
+}
+
+export function submitSelection(state) {
+  if (state.selected.size !== 4) {
+    return { ok: false, message: "Select exactly 4 words." };
+  }
+
+  const words = Array.from(state.selected);
+  const group = getGroupBySelection(state.activePuzzle, words);
+
+  if (!group) {
+    return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
+  }
+
+  if (isGroupFound(state, group)) {
+    state.selected.clear();
+    return { ok: false, message: "You already found that group." };
+  }
+
+  state.foundGroups.push(group);
+  lockWords(state, group.words, group.color);
+  state.selected.clear();
+
+  const solved = state.foundGroups.length === 4;
+  return {
+    ok: true,
+    group,
+    message: solved ? "Solved! 🎉" : `Correct! ${4 - state.foundGroups.length} groups left.`,
+  };
+}
+
+export function assignColorToSelection(state, color) {
+  if (state.selected.size !== 4) {
+    return { ok: false, message: "Select exactly 4 words to assign a color." };
+  }
+  const words = Array.from(state.selected);
+  const group = getGroupBySelection(state.activePuzzle, words);
+  if (!group) return { ok: false, message: "That selection isn't a correct group (demo)." };
+
+  const forced = { ...group, color };
+  if (!isGroupFound(state, forced)) {
+    state.foundGroups.push(forced);
+    lockWords(state, forced.words, forced.color);
+  }
+  state.selected.clear();
+  return { ok: true, group: forced, message: `Locked as ${color.toUpperCase()}.` };
+}
+
+export function shuffleUnlocked(state) {
+  const locked = state.boardWords.filter(b => b.lockedColor);
+  const unlocked = shuffle(state.boardWords.filter(b => !b.lockedColor));
+  state.boardWords = shuffle([...unlocked, ...locked]);
+}
+
+export function hintRevealCategory(state) {
+  const remaining = state.activePuzzle.groups
+    .map((g, idx) => ({ g, idx }))
+    .filter(({ g, idx }) =>
+      !state.foundGroups.some(f => f.category === g.category) &&
+      !state.revealedCategories.has(idx)
+    );
+
+  if (remaining.length === 0) return { ok: false, message: "No categories left to reveal." };
+
+  const pick = remaining[Math.floor(Math.random() * remaining.length)];
+  state.revealedCategories.add(pick.idx);
+  return { ok: true, message: `Hint: One category is “${pick.g.category}”.` };
+}
+
+export function hintRevealWord(state) {
+  if (state.selected.size >= 4) state.selected.clear();
+
+  const remainingGroups = state.activePuzzle.groups.filter(
+    g => !state.foundGroups.some(f => f.category === g.category)
+  );
+  if (remainingGroups.length === 0) return { ok: false, message: "No words left to reveal." };
+
+  const g = remainingGroups[Math.floor(Math.random() * remainingGroups.length)];
+  const unlockedWords = g.words.filter(w => {
+    const item = state.boardWords.find(b => b.word === w);
+    return item && !item.lockedColor;
+  });
+  if (unlockedWords.length === 0) {
+    return { ok: false, message: "No revealable words in remaining groups." };
+  }
+
+  const w = unlockedWords[Math.floor(Math.random() * unlockedWords.length)];
+  state.selected.add(w);
+  return { ok: true, message: `Hint: selected “${w}”.` };
+}
+

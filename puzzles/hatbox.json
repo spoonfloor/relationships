@@ -1,0 +1,10 @@
+{
+  "id": "hatbox",
+  "groups": [
+    { "color": "yellow", "category": "THAT THING YOU PUT YOUR THINGS IN TO CARRY THEM AROUND", "words": ["CLUTCH", "FANNY PACK", "SACK", "TOTE"] },
+    { "color": "green", "category": "THAT THING YOU DO WITH YOUR MOUTH TO FLIRT", "words": ["MOUE", "POUT", "PUCKER", "PURSE"] },
+    { "color": "blue", "category": "THAT THING YOU DO WITH YOUR MOUTH AND (SOMETIMES) SOMEONE ELSE'S", "words": ["MAKE OUT", "PECK", "SMACK", "SMOOCH"] },
+    { "color": "purple", "category": "THAT THING YOU DO WHEN YOU CAN'T LET GO", "words": ["CLASP", "GRAB", "GRASP", "GRIP"] }
+  ]
+}
+

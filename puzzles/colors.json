@@ -1,0 +1,10 @@
+{
+  "id": "colors",
+  "groups": [
+    { "color": "yellow", "category": "COLORS AS ANIMALS", "words": ["CAMEL", "CORAL", "RAVEN", "SALMON"] },
+    { "color": "green", "category": "COLORS AS FLOWERS", "words": ["FUCHSIA", "GOLDENROD", "ROSE", "VIOLET"] },
+    { "color": "blue", "category": "COLORS AS TREES", "words": ["ASH", "CHERRY", "CHESTNUT", "EBONY"] },
+    { "color": "purple", "category": "COLORS AS VERBS", "words": ["BLUSH", "FAWN", "JET", "MAROON"] }
+  ]
+}
+

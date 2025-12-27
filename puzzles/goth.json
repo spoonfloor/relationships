@@ -1,0 +1,10 @@
+{
+  "id": "goth",
+  "groups": [
+    { "color": "yellow", "category": "GOTH GIRLS", "words": ["ELVIRA", "LILITH", "OPHELIA", "WEDNESDAY"] },
+    { "color": "green", "category": "EERIE", "words": ["CURIOUS", "ELDRICH", "QUEER", "UNCANNY"] },
+    { "color": "blue", "category": "FAMOUS LAKES", "words": ["ERIE", "LOCH NESS", "SUPERIOR", "VICTORIA"] },
+    { "color": "purple", "category": "CRYPTIDS", "words": ["CHUPACABRA", "KRAKEN", "NOT-DEER", "SASQUATCH"] }
+  ]
+}
+

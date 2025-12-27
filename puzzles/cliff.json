@@ -1,0 +1,10 @@
+{
+  "id": "cliff",
+  "groups": [
+    { "color": "yellow", "category": "AURAL PLEASURES", "words": ["CHANT", "RHYME", "SONG", "STORY"] },
+    { "color": "green", "category": "ICY GOODNESS", "words": ["HOARFROST", "ICICLES", "RIME", "VERGLAS"] },
+    { "color": "blue", "category": "A BIT OF LAND OVERLOOKING THE SEA", "words": ["BLUFF", "HEAD", "HORN", "SPIT"] },
+    { "color": "purple", "category": "WHY AND WHEREFORE", "words": ["CAUSE", "POINT", "PURPOSE", "REASON"] }
+  ]
+}
+

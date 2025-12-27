@@ -1,0 +1,10 @@
+{
+  "id": "autumn",
+  "groups": [
+    { "color": "yellow", "category": "A SMALL DENSE GROUP OF TREES OR SHRUBS", "words": ["COPSE", "HEDGEROW", "SPINNEY", "THICKET"] },
+    { "color": "green", "category": "DELIGHTFULLY LIGHTHEADED", "words": ["DIZZY", "GIDDY", "SWIMMY", "WOOZY"] },
+    { "color": "blue", "category": "SO VERY FULL", "words": ["BRIMFUL", "CHOCKABLOCK", "FLUSH", "REPLETE"] },
+    { "color": "purple", "category": "LIKE SOMEONE IN LOVE", "words": ["BEGUILED", "BESOTTED", "SMITTEN", "TWITTERPATED"] }
+  ]
+}
+

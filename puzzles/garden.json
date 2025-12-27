@@ -1,0 +1,10 @@
+{
+  "id": "garden",
+  "groups": [
+    { "color": "yellow", "category": "JUST BEGINNING", "words": ["BLOSSOMING", "BUDDING", "FLEDGLING", "NASCENT"] },
+    { "color": "green", "category": "YOUNG AND INNOCENT", "words": ["DEWY", "INGENUOUS", "NAIF", "WIDE-EYED"] },
+    { "color": "blue", "category": "FOUND IN A GARDEN", "words": ["ARBOR", "BEDS", "JASMINE", "ROSE"] },
+    { "color": "purple", "category": "TEAS WITH COLORFUL NAMES", "words": ["BLACK", "EARL GREY", "GREEN", "WHITE"] }
+  ]
+}
+

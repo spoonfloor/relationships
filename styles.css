@@ -173,3 +173,11 @@ body{
   font-weight: 700;
 }
 
+.select{
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #151a24;
+  color: var(--text);
+  font-weight: 700;
+}

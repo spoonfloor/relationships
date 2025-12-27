@@ -1,0 +1,10 @@
+{
+  "id": "awe",
+  "groups": [
+    { "color": "yellow", "category": "PROFOUND AWE", "words": ["ADORATION", "ADULATION", "VENERATION", "WORSHIP"] },
+    { "color": "green", "category": "SOFT REVERBERATIONS", "words": ["HUM", "SIGH", "SOUGH", "SUSURRATION"] },
+    { "color": "blue", "category": "TINY DROPLETS DANCING ON AIR", "words": ["MIST", "MIZZLE", "SPINDRIFT", "VAPOR"] },
+    { "color": "purple", "category": "GROUPS OF BIRDS", "words": ["EXALTATION", "FLOCK", "GAGGLE", "MURMURATION"] }
+  ]
+}
+

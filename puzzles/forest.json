@@ -1,0 +1,10 @@
+{
+  "id": "forest",
+  "groups": [
+    { "color": "yellow", "category": "THIN, FINE TEXTURES", "words": ["COBWEBBY", "DIAPHANOUS", "GAUZY", "GOSSAMER"] },
+    { "color": "green",  "category": "THREADLIKE STRUCTURES", "words": ["CILIUM", "FIBRIL", "FILAMENT", "TENDRIL"] },
+    { "color": "blue",   "category": "COZY LAYERS", "words": ["SHAWL", "HOOD", "CLOAK", "BALACLAVA"] },
+    { "color": "purple", "category": "MUSHROOM PARTS", "words": ["CAP","GILL","HYPHAE","SPORE"] }
+  ]
+}
+
