@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connections-style Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>Connections-ish</h1>
+      <p class="sub">Select 4 words that belong together.</p>
+    </header>
+
+    <section class="controls">
+      <div class="row">
+        <button id="newGameBtn" class="btn">New game</button>
+        <button id="shuffleBtn" class="btn">Shuffle</button>
+        <button id="clearBtn" class="btn btn-secondary">Clear selection</button>
+      </div>
+
+      <div class="row color-row">
+        <span class="label">Assign group color:</span>
+        <button class="chip chip-yellow" data-color="yellow">Yellow</button>
+        <button class="chip chip-green" data-color="green">Green</button>
+        <button class="chip chip-blue" data-color="blue">Blue</button>
+        <button class="chip chip-purple" data-color="purple">Purple</button>
+      </div>
+
+      <div class="row">
+        <button id="submitBtn" class="btn btn-primary">Submit</button>
+        <div id="status" class="status" aria-live="polite"></div>
+      </div>
+
+      <div class="row hints">
+        <span class="label">Hints:</span>
+        <button id="hintCategoryBtn" class="btn btn-secondary">Reveal a category</button>
+        <button id="hintWordBtn" class="btn btn-secondary">Reveal a word</button>
+      </div>
+    </section>
+
+    <section class="board" aria-label="Word grid" id="board"></section>
+
+    <section class="found">
+      <h2>Found groups</h2>
+      <div id="foundGroups" class="foundGroups"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
