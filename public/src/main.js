@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
+ */
+
 import { getDom } from "./dom.js";
 import { createInitialState } from "./state.js";
 import { loadPuzzle, loadPuzzleIndex } from "./loadPuzzle.js";

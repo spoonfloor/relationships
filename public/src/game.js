@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
+ */
+
 import { shuffle } from "./utils.js";
 
 export function pickPuzzleWords(puzzle) {
