@@ -97,6 +97,8 @@ export function submitSelection(state, wittyResponses) {
     return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
   }
 
+  console.log("submitSelection: state.foundGroups BEFORE:", state.foundGroups);
+
   const existing = state.foundGroups.find(g => g.category === group.category);
   if (existing) {
     existing.words = group.words;
@@ -105,11 +107,14 @@ export function submitSelection(state, wittyResponses) {
     state.foundGroups.push(group);
   }
 
+  console.log("submitSelection: state.foundGroups AFTER:", state.foundGroups);
+
   lockWords(state, group.words, group.palette);
   state.selected.clear();
 
   const solvedGroupsCount = state.foundGroups.filter(g => g.words.length > 0).length;
   const solved = solvedGroupsCount === 4;
+  console.log("submitSelection: solvedGroupsCount:", solvedGroupsCount, "solved:", solved);
   return {
     ok: true,
     group,
@@ -155,6 +160,7 @@ export function hintRevealCategory(state) {
 
   const revealedGroup = { ...pick.g, words: [] };
   state.foundGroups.push(revealedGroup);
+  console.log("hintRevealCategory: state.foundGroups AFTER:", state.foundGroups);
   return { ok: true, group: revealedGroup, message: `Hint: Revealed a group.` };
 }
 
