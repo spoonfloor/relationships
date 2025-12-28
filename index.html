@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relationships Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <label class="label" for="puzzleSelect">Puzzle:</label>
+    <select id="puzzleSelect" class="select"></select>
+    <header class="header">
+      <h1>Relationships</h1>
+      <div id="vignette" class="vignette"></div>
+      <p class="sub">Select 4 words that belong together.</p>
+    </header>
+
+    <section class="board" aria-label="Word grid" id="board"></section>
+
+    <section class="controls">
+      <div class="row">
+        <button id="newGameBtn" class="btn">New game</button>
+        <button id="shuffleBtn" class="btn">Shuffle</button>
+        <button id="clearBtn" class="btn btn-secondary">Clear selection</button>
+      </div>
+
+      <div class="row color-row">
+        <div id="paletteChips" class="paletteChips"></div>
+      </div>
+
+      <div class="row">
+        <button id="submitBtn" class="btn btn-primary">Submit</button>
+        <div id="status" class="status" aria-live="polite"></div>
+      </div>
+
+      <div class="row hints">
+        <span class="label">Hints:</span>
+        <button id="hintCategoryBtn" class="btn btn-secondary">Reveal a category</button>
+        <button id="hintWordBtn" class="btn btn-secondary">Reveal a word</button>
+      </div>
+
+      <div id="most-recent-guess"></div>
+    </section>
+
+    <section class="found">
+      <h2>Found Relationships</h2>
+      <div id="foundGroups" class="foundGroups"></div>
+    </section>
+
+    <section class="guesses" id="guesses"></section>
+  </main>
+
+  <script type="module" src="./src/main.js"></script>
+
+  <div id="results-popup" class="popup-container" style="display: none;">
+    <div class="popup">
+      <h2>Congratulations!</h2>
+      <p>You solved the puzzle in <span id="results-num-guesses"></span> guesses.</p>
+      <div id="results-guesses"></div>
+      <button id="results-close-btn" class="btn">Close</button>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,10 @@
+{
+  "id": "sofa",
+  "groups": [
+    { "color": "yellow", "category": "TO GIVE GENEROUSLY", "words": ["BESTOW", "LAVISH", "PAMPER", "SHOWER"] },
+    { "color": "green", "category": "____ UP (ALL WARM AND COZY-LIKE)", "words": ["BUNDLE", "CUDDLE", "HUDDLE", "SNUGGLE"] },
+    { "color": "blue", "category": "A GREAT QUANTITY", "words": ["FISTFUL", "HEAP", "MOUNTAIN", "WODGE"] },
+    { "color": "purple", "category": "HERE COMES THE RAIN AGAIN", "words": ["CLOUDBURST", "DOWNPOUR", "DRENCHER", "THUNDERSTORM"] }
+  ]
+}
+

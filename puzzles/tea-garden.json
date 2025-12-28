@@ -1,0 +1,10 @@
+{
+  "id": "tea-garden",
+  "groups": [
+    { "color": "yellow", "category": "COY", "words": ["ARCH", "FEY", "KITTENISH", "PUCKISH"] },
+    { "color": "green", "category": "LOOK AT WHAT THE LIGHT DID NOW", "words": ["CORUSCATION", "GLIMMER", "SCINTILLATION", "TWINKLE"] },
+    { "color": "blue", "category": "FOUND ON THE SURFACE OF A POND", "words": ["ALGAE", "REFLECTIONS", "RIPPLES", "WATER STRIDERS"] },
+    { "color": "purple", "category": "JAPANESE GARDEN FEATURES", "words": ["BONSAI", "CHERRY TREES", "KOI", "PAGODA"] }
+  ]
+}
+

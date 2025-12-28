@@ -1,0 +1,10 @@
+{
+  "id": "bridge",
+  "groups": [
+    { "color": "yellow", "category": "A BUNCH OF BABY BIRDS", "words": ["BROOD", "CLUTCH", "HATCH", "NEST"] },
+    { "color": "green", "category": "A SMALL HUMP OF GRASS", "words": ["CLUMP", "TUFFET", "TUFT", "TUSSOCK"] },
+    { "color": "blue", "category": "A BIT OF HAIR", "words": ["FORELOCK", "KISS-CURL", "RINGLET", "TRESS"] },
+    { "color": "purple", "category": "MAKING SECRET PLANS TOGETHER", "words": ["CAHOOT", "COLLABORATE", "COMPLOT", "CONSPIRE"] }
+  ]
+}
+

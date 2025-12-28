@@ -1,0 +1,10 @@
+{
+  "id": "tangled",
+  "groups": [
+    { "color": "yellow", "category": "TO KNIT TOGETHER", "words": ["CRISS-CROSS", "INTERTWINE", "LACE", "WEAVE"] },
+    { "color": "green", "category": "TO COME TO KNOW", "words": ["COTTON", "GLEAN", "GRASP", "UNDERSTAND"] },
+    { "color": "blue", "category": "FOUR OUT OF FIVE SENSES AGREED", "words": ["FELT", "HEARD", "SAW", "TASTED"] },
+    { "color": "purple", "category": "THE THINGS WE TELL OURSELVES AND EACH OTHER", "words": ["FABLE", "STORY", "TALE", "YARN"] }
+  ]
+}
+

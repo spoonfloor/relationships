@@ -1,0 +1,10 @@
+{
+  "repeated_incorrect_guess": [
+    "You've tried that already. Maybe a different approach?",
+    "That didn't work before, and it's not going to work now.",
+    "Are you just guessing randomly? Because you've guessed that already.",
+    "The definition of insanity is trying the same thing over and over and expecting different results.",
+    "Nope, still not a group. You've tried this one before.",
+    "Let's not go back to that one. It was wrong then, and it's wrong now."
+  ]
+}

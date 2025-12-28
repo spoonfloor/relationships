@@ -1,0 +1,10 @@
+{
+  "id": "starlight",
+  "groups": [
+    { "color": "yellow", "category": "NICKNAMES FOR DRINKS", "words": ["BUBBLY", "HOOCH", "MOONSHINE", "VINO"] },
+    { "color": "green", "category": "NIGHT SKY DELIGHTS", "words": ["AURORA", "MOONBEAM", "SHOOTING STAR", "STARLIGHT"] },
+    { "color": "blue", "category": "SPARKLING TREMULOUSLY", "words": ["GLIMMERING", "GLINTING", "GLITTERING", "SHIMMERY"] },
+    { "color": "purple", "category": "BUBBLING OVER WITH LIFE", "words": ["EBULLIENT", "EXUBERANT", "SPARKLING", "VIVACIOUS"] }
+  ]
+}
+

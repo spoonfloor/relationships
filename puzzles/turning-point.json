@@ -1,0 +1,10 @@
+{
+  "id": "turning-point",
+  "groups": [
+    { "color": "yellow", "category": "A STILL, DRY SPOT WITH A VIEW OF SWIRLS, CURRENTS, AND EDDIES", "words": ["BANK", "RIVERSIDE", "SHORELINE", "WATERFRONT"] },
+    { "color": "green", "category": "THE TURNING POINT", "words": ["BRINK", "CUSP", "PRECIPICE", "VERGE"] },
+    { "color": "blue", "category": "THE UNCERTAIN EDGES", "words": ["BORDERLANDS", "FRINGES", "OUTSKIRTS", "PERIPHERY"] },
+    { "color": "purple", "category": "PLAYING WITH FIRE", "words": ["FEED", "FUEL", "KINDLE", "STOKE"] }
+  ]
+}
+

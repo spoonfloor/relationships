@@ -1,0 +1,10 @@
+{
+  "id": "bell",
+  "groups": [
+    { "color": "yellow", "category": "LIKE A LITTLE BELL RINGING", "words": ["CHIME", "PEAL", "TINKLE", "TINTINNABULATION"] },
+    { "color": "green", "category": "UNTROUBLED", "words": ["HALCYON", "SERENE", "STILLY", "TRANQUIL"] },
+    { "color": "blue", "category": "SLEEPYHEADED", "words": ["DOZY", "DROWSY", "LANGUID", "SLUMBROUS"] },
+    { "color": "purple", "category": "____RING", "words": ["FAIRY", "KEY", "PINKY", "PROMISE"] }
+  ]
+}
+

@@ -1,0 +1,10 @@
+{
+  "id": "sour",
+  "groups": [
+    { "color": "yellow", "category": "REALLY ON THE BALL", "words": ["ASTUTE", "BRIGHT", "QUICK", "SHARP"] },
+    { "color": "green", "category": "THAT'S GONNA HURT A LITTLE", "words": ["CHAFE", "PINCH", "SMART", "STING"] },
+    { "color": "blue", "category": "AT THE POOL HALL", "words": ["CHALK", "CUE", "POCKETS", "RACK"] },
+    { "color": "purple", "category": "LIKE A GOOD BEER", "words": ["BITTER", "HOPPY", "MALTY", "TART"] }
+  ]
+}
+
