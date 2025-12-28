@@ -1,0 +1,74 @@
+{
+  "id": "city-glittering-before-sea",
+  "title": "The city glittering before us,",
+  "vignette": "The city glittering before us, the sea glittering behind, under our shoes, the hilltop turning to dust, in the dark you didn’t see the slow, hot tear creeping down my cheek, but I could feel your hand holding tight, telling me again how we’re gonna make it.",
+  "url": "https://connections.swellgarfo.com/game/-OgNFwSfEQ0sDXwcdnqo",
+  "palette": {
+    "a": {
+      "name": "Powder Lagoon",
+      "bg": "#B5D7E4",
+      "fg": "#EBF7FA",
+      "accent": "#D5EAF1"
+    },
+    "b": {
+      "name": "Dark Azure",
+      "bg": "#12518A",
+      "fg": "#FAEDB8",
+      "accent": "#9DAFA6"
+    },
+    "c": {
+      "name": "Deep Olive",
+      "bg": "#546847",
+      "fg": "#CDD1AF",
+      "accent": "#9DA785"
+    },
+    "d": {
+      "name": "Midnight Coral",
+      "bg": "#6D4E2D",
+      "fg": "#DDDACC",
+      "accent": "#B0A28C"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "TO SEE BUT NOT TO SEE [",
+      "words": [
+        "FAIL TO NOTICE",
+        "MISS",
+        "OVERLOOK",
+        "PASS OVER"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "A SWEEPING VIEW  ]",
+      "words": [
+        "LOOKOUT POINT",
+        "SCENIC VIEW",
+        "VANTAGE POINT",
+        "VISTA"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "THE WAY THINGS GO",
+      "words": [
+        "CRUMBLE",
+        "DISINTEGRATE",
+        "DISSOLVE",
+        "ERODE"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "THE WAY WE’RE STILL HERE",
+      "words": [
+        "BRAVE",
+        "PERSEVERE",
+        "PULL THROUGH",
+        "WEATHER"
+      ]
+    }
+  ]
+}

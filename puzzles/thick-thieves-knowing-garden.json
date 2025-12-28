@@ -1,0 +1,74 @@
+{
+  "id": "thick-thieves-knowing-garden",
+  "title": "Thick as thieves",
+  "vignette": "Thick as thieves despite barely knowing each other, down the garden path we traipsed, redolent with heady scents, unconcerned with the state of our rumpled skirts and dirty knees, ravenous and hoping for some afternoon tidbits and the prospect of a warm drink to sooth our pinked fingertips.",
+  "url": "https://connections.swellgarfo.com/game/-OfZsJSk1b2VnRPv2NCQ",
+  "palette": {
+    "a": {
+      "name": "Icy Magenta",
+      "bg": "#FFE4F4",
+      "fg": "#FF4E82",
+      "accent": "#FF8AB0"
+    },
+    "b": {
+      "name": "Feather Seafoam",
+      "bg": "#C3EEEB",
+      "fg": "#57A8C7",
+      "accent": "#82C4D5"
+    },
+    "c": {
+      "name": "Powder Moss",
+      "bg": "#CBDA86",
+      "fg": "#747501",
+      "accent": "#979D36"
+    },
+    "d": {
+      "name": "Dusty Cinnamon",
+      "bg": "#DAA774",
+      "fg": "#B45F06",
+      "accent": "#C37C32"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "JUST BEGINNING",
+      "words": [
+        "BLOSSOMING",
+        "BUDDING",
+        "FLEDGLING",
+        "NASCENT"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "YOUNG AND INNOCENT",
+      "words": [
+        "DEWY",
+        "INGENUOUS",
+        "NAIF",
+        "WIDE-EYED"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "FOUND IN A GARDEN",
+      "words": [
+        "ARBOR",
+        "BEDS",
+        "JASMINE",
+        "ROSE"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "TEAS WITH COLORFUL NAMES",
+      "words": [
+        "BLACK",
+        "EARL GREY",
+        "GREEN",
+        "WHITE"
+      ]
+    }
+  ]
+}

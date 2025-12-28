@@ -1,0 +1,74 @@
+{
+  "id": "surprisingly-sour-someone-kind",
+  "title": "Surprisingly sour for someone so kind",
+  "vignette": "Surprisingly sour for someone so kind , you've got me dodging the clever barbs and darts you don't seem to know you're throwing, poking back at you to make you laugh, to draw you out, when above the crack and muffled thump-thumps from the next table, poignantly, I hear you say, \"I'll break\".",
+  "url": "https://connections.swellgarfo.com/game/-OgCySlzvFfK7waj5a--",
+  "palette": {
+    "a": {
+      "name": "Warm Amber",
+      "bg": "#FCB744",
+      "fg": "#FFFADE",
+      "accent": "#FEDFA0"
+    },
+    "b": {
+      "name": "Dusty Crimson",
+      "bg": "#DD7E6B",
+      "fg": "#FDD8C5",
+      "accent": "#F0B4A1"
+    },
+    "c": {
+      "name": "Stormy Moss",
+      "bg": "#80A04C",
+      "fg": "#3D6622",
+      "accent": "#587D33"
+    },
+    "d": {
+      "name": "Ink Coral",
+      "bg": "#633709",
+      "fg": "#EBE3BE",
+      "accent": "#B59E76"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "REALLY ON THE BALL",
+      "words": [
+        "ASTUTE",
+        "BRIGHT",
+        "QUICK",
+        "SHARP"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "THAT'S GONNA HURT A LITTLE",
+      "words": [
+        "CHAFE",
+        "PINCH",
+        "SMART",
+        "STING"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "AT THE POOL HALL",
+      "words": [
+        "CHALK",
+        "CUE",
+        "POCKETS",
+        "RACK"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "LIKE A GOOD BEER",
+      "words": [
+        "BITTER",
+        "HOPPY",
+        "MALTY",
+        "TART"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "goofing-off-playing-games",
+  "title": "Goofing off",
+  "vignette": "Goofing off , playing games, laughing about stupid stuff until we nearly pee our pants, for a couple of little bookworms, too sharp by half, we sure got a lot of mileage out of potty humor.",
+  "url": "https://connections.swellgarfo.com/game/-OgyivixBWM13KqLLs2V",
+  "palette": {
+    "a": {
+      "name": "Feather Mint",
+      "bg": "#BCEED4",
+      "fg": "#6EA792",
+      "accent": "#8DC3AC"
+    },
+    "b": {
+      "name": "Icy Lagoon",
+      "bg": "#B3E5F0",
+      "fg": "#5998A3",
+      "accent": "#7DB7C2"
+    },
+    "c": {
+      "name": "Soft Honey",
+      "bg": "#FFD966",
+      "fg": "#C9881D",
+      "accent": "#DFA83A"
+    },
+    "d": {
+      "name": "Warm Amber",
+      "bg": "#FAA146",
+      "fg": "#C54A00",
+      "accent": "#DA6D1C"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "CLEVER BEANS [O][O][O][O][O][O][O][O][O]",
+      "words": [
+        "ACE",
+        "CRACKERJACK",
+        "SMARTY PANTS",
+        "WHIZ"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "_____ AROUND DOING NOTHING IN PARTICULAR",
+      "words": [
+        "LAZE",
+        "LOAF",
+        "LOUNGE",
+        "PIDDLE [O][O][O][O][O][O][O ]"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "SHALL WE PLAY A GAME? [O][OO]",
+      "words": [
+        "CHECKERS",
+        "CHESS",
+        "GO",
+        "MANCALA"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "KNEE HIGH TO GRASSHOPPER O]",
+      "words": [
+        "ICKLE",
+        "ITTY-BITTY",
+        "PINTSIZE",
+        "WEE"
+      ]
+    }
+  ]
+}

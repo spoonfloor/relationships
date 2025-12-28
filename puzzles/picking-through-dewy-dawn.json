@@ -1,0 +1,74 @@
+{
+  "id": "picking-through-dewy-dawn",
+  "title": "Picking through the dewy dawn forest",
+  "vignette": "Picking through the dewy dawn forest , having thrown something on over our nightshirts against the cold, looking for and leaving behind traces and delights.",
+  "url": "https://connections.swellgarfo.com/game/-OfKZXDuFHUQPHISB8ZQ",
+  "palette": {
+    "a": {
+      "name": "Airy Blush",
+      "bg": "#E0D1D5",
+      "fg": "#741B47",
+      "accent": "#9F6480"
+    },
+    "b": {
+      "name": "Warm Stone",
+      "bg": "#A09582",
+      "fg": "#493D2F",
+      "accent": "#6C6050"
+    },
+    "c": {
+      "name": "Dark Moss",
+      "bg": "#476935",
+      "fg": "#B9C08C",
+      "accent": "#8B9D69"
+    },
+    "d": {
+      "name": "Ink Apricot",
+      "bg": "#574937",
+      "fg": "#C9BBA3",
+      "accent": "#9B8D78"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "THIN, FINE TEXTURES",
+      "words": [
+        "COBWEBBY",
+        "DIAPHANOUS",
+        "GAUZY",
+        "GOSSAMER"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "THREADLIKE STRUCTURES",
+      "words": [
+        "CILIUM",
+        "FIBRIL",
+        "FILAMENT",
+        "TENDRIL"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "COZY LAYERS",
+      "words": [
+        "SHAWL",
+        "HOOD",
+        "CLOAK",
+        "BALACLAVA"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "MUSHROOM PARTS",
+      "words": [
+        "CAP",
+        "GILL",
+        "HYPHAE",
+        "SPORE"
+      ]
+    }
+  ]
+}
