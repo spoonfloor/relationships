@@ -76,8 +76,7 @@ export function renderGuesses({ guessesEl }, guesses, palette) {
   for (const guess of guesses) {
     const row = document.createElement("div");
     row.className = "guess-row";
-    const shuffledWords = [...guess.words].sort(() => Math.random() - 0.5);
-    for (const word of shuffledWords) {
+    for (const word of guess.words) {
       const box = document.createElement("div");
       box.className = "guess-box";
       const palEntry = palette[word.palette];

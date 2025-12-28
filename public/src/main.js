@@ -22,107 +22,238 @@ import {
 const dom = getDom();
 
 async function bootstrap() {
-  const index = await loadPuzzleIndex("./puzzles/index.json");
+
+  const [index, wittyResponses] = await Promise.all([
+
+    loadPuzzleIndex("./puzzles/index.json"),
+
+    fetch("./witty_responses.json").then(res => res.json()),
+
+  ]);
+
+
 
   // Populate dropdown
+
   dom.puzzleSelect.innerHTML = "";
+
   for (const p of index.puzzles) {
+
     const opt = document.createElement("option");
+
     opt.value = p.id;
+
     opt.textContent = p.label ?? p.id;
+
     dom.puzzleSelect.appendChild(opt);
+
   }
+
+
 
   const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
 
+
+
   // State is created once; we swap its activePuzzle on selection.
+
   const initialId = index.defaultId && idToEntry.has(index.defaultId)
+
     ? index.defaultId
+
     : index.puzzles[0].id;
 
+
+
   const state = createInitialState(await loadPuzzle(`./puzzles/${idToEntry.get(initialId).file}`));
+
   dom.puzzleSelect.value = initialId;
 
+
+
   function renderPaletteChips() {
+
     const pal = state.activePuzzle.palette || {};
+
     dom.paletteChipsEl.innerHTML = "";
+
     for (const [palette, entry] of Object.entries(pal)) {
+
       const btn = document.createElement("button");
+
       btn.className = "chip";
+
       btn.type = "button";
 
+
+
       const foundGroup = state.foundGroups.find(g => g.palette === palette);
+
       if (foundGroup) {
+
         btn.textContent = foundGroup.category;
+
       } else {
+
         btn.textContent = entry.name ?? palette.toUpperCase();
+
       }
+
+
 
       if (entry.bg) btn.style.background = entry.bg;
+
       if (entry.fg) btn.style.color = entry.fg;
+
       dom.paletteChipsEl.appendChild(btn);
+
     }
+
   }
+
+
 
   const handlers = {
+
     onToggleSelect(word) {
+
       const res = toggleSelect(state, word);
+
       renderStatus(dom, res.ok ? `${state.selected.size} selected.` : res.message);
+
       renderBoard(dom, state, handlers);
+
     },
+
   };
 
+
+
   function startPuzzle(puzzle) {
+
     state.activePuzzle = puzzle;
+
     dom.vignetteEl.textContent = puzzle.vignette ?? "";
+
     initGameState(state);
+
     clearFoundGroups(dom);
+
     renderPaletteChips();
+
     renderBoard(dom, state, handlers);
+
     renderStatus(dom, "Pick 4 words.");
+
   }
 
+
+
   // Controls
+
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
-  dom.shuffleBtn.addEventListener("click", () => { shuffleUnlocked(state); renderBoard(dom, state, handlers); renderStatus(dom, "Shuffled."); });
-  dom.clearBtn.addEventListener("click", () => { clearSelection(state); renderBoard(dom, state, handlers); renderStatus(dom, "Selection cleared."); });
+
+  dom.shuffleBtn.addEventListener("click", () => {
+
+    shuffleUnlocked(state);
+
+    renderBoard(dom, state, handlers);
+
+    renderStatus(dom, "Shuffled.");
+
+  });
+
+  dom.clearBtn.addEventListener("click", () => {
+
+    clearSelection(state);
+
+    renderBoard(dom, state, handlers);
+
+    renderStatus(dom, "Selection cleared.");
+
+  });
+
+
 
   dom.submitBtn.addEventListener("click", () => {
-    const res = submitSelection(state);
+
+    const res = submitSelection(state, wittyResponses.repeated_incorrect_guess);
+
     if (res.ok && res.group) {
+
       clearFoundGroups(dom);
+
       for (const group of state.foundGroups) {
+
         const palEntry = state.activePuzzle.palette?.[group.palette];
+
         const displayName = group.category;
+
         appendFoundGroupCard(dom, group, displayName);
+
         const last = dom.foundEl.lastElementChild;
+
         if (last && palEntry?.bg) last.style.background = palEntry.bg;
+
         if (last && palEntry?.fg) last.style.color = palEntry.fg;
+
       }
+
       renderPaletteChips();
+
     }
+
     renderBoard(dom, state, handlers);
+
     renderGuesses(dom, state.guesses, state.activePuzzle.palette);
+
     renderStatus(dom, res.message);
+
   });
+
+
 
   // (chips are now created dynamically in renderPaletteChips)
 
+
+
   dom.hintCategoryBtn.addEventListener("click", () => {
+
     const res = hintRevealCategory(state);
+
     if (res.ok && res.group) {
+
       appendFoundGroupCard(dom, res.group, res.group.category);
+
       const palEntry = state.activePuzzle.palette?.[res.group.palette];
+
       const last = dom.foundEl.lastElementChild;
+
       if (last && palEntry?.bg) last.style.background = palEntry.bg;
+
       if (last && palEntry?.fg) last.style.color = palEntry.fg;
+
       renderPaletteChips();
+
       renderStatus(dom, `Hint: One category is “${res.group.category}”.`);
+
     } else {
+
       renderStatus(dom, res.message);
+
     }
+
   });
-  dom.hintWordBtn.addEventListener("click", () => { const res = hintRevealWord(state); renderBoard(dom, state, handlers); renderStatus(dom, res.message); });
+
+  dom.hintWordBtn.addEventListener("click", () => {
+
+    const res = hintRevealWord(state);
+
+    renderBoard(dom, state, handlers);
+
+    renderStatus(dom, res.message);
+
+  });
 
   // Puzzle switching
   dom.puzzleSelect.addEventListener("change", async () => {

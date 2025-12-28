@@ -55,14 +55,16 @@ export function lockWords(state, wordsArr, color) {
   }
 }
 
-export function submitSelection(state) {
+export function submitSelection(state, wittyResponses) {
   if (state.selected.size !== 4) {
     return { ok: false, message: "Select exactly 4 words." };
   }
 
   const words = Array.from(state.selected);
+  const shuffledWords = shuffle(words);
+
   const guess = {
-    words: words.map(word => {
+    words: shuffledWords.map(word => {
       const group = state.wordToGroupMap.get(word);
       return { word, palette: group.palette };
     }),
@@ -74,15 +76,16 @@ export function submitSelection(state) {
     g.words.every((w, i) => w.word === guess.words[i].word)
   );
 
-  if (isRepeated) {
-    return { ok: false, message: "You've already tried that combination." };
-  }
-
   let group = getGroupBySelection(state.activePuzzle, words);
-
   if (group) {
     guess.isCorrect = true;
   }
+
+  if (isRepeated && !guess.isCorrect) {
+    const randomIndex = Math.floor(Math.random() * wittyResponses.length);
+    return { ok: false, message: wittyResponses[randomIndex] };
+  }
+
   state.guesses.push(guess);
 
   if (!group) {
