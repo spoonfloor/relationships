@@ -85,9 +85,9 @@ export function submitSelection(state, wittyResponses) {
   if (isRepeated && !guess.isCorrect) {
     const randomIndex = Math.floor(Math.random() * wittyResponses.length);
     return { ok: false, message: wittyResponses[randomIndex] };
+  } else {
+    state.guesses.push(guess);
   }
-
-  state.guesses.push(guess);
 
   if (!group) {
     return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
