@@ -25,13 +25,23 @@ async function bootstrap() {
   const puzzleId = urlParams.get("puzzleId");
   const puzzleUrl = urlParams.get("puzzleUrl");
   const allowedHostnames = ["raw.githubusercontent.com"];
-  
-  let puzzle;
-  let wittyResponses = { repeated_incorrect_guess: [] };
 
+  const [index, wittyResponses] = await Promise.all([
+    loadPuzzleIndex("./puzzles/index.json"),
+    fetch("./witty_responses.json").then(res => res.json()),
+  ]);
+
+  dom.puzzleSelect.innerHTML = "";
+  for (const p of index.puzzles) {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = p.label ?? p.id;
+    dom.puzzleSelect.appendChild(opt);
+  }
+  const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
+
+  let puzzle;
   if (puzzleId) {
-    const index = await loadPuzzleIndex("./puzzles/index.json");
-    const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
     const entry = idToEntry.get(puzzleId);
     if (entry) {
       puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
@@ -53,44 +63,18 @@ async function bootstrap() {
       return;
     }
   } else {
-    const [index, witty] = await Promise.all([
-      loadPuzzleIndex("./puzzles/index.json"),
-      fetch("./witty_responses.json").then(res => res.json()),
-    ]);
-    wittyResponses = witty;
-
-    dom.puzzleSelect.innerHTML = "";
-    for (const p of index.puzzles) {
-      const opt = document.createElement("option");
-      opt.value = p.id;
-      opt.textContent = p.label ?? p.id;
-      dom.puzzleSelect.appendChild(opt);
-    }
-    const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
     const initialId = index.defaultId && idToEntry.has(index.defaultId)
       ? index.defaultId
       : index.puzzles[0].id;
     puzzle = await loadPuzzle(`./puzzles/${idToEntry.get(initialId).file}`);
     dom.puzzleSelect.value = initialId;
-
-    dom.puzzleSelect.addEventListener("change", async () => {
-      try {
-        const id = dom.puzzleSelect.value;
-        const entry = idToEntry.get(id);
-        const puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
-        startPuzzle(puzzle);
-      } catch (e) {
-        console.error(e);
-        renderStatus(dom, `Puzzle load error: ${e.message}`);
-      }
-    });
   }
 
   const state = createInitialState(puzzle);
-  initializePage(state, wittyResponses.repeated_incorrect_guess);
+  initializePage(state, wittyResponses.repeated_incorrect_guess, idToEntry);
 }
 
-function initializePage(state, wittyResponses) {
+function initializePage(state, wittyResponses, idToEntry) {
   const dom = getDom();
 
   function renderPaletteChips() {
@@ -214,6 +198,18 @@ function initializePage(state, wittyResponses) {
     const res = hintRevealWord(state);
     renderBoard(dom, state, handlers);
     renderStatus(dom, res.message);
+  });
+
+  dom.puzzleSelect.addEventListener("change", async () => {
+    try {
+      const id = dom.puzzleSelect.value;
+      const entry = idToEntry.get(id);
+      const puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      startPuzzle(puzzle);
+    } catch (e) {
+      console.error(e);
+      renderStatus(dom, `Puzzle load error: ${e.message}`);
+    }
   });
 
   startPuzzle(state.activePuzzle);
