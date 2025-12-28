@@ -1,0 +1,74 @@
+{
+  "id": "irreverent-ever-stirred-sounds",
+  "title": "Irreverent as ever",
+  "vignette": "Irreverent as ever , stirred by the sounds of the night coming alive, fancying ourselves a pack of young rakes, we cut through the sweet-smelling orchard, picking and eating the fruit, and spitting out the pips.",
+  "url": "https://connections.swellgarfo.com/game/-OeMjXzx51OE2WI0qlKZ",
+  "palette": {
+    "a": {
+      "name": "Night Lagoon",
+      "bg": "#0B425C",
+      "fg": "#C6CFC2",
+      "accent": "#7B9799"
+    },
+    "b": {
+      "name": "Dark Linen",
+      "bg": "#434343",
+      "fg": "#D0E0E3",
+      "accent": "#98A1A3"
+    },
+    "c": {
+      "name": "Night Rose",
+      "bg": "#990000",
+      "fg": "#E9B8A4",
+      "accent": "#C96E62"
+    },
+    "d": {
+      "name": "Deep Raspberry",
+      "bg": "#CC0000",
+      "fg": "#E6B8AF",
+      "accent": "#DC6E69"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "SOUNDS OF THE TWILIGHT CHORUS",
+      "words": [
+        "CHIRRUP",
+        "TREMOLO",
+        "TRILL",
+        "WARBLE"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "LIKE THE FADING LIGHT",
+      "words": [
+        "DARKLING",
+        "DUSKY",
+        "SHADOWY",
+        "TENEBROUS"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "APPLE ____",
+      "words": [
+        "CART",
+        "JACK",
+        "SAUCE",
+        "SEED"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "ENDEARINGLY AUDACIOUS",
+      "words": [
+        "CHEEKY",
+        "LIPPY",
+        "MOUTHY",
+        "SASSY"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "racing-towards-away-autumn",
+  "title": "Racing towards you and away",
+  "vignette": "Racing towards you and away , in the autumn field, passing from arm to arm to arm back to yours, the strings reeling us all along, till at last we stumble to the side, rousing a bevy of finches from their rest as we drop sweaty and breathless beneath the branches, for ours.",
+  "url": "https://connections.swellgarfo.com/game/-OeH_yW10JCfBc_s3SEU",
+  "palette": {
+    "a": {
+      "name": "Night Butter",
+      "bg": "#747501",
+      "fg": "#CBDA86",
+      "accent": "#A8B251"
+    },
+    "b": {
+      "name": "Rich Marigold",
+      "bg": "#ECB200",
+      "fg": "#FFF2CC",
+      "accent": "#F7D87A"
+    },
+    "c": {
+      "name": "Stormy Amber",
+      "bg": "#C26421",
+      "fg": "#F0B460",
+      "accent": "#DE9447"
+    },
+    "d": {
+      "name": "Stormy Raspberry",
+      "bg": "#A3381B",
+      "fg": "#FCC2B6",
+      "accent": "#D88B78"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "A SMALL DENSE GROUP OF TREES OR SHRUBS",
+      "words": [
+        "COPSE",
+        "HEDGEROW",
+        "SPINNEY",
+        "THICKET"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "DELIGHTFULLY LIGHTHEADED ]",
+      "words": [
+        "DIZZY",
+        "GIDDY",
+        "SWIMMY",
+        "WOOZY ]"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "SO VERY FULL",
+      "words": [
+        "BRIMFUL",
+        "CHOCKABLOCK",
+        "FLUSH",
+        "REPLETE"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "LIKE SOMEONE IN LOVE",
+      "words": [
+        "BEGUILED",
+        "BESOTTED",
+        "SMITTEN",
+        "TWITTERPATED"
+      ]
+    }
+  ]
+}

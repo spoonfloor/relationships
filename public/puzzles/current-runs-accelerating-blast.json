@@ -1,0 +1,74 @@
+{
+  "id": "current-runs-accelerating-blast",
+  "title": "A current runs between us",
+  "vignette": "A current runs between us , accelerating as you blast past the fireworks stand and bust through the swirling dust cloud dancing over the road; we haven’t slept since we started this trip, determined to guzzle every last drop of it.",
+  "url": "https://connections.swellgarfo.com/game/-Ogw_3AFilxjXQVaqq9Q",
+  "palette": {
+    "a": {
+      "name": "Powder Raspberry",
+      "bg": "#FF8C75",
+      "fg": "#85200C",
+      "accent": "#B64B36"
+    },
+    "b": {
+      "name": "Deep Raspberry",
+      "bg": "#CC0000",
+      "fg": "#F5D992",
+      "accent": "#E58258"
+    },
+    "c": {
+      "name": "Dappled Amber",
+      "bg": "#D5AE85",
+      "fg": "#FFFADE",
+      "accent": "#EEDCBA"
+    },
+    "d": {
+      "name": "Pale Cinnamon",
+      "bg": "#FFECBC",
+      "fg": "#AEC0C2",
+      "accent": "#CED2C0"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "THE SHEER VELOCITY OF IT WAS SHOCKING",
+      "words": [
+        "BREAKNECK",
+        "FLEET-FOOTED",
+        "WHIRLWIND",
+        "WHISTLE-STOP"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "LIKE THE FOURTH OF JULY",
+      "words": [
+        "BOTTLE ROCKET",
+        "CHERRY BOMB",
+        "ROMAN CANDLE",
+        "SPARKLER"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "LIKE A SWIRLING WIND",
+      "words": [
+        "DUST DEVIL",
+        "WILLY-WILLY",
+        "TWISTER",
+        "VORTEX"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "AURAL PLEASURES",
+      "words": [
+        "CHANT",
+        "RHYME",
+        "SONG",
+        "STORY"
+      ]
+    }
+  ]
+}

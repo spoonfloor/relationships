@@ -1,0 +1,74 @@
+{
+  "id": "cozy-covers-watching-deeply",
+  "title": "Cozy under covers",
+  "vignette": "Cozy under covers , watching deeply pinked clouds fill our window, hatching my plans for a game we can play, slowly wafting up the stairs, the most welcome smell calls me down to breakfast.",
+  "url": "https://connections.swellgarfo.com/game/-Odpsfdij3DW3ZNE071J",
+  "palette": {
+    "a": {
+      "name": "Airy Butter",
+      "bg": "#FAEDB8",
+      "fg": "#FCB744",
+      "accent": "#FBCD72"
+    },
+    "b": {
+      "name": "Pale Raspberry",
+      "bg": "#FCC2B6",
+      "fg": "#EE5C2B",
+      "accent": "#F48563"
+    },
+    "c": {
+      "name": "Silk Cinnamon",
+      "bg": "#FFC899",
+      "fg": "#B45F06",
+      "accent": "#D28941"
+    },
+    "d": {
+      "name": "Dappled Cinnamon",
+      "bg": "#B98149",
+      "fg": "#FDCFA1",
+      "accent": "#E2B07E"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "START THE DAY, RIGHT?",
+      "words": [
+        "COCK-CROW",
+        "DAWN",
+        "DAY-PEEP",
+        "HALF-LIGHT"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "SUN-KISSED",
+      "words": [
+        "GLOWING",
+        "GOLDEN",
+        "ROSY",
+        "WARM"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "THE WAY IDEAS PERCOLATE",
+      "words": [
+        "ARISE",
+        "EMERGE",
+        "SURFACE",
+        "UNFOLD"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "HOW DO YOU TAKE (OR MAKE?) YOUR COFFEE?",
+      "words": [
+        "DRIP",
+        "IMMERSE",
+        "PERCOLATE",
+        "PRESS"
+      ]
+    }
+  ]
+}

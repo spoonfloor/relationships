@@ -1,0 +1,74 @@
+{
+  "id": "nestled-together-deep-downy",
+  "title": "Nestled together on the deep, downy sofa",
+  "vignette": "Nestled together on the deep, downy sofa , watching the lights twinkle in the wet pavement’s reflection, you both turn back to the stacks of books and cards we’ve been devouring, as I return with a tottering, brimming tea tray.",
+  "url": "https://connections.swellgarfo.com/game/-OfjSfz0RuilRTcXxywS",
+  "palette": {
+    "a": {
+      "name": "Powder Raspberry",
+      "bg": "#FF8C75",
+      "fg": "#FDD8C5",
+      "accent": "#FEBAA5"
+    },
+    "b": {
+      "name": "Light Amber",
+      "bg": "#FFE599",
+      "fg": "#FF8C75",
+      "accent": "#FFB083"
+    },
+    "c": {
+      "name": "Silk Amber",
+      "bg": "#DBD3C4",
+      "fg": "#A09582",
+      "accent": "#B8AE9C"
+    },
+    "d": {
+      "name": "Sunlit Azure",
+      "bg": "#8496B4",
+      "fg": "#1C4587",
+      "accent": "#466599"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "TO GIVE GENEROUSLY",
+      "words": [
+        "BESTOW",
+        "LAVISH",
+        "PAMPER",
+        "SHOWER"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "_______ UP (ALL WARM AND COZY-LIKE)",
+      "words": [
+        "BUNDLE",
+        "CUDDLE",
+        "HUDDLE",
+        "SNUGGLE"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "A GREAT QUANTIT Y",
+      "words": [
+        "FISTFUL",
+        "HEAP",
+        "MOUNTAIN",
+        "WODGE"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "HERE COMES THE RAIN AGAIN",
+      "words": [
+        "CLOUDBURST",
+        "DOWNPOUR",
+        "DRENCHER",
+        "THUNDERSTORM"
+      ]
+    }
+  ]
+}

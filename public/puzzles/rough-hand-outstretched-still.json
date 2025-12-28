@@ -1,0 +1,74 @@
+{
+  "id": "rough-hand-outstretched-still",
+  "title": "His rough hand outstretched",
+  "vignette": "His rough hand outstretched , the other still holding the small heart-shaped box, flat on my back in the merciful hay, breathing deep the musk of the space, blushing at my clumsiness, I reach for his help…then pull him down with me.",
+  "url": "https://connections.swellgarfo.com/game/-Ofe01Ue55L31_ybLqhE",
+  "palette": {
+    "a": {
+      "name": "Stormy Marigold",
+      "bg": "#968B39",
+      "fg": "#DFD49C",
+      "accent": "#C2B774"
+    },
+    "b": {
+      "name": "Powder Apricot",
+      "bg": "#E9C478",
+      "fg": "#7F6000",
+      "accent": "#A98830"
+    },
+    "c": {
+      "name": "Dusty Cinnamon",
+      "bg": "#DAA774",
+      "fg": "#B45F06",
+      "accent": "#C37C32"
+    },
+    "d": {
+      "name": "Dark Cherry",
+      "bg": "#5B0F00",
+      "fg": "#D89752",
+      "accent": "#A66131"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "WILL THEY/WON’T THEY? OXYMORONS",
+      "words": [
+        "AWFUL GOOD",
+        "DEFINITE MAYBE",
+        "EVEN ODDS",
+        "LIVING END"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "GETTING THE GOODS DOWN ON THE FARM",
+      "words": [
+        "MILK",
+        "PLUCK",
+        "REAP",
+        "SHEAR"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "HE’S A GOOD GUY",
+      "words": [
+        "CLEMENT",
+        "EARNEST",
+        "FRANK",
+        "STERLING"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "ASSORTED CHOCOLATES",
+      "words": [
+        "BITTERSWEET",
+        "DARK",
+        "DUTCH",
+        "WHITE"
+      ]
+    }
+  ]
+}
