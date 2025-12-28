@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Word Groups Prototype</title>
+  <title>Relationships Prototype</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,10 +11,15 @@
     <label class="label" for="puzzleSelect">Puzzle:</label>
     <select id="puzzleSelect" class="select"></select>
     <header class="header">
-      <h1>Word Groups</h1>
+      <h1>Relationships</h1>
       <div id="vignette" class="vignette"></div>
       <p class="sub">Select 4 words that belong together.</p>
     </header>
+
+    <section class="found">
+      <h2>Found Relationships</h2>
+      <div id="foundGroups" class="foundGroups"></div>
+    </section>
 
     <section class="controls">
       <div class="row">
@@ -40,12 +45,6 @@
       </div>
     </section>
 
-    <section class="board" aria-label="Word grid" id="board"></section>
-
-    <section class="found">
-      <h2>Found groups</h2>
-      <div id="foundGroups" class="foundGroups"></div>
-    </section>
   </main>
 
   <script type="module" src="./src/main.js"></script>
