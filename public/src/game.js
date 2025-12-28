@@ -108,7 +108,7 @@ export function submitSelection(state, wittyResponses) {
   lockWords(state, group.words, group.palette);
   state.selected.clear();
 
-  const solved = state.foundGroups.length === 4;
+  const solved = state.foundGroups.length === 4 && state.foundGroups.every(g => g.words.length === 4);
   return {
     ok: true,
     group,
