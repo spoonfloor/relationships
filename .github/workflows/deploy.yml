@@ -8,6 +8,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Grant write permissions to the GITHUB_TOKEN
+      pages: write     # Grant write permissions to the GITHUB_TOKEN for pages
+      id-token: write  # Grant OpenID Connect permissions to the GITHUB_TOKEN for pages
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,3 +22,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+          # Ensure the gh-pages branch is created if it doesn't exist
+          enable_jekyll: false # Disable Jekyll if you're serving a static site
