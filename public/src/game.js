@@ -155,9 +155,7 @@ export function hintRevealCategory(state) {
 export function hintRevealWord(state) {
   if (state.selected.size >= 4) state.selected.clear();
 
-  const remainingGroups = state.activePuzzle.groups.filter(
-    g => !state.foundGroups.some(f => f.category === g.category)
-  );
+  const remainingGroups = state.activePuzzle.groups.filter(g => !isGroupFound(state, g));
   if (remainingGroups.length === 0) return { ok: false, message: "No words left to reveal." };
 
   const g = remainingGroups[Math.floor(Math.random() * remainingGroups.length)];

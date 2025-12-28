@@ -203,13 +203,53 @@ async function bootstrap() {
 
     }
 
-    renderBoard(dom, state, handlers);
+        renderBoard(dom, state, handlers);
 
-    renderGuesses(dom, state.guesses, state.activePuzzle.palette);
+        renderMostRecentGuess(dom, state.guesses.at(-1), state.activePuzzle.palette);
 
-    renderStatus(dom, res.message);
+        if (state.foundGroups.length === 4) {
 
-  });
+          renderGuesses(dom, state.guesses, state.activePuzzle.palette);
+
+        }
+
+        renderStatus(dom, res.message);
+
+      });
+
+    
+
+      function renderMostRecentGuess(dom, guess, palette) {
+
+        if (!guess) return;
+
+        const row = document.createElement("div");
+
+        row.className = "guess-row";
+
+        for (const word of guess.words) {
+
+          const box = document.createElement("div");
+
+          box.className = "guess-box";
+
+          const palEntry = palette[word.palette];
+
+          if (palEntry?.bg) {
+
+            box.style.backgroundColor = palEntry.bg;
+
+          }
+
+          row.appendChild(box);
+
+        }
+
+        dom.mostRecentGuessEl.innerHTML = "";
+
+        dom.mostRecentGuessEl.appendChild(row);
+
+      }
 
 
 

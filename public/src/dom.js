@@ -5,6 +5,7 @@ export function getDom() {
     vignetteEl: document.getElementById("vignette"),
     foundEl: document.getElementById("foundGroups"),
     guessesEl: document.getElementById("guesses"),
+    mostRecentGuessEl: document.getElementById("most-recent-guess"),
 
     newGameBtn: document.getElementById("newGameBtn"),
     shuffleBtn: document.getElementById("shuffleBtn"),
