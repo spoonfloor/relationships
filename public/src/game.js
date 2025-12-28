@@ -61,7 +61,7 @@ export function submitSelection(state) {
   }
 
   const words = Array.from(state.selected);
-  const group = getGroupBySelection(state.activePuzzle, words);
+  let group = getGroupBySelection(state.activePuzzle, words);
 
   if (!group) {
     return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
