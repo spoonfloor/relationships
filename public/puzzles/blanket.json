@@ -4,10 +4,10 @@
   "vignette": "Lolling on the soft bright blanket, watching the bees amble in and out of the year’s very last roses, reading to each other, snorting and sighing at the story between bites of persimmon, sharp cheddar and each other.",
   "url": "TBA",
   "palette": {
-    "a": { "name": "Honeycomb", "bg": "#FFE6A3", "fg": "#C07A1E", "accent": "#F2C14E" },
-    "b": { "name": "Petname",   "bg": "#FFD87A", "fg": "#A62A1C", "accent": "#E29A2D" },
-    "c": { "name": "Palate",    "bg": "#F39A54", "fg": "#FFFFFF", "accent": "#D9782F" },
-    "d": { "name": "Swoon",     "bg": "#EF3B2C", "fg": "#FFFFFF", "accent": "#B82A20" }
+    "a": { "name": "Amber", "bg": "#FFE6A3", "fg": "#C07A1E", "accent": "#F2C14E" },
+    "b": { "name": "Crimson",   "bg": "#FFD87A", "fg": "#A62A1C", "accent": "#E29A2D" },
+    "c": { "name": "Cloud",    "bg": "#F39A54", "fg": "#FFFFFF", "accent": "#D9782F" },
+    "d": { "name": "Snow",     "bg": "#EF3B2C", "fg": "#FFFFFF", "accent": "#B82A20" }
   },
   "groups": [
     { "palette": "a", "category": "ALL ABOUT THE BEES", "words": ["DRONE", "HIVE", "JELLY", "QUEEN"] },

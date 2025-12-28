@@ -4,10 +4,10 @@
   "vignette": "Thick as thieves despite barely knowing each other, down the garden path we traipsed, redolent with heady scents, unconcerned with the state of our rumpled skirts and dirty knees, ravenous and hoping for some afternoon tidbits and the prospect of a warm drink to sooth our pinked fingertips.",
   "url": "TBA",
   "palette": {
-    "a": { "name": "Bloom",     "bg": "#FBE5F0", "fg": "#E0436F", "accent": "#F28CB1" },
-    "b": { "name": "Dew",       "bg": "#DDF2F1", "fg": "#6DA9C3", "accent": "#A3D6D3" },
-    "c": { "name": "Garden",    "bg": "#D6E59B", "fg": "#6A7B1E", "accent": "#A5B95A" },
-    "d": { "name": "Infusion",  "bg": "#E1B07A", "fg": "#8A4A14", "accent": "#C07A3A" }
+    "a": { "name": "Rose",     "bg": "#FBE5F0", "fg": "#E0436F", "accent": "#F28CB1" },
+    "b": { "name": "Sky",       "bg": "#DDF2F1", "fg": "#6DA9C3", "accent": "#A3D6D3" },
+    "c": { "name": "Olive",    "bg": "#D6E59B", "fg": "#6A7B1E", "accent": "#A5B95A" },
+    "d": { "name": "Cinnamon",  "bg": "#E1B07A", "fg": "#8A4A14", "accent": "#C07A3A" }
   },
   "groups": [
     { "palette": "a", "category": "JUST BEGINNING", "words": ["BLOSSOMING", "BUDDING", "FLEDGLING", "NASCENT"] },
