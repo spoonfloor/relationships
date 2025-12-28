@@ -1,0 +1,74 @@
+{
+  "id": "paper-crinkling-pulled-pocket",
+  "title": "The paper crinkling",
+  "vignette": "The paper crinkling as you pulled from your pocket the sweets you pinched from the party, laughing through chattering teeth we left a trail of crumbs, trundling home to the sounds of revelry tinkling over snow",
+  "url": "https://connections.swellgarfo.com/game/-OdZA-LLx3Du2GTKCXJp",
+  "palette": {
+    "a": {
+      "name": "Feather Twilight",
+      "bg": "#CFE2F3",
+      "fg": "#3C78D8",
+      "accent": "#77A2E3"
+    },
+    "b": {
+      "name": "Stormy Honey",
+      "bg": "#BF9000",
+      "fg": "#FFE599",
+      "accent": "#E5C35C"
+    },
+    "c": {
+      "name": "Deep Raspberry",
+      "bg": "#CC0000",
+      "fg": "#FFFFFF",
+      "accent": "#EB9999"
+    },
+    "d": {
+      "name": "Night Rose",
+      "bg": "#990000",
+      "fg": "#EAD1DC",
+      "accent": "#CA7D84"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "BABY, IT'S COLD OUTSIDE",
+      "words": [
+        "CHILLY",
+        "CRISP",
+        "NIPPY",
+        "SHIVERY"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "A CAROL OF ____ BELLS ]",
+      "words": [
+        "BLUE",
+        "JINGLE",
+        "SILVER",
+        "SLEIGH"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "THE LIFE OF THE PARTY",
+      "words": [
+        "CARD",
+        "HOOT",
+        "JOKER",
+        "WISECRACKER"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "OLD FASHIONED WINTER TREATS",
+      "words": [
+        "FIGGY PUDDING",
+        "FRUITCAKE",
+        "MINCE PIE",
+        "SUGAR PLUM"
+      ]
+    }
+  ]
+}

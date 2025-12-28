@@ -1,0 +1,74 @@
+{
+  "id": "dropping-hatbox-shaped-handbag",
+  "title": "Dropping my hatbox-shaped handbag",
+  "vignette": "Dropping my hatbox-shaped handbag , plopping down next to you and your *actual* hatbox-as-handbag, taking in your quirked bow of a mouth, lined in plum, your black bob falling in your bright blue eyes, as the cafeteria opens, you hop up, and holding the door for me you say, we could sit together if you’d like the company? and I spend the next month trying to figure out how to get you to kiss me.",
+  "url": "https://connections.swellgarfo.com/game/-Oh5waOEFHok15586hn5",
+  "palette": {
+    "a": {
+      "name": "Midnight Slate",
+      "bg": "#000000",
+      "fg": "#B8DAEE",
+      "accent": "#6E838F"
+    },
+    "b": {
+      "name": "Midnight Magenta",
+      "bg": "#692652",
+      "fg": "#F8C1E4",
+      "accent": "#BF83AA"
+    },
+    "c": {
+      "name": "Pale Wine",
+      "bg": "#F8C1E4",
+      "fg": "#692652",
+      "accent": "#A2648C"
+    },
+    "d": {
+      "name": "Icy Twilight",
+      "bg": "#B8DAEE",
+      "fg": "#384780",
+      "accent": "#6B82AC"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "THAT THING YOU PUT YOUR THINGS IN TO CARRY THEM AROUND",
+      "words": [
+        "CLUTCH",
+        "FANNY PACK",
+        "SACK",
+        "TOTE [O][O][O][O][O][O][O][O][O][O]"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "THAT THING YOU DO WITH YOUR MOUTH TO FLIRT",
+      "words": [
+        "MOUE",
+        "POUT",
+        "PUCKER",
+        "PURSE [O][O][O][O][O][O][O]"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "THAT THING YOU DO WITH YOUR MOUTH AND (SOMETIMES) SOMEONE ELSE’S",
+      "words": [
+        "MAKE OUT",
+        "PECK",
+        "SMACK",
+        "SMOOCH O][O][O][O][O][O][O][O][O][O][O][O]"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "THAT THING YOU DO WHEN YOU CAN’T LET GO",
+      "words": [
+        "CLASP",
+        "GRAB",
+        "GRASP",
+        "GRIP [O][O][O][O][O][O][O]"
+      ]
+    }
+  ]
+}

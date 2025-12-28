@@ -1,0 +1,74 @@
+{
+  "id": "walking-waves-breathless-lithe",
+  "title": "Walking out of the waves",
+  "vignette": "Walking out of the waves , breathless and lithe, looking like a silver screen confection, she meets your eye, the crook of her smile and her sand-tangled hair hinting at the wilderness raging inside.",
+  "url": "https://connections.swellgarfo.com/game/-OfFUPjrkeQPorHSTQwM",
+  "palette": {
+    "a": {
+      "name": "Airy Butter",
+      "bg": "#FAEDB8",
+      "fg": "#BF9000",
+      "accent": "#D7B54A"
+    },
+    "b": {
+      "name": "Airy Teal",
+      "bg": "#D0E0E3",
+      "fg": "#006D86",
+      "accent": "#539BAB"
+    },
+    "c": {
+      "name": "Powder Apricot",
+      "bg": "#D4C7AF",
+      "fg": "#916026",
+      "accent": "#AC895D"
+    },
+    "d": {
+      "name": "Powder Coral",
+      "bg": "#EFCB8E",
+      "fg": "#B57535",
+      "accent": "#CC9759"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "STAR____",
+      "words": [
+        "FISH",
+        "GAZE",
+        "LET",
+        "POWER"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "AS A SLENDER BRANCH MOVES IN THE BREEZE",
+      "words": [
+        "GRACILE",
+        "LISSOM",
+        "SINUOUS",
+        "WILLOWY"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "SHE’S AN ANIMAL",
+      "words": [
+        "CHICK",
+        "FILLY",
+        "HEN",
+        "VIXEN"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "A REAL HEARTBREAKER",
+      "words": [
+        "FLIRT",
+        "MINX",
+        "SIREN",
+        "VAMP"
+      ]
+    }
+  ]
+}

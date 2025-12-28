@@ -1,0 +1,74 @@
+{
+  "id": "held-blurry-sounds-sky",
+  "title": "Held in the blurry sounds of the sky and the sea",
+  "vignette": "Held in the blurry sounds of the sky and the sea , I watched you mesmerized by their flight, your cheeks glistening and ruddy, your lips open and moving slightly as if in prayer.",
+  "url": "https://connections.swellgarfo.com/game/-OdseGR8d8m3V9TAoVE9",
+  "palette": {
+    "a": {
+      "name": "Dusty Sky",
+      "bg": "#6FA8DC",
+      "fg": "#CFE2F3",
+      "accent": "#A9CBEA"
+    },
+    "b": {
+      "name": "Silk Twilight",
+      "bg": "#A4C2F4",
+      "fg": "#F3F3F3",
+      "accent": "#D3DFF3"
+    },
+    "c": {
+      "name": "Soft Seafoam",
+      "bg": "#A2C4C9",
+      "fg": "#134F5C",
+      "accent": "#4C7E88"
+    },
+    "d": {
+      "name": "Stormy Teal",
+      "bg": "#45818E",
+      "fg": "#D0E0E3",
+      "accent": "#98BAC1"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "PROFOUND AWE",
+      "words": [
+        "ADORATION",
+        "ADULATION",
+        "VENERATION",
+        "WORSHIP"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "SOFT REVERBERATIONS",
+      "words": [
+        "HUM",
+        "SIGH",
+        "SOUGH",
+        "SUSURRATION"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "TINY DROPLETS DANCING ON AIR",
+      "words": [
+        "MIST",
+        "MIZZLE",
+        "SPINDRIFT",
+        "VAPOR"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "GROUPS OF BIRDS",
+      "words": [
+        "EXALTATION",
+        "FLOCK",
+        "GAGGLE",
+        "MURMURATION"
+      ]
+    }
+  ]
+}

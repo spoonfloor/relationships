@@ -1,0 +1,74 @@
+{
+  "id": "woolgathering-when-waiter-arrives",
+  "title": "Woolgathering",
+  "vignette": "Woolgathering when the waiter arrives, rambling about a funny thing that happened this morning, she likes it here — folks seem entirely themselves, unapologetically friendly or grumpy, and there’s a sense of the messy-beautiful way we’re all tangled together.",
+  "url": "https://connections.swellgarfo.com/game/-Ofpyf8tcmoFV4FyJARg",
+  "palette": {
+    "a": {
+      "name": "Feather Honey",
+      "bg": "#F0EDE1",
+      "fg": "#D4C7AF",
+      "accent": "#DFD6C3"
+    },
+    "b": {
+      "name": "Silk Amber",
+      "bg": "#DBD3C4",
+      "fg": "#B8AA91",
+      "accent": "#C6BAA5"
+    },
+    "c": {
+      "name": "Dusty Amber",
+      "bg": "#C0A68C",
+      "fg": "#F0EDE1",
+      "accent": "#DDD1BF"
+    },
+    "d": {
+      "name": "Rich Coral",
+      "bg": "#81745C",
+      "fg": "#D4C7AF",
+      "accent": "#B3A68E"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "TO KNIT TOGETHER",
+      "words": [
+        "CRISS-CROSS",
+        "INTERTWINE",
+        "LACE",
+        "WEAVE"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "TO COME TO KNOW",
+      "words": [
+        "COTTON",
+        "GLEAN",
+        "GRASP",
+        "UNDERSTAND"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "FOUR OUT OF FIVE SENSES AGREED",
+      "words": [
+        "FELT",
+        "HEARD",
+        "SAW",
+        "TASTED ]"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "THE THINGS WE TELL OURSELVES AND EACH OTHER",
+      "words": [
+        "FABLE",
+        "STORY",
+        "TALE",
+        "YARN"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "driven-boonies-spot-reminds",
+  "title": "We’d driven out to the boonies",
+  "vignette": "We’d driven out to the boonies to a spot that reminds me of your name, sitting on the low wooden bridge, feeling the season change in the air, trash talking that novel, laughing at its not-very-hidden meanings, you lean towards me, but your eyes pull back, looking down into the swirling ripples below, and even though some say “don’t push the river”, I ask, What's troubling you?",
+  "url": "https://connections.swellgarfo.com/game/-OhWNSQ8A-1cd50UU-Z7",
+  "palette": {
+    "a": {
+      "name": "Dark Lagoon",
+      "bg": "#022D3A",
+      "fg": "#8EC3C7",
+      "accent": "#56878F"
+    },
+    "b": {
+      "name": "Ink Moss",
+      "bg": "#112D11",
+      "fg": "#BDC7AE",
+      "accent": "#78896F"
+    },
+    "c": {
+      "name": "Deep Teal",
+      "bg": "#41716C",
+      "fg": "#C9E2D7",
+      "accent": "#93B5AC"
+    },
+    "d": {
+      "name": "Stormy Stone",
+      "bg": "#62837A",
+      "fg": "#D4DFC5",
+      "accent": "#A6BAA7"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "TELL ME YOUR NAME, WATERSPRITE",
+      "words": [
+        "BROOKE",
+        "EDDY",
+        "MARSH",
+        "RIO [ O[O]][O]"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "SUBTLE PULLS AND QUIET REVERSALS [O][[O]O][O][O][O]O]",
+      "words": [
+        "BACKWATER",
+        "COUNTER FLOW",
+        "UNDERCURRENT",
+        "UNDERTOW"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "WHERE’S IT COMING FROM? [O][O][O][ O]",
+      "words": [
+        "FOUNTAINHEAD",
+        "ORIGIN",
+        "SOURCE",
+        "SPRING"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "RIVER FEATURES [O] [O][O][O][O][O][O][O]",
+      "words": [
+        "CASCADE",
+        "CONFLUENCE",
+        "MOUTH",
+        "OXBOW"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "spinning-together-grass-scene",
+  "title": "Spinning together on the grass",
+  "vignette": "Spinning together on the grass , the scene behind your laughing face a kaleidoscope, a particolored blurr, the day with you a whirling in my mind, the birds in the zoo, the fish in the aquarium, the picnic - everything, everything shot through with color.",
+  "url": "https://connections.swellgarfo.com/game/-OebLgjn9um9WRijR_1i",
+  "palette": {
+    "a": {
+      "name": "Powder Cinnamon",
+      "bg": "#F59973",
+      "fg": "#AC4101",
+      "accent": "#C9642F"
+    },
+    "b": {
+      "name": "Pale Raspberry",
+      "bg": "#FCC2B6",
+      "fg": "#CC003C",
+      "accent": "#DF4E6D"
+    },
+    "c": {
+      "name": "Warm Mint",
+      "bg": "#B0E262",
+      "fg": "#747501",
+      "accent": "#8CA128"
+    },
+    "d": {
+      "name": "Dark Teal",
+      "bg": "#07818A",
+      "fg": "#C3EEEB",
+      "accent": "#78C2C4"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "COLORS AS ANIMALS",
+      "words": [
+        "CAMEL",
+        "CORAL",
+        "RAVEN",
+        "SALMON"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "COLORS AS FLOWERS",
+      "words": [
+        "FUCHSIA",
+        "GOLDENROD",
+        "ROSE",
+        "VIOLET"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "COLORS AS TREES",
+      "words": [
+        "ASH",
+        "CHERRY",
+        "CHESTNUT",
+        "EBONY"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "COLORS AS VERBS",
+      "words": [
+        "BLUSH",
+        "FAWN",
+        "JET",
+        "MAROON"
+      ]
+    }
+  ]
+}

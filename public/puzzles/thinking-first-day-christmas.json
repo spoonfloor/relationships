@@ -1,0 +1,74 @@
+{
+  "id": "thinking-first-day-christmas",
+  "title": "Thinking of you",
+  "vignette": "Thinking of you on the first day of Christmas, the way your eyes crinkle when you smile, and the little birds of my heart want to bring you this message - wherever you are and whatever you face I'm right there with you always.",
+  "url": "https://connections.swellgarfo.com/game/-OhI1XZsxPeMZBF7CNzw",
+  "palette": {
+    "a": {
+      "name": "Icy Twilight",
+      "bg": "#E3EBFF",
+      "fg": "#749CC0",
+      "accent": "#A0BCD9"
+    },
+    "b": {
+      "name": "Sunlit Coral",
+      "bg": "#F0B460",
+      "fg": "#FFFADE",
+      "accent": "#F9DEAC"
+    },
+    "c": {
+      "name": "Deep Raspberry",
+      "bg": "#CC0000",
+      "fg": "#FFFFFF",
+      "accent": "#EB9999"
+    },
+    "d": {
+      "name": "Ink Fern",
+      "bg": "#3D6622",
+      "fg": "#BBD88D",
+      "accent": "#89AA62"
+    }
+  },
+  "groups": [
+    {
+      "palette": "a",
+      "category": "THINGS YOU MIGHT FIND IN YOUR MAILBOX",
+      "words": [
+        "CARDS",
+        "GREETINGS",
+        "POST",
+        "TIDINGS [O][[O] [O]"
+      ]
+    },
+    {
+      "palette": "b",
+      "category": "MAY YOUR DAYS BE [O][O ]O]",
+      "words": [
+        "BRIGHT",
+        "GLAD",
+        "JOLLY",
+        "MERRY"
+      ]
+    },
+    {
+      "palette": "c",
+      "category": "______ CARD [O][O][OO ][OO]",
+      "words": [
+        "CHRISTMAS",
+        "DANCE",
+        "GIFT",
+        "WILD"
+      ]
+    },
+    {
+      "palette": "d",
+      "category": "MODIFIERS FOR GIFTS MY TRUE LOVE GAVE TO ME",
+      "words": [
+        "CALLING",
+        "FRENCH",
+        "GOLDEN",
+        "TURTLE [O][O][O][O [O]"
+      ]
+    }
+  ]
+}
