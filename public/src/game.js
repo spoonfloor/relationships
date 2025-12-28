@@ -9,6 +9,7 @@ export function initGameState(state) {
   state.foundGroups = [];
   state.revealedCategories.clear();
   state.revealedWords.clear();
+  state.guesses = [];
   state.selected.clear();
   state.wordToGroupMap.clear();
 

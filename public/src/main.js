@@ -135,9 +135,13 @@ async function bootstrap() {
 
     dom.vignetteEl.textContent = puzzle.vignette ?? "";
 
-    initGameState(state);
+        initGameState(state);
 
-    clearFoundGroups(dom);
+        clearFoundGroups(dom);
+
+        dom.guessesEl.innerHTML = "";
+
+        dom.mostRecentGuessEl.innerHTML = "";
 
     renderPaletteChips();
 
