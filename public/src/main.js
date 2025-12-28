@@ -32,6 +32,17 @@ async function bootstrap() {
     dom.puzzleSelect.appendChild(opt);
   }
 
+  const whimsicalNames = {
+    yellow: "Golden Sunshine",
+    green: "Emerald Forest",
+    blue: "Azure Sky",
+    purple: "Royal Amethyst",
+    a: "Coral Mist",
+    b: "Meadow",
+    c: "Lake",
+    d: "Plum",
+  };
+
   const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
 
   // State is created once; we swap its activePuzzle on selection.
@@ -55,7 +66,7 @@ async function bootstrap() {
       btn.addEventListener("click", () => {
         const res = assignColorToSelection(state, palette);
         if (res.ok && res.group) {
-          appendFoundGroupCard(dom, res.group);
+          appendFoundGroupCard(dom, res.group, whimsicalNames[res.group.palette] || res.group.palette);
           // color the last-added card
           const last = dom.foundEl.lastElementChild;
           if (last && entry.bg) last.style.background = entry.bg;
@@ -94,7 +105,7 @@ async function bootstrap() {
   dom.submitBtn.addEventListener("click", () => {
     const res = submitSelection(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, state, true);
+      appendFoundGroupCard(dom, res.group, whimsicalNames[res.group.palette] || res.group.palette);
       const palEntry = state.activePuzzle.palette?.[res.group.palette];
       const last = dom.foundEl.lastElementChild;
       if (last && palEntry?.bg) last.style.background = palEntry.bg;
@@ -109,13 +120,15 @@ async function bootstrap() {
   dom.hintCategoryBtn.addEventListener("click", () => {
     const res = hintRevealCategory(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, state, false);
+      appendFoundGroupCard(dom, res.group, whimsicalNames[res.group.palette] || res.group.palette);
       const palEntry = state.activePuzzle.palette?.[res.group.palette];
       const last = dom.foundEl.lastElementChild;
       if (last && palEntry?.bg) last.style.background = palEntry.bg;
       if (last && palEntry?.fg) last.style.color = palEntry.fg;
+      renderStatus(dom, `Hint: One category is “${res.group.category}”.`);
+    } else {
+      renderStatus(dom, res.message);
     }
-    renderStatus(dom, res.message);
   });
   dom.hintWordBtn.addEventListener("click", () => { const res = hintRevealWord(state); renderBoard(dom, state, handlers); renderStatus(dom, res.message); });
 

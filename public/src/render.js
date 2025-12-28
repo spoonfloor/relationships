@@ -46,17 +46,13 @@ export function renderStatus({ statusEl }, text) {
   statusEl.textContent = text;
 }
 
-export function appendFoundGroupCard({ foundEl }, group, state, isSolved) {
+export function appendFoundGroupCard({ foundEl }, group, displayName) {
   const card = document.createElement("div");
   card.className = "groupCard";
 
   const title = document.createElement("div");
   title.className = "groupTitle";
-  if (isSolved) {
-    title.textContent = group.category;
-  } else {
-    title.textContent = state.activePuzzle.palette[group.palette].name;
-  }
+  title.textContent = displayName;
 
   const words = document.createElement("div");
   words.className = "groupWords";

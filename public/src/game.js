@@ -67,8 +67,13 @@ export function submitSelection(state) {
   }
 
   if (isGroupFound(state, group)) {
-    state.selected.clear();
-    return { ok: false, message: "You already found that group." };
+    const found = state.foundGroups.find(g => g.category === group.category);
+    if (found.words.length > 0) {
+      state.selected.clear();
+      return { ok: false, message: "You already found that group." };
+    }
+    // It's a hinted group, so we can "complete" it.
+    state.foundGroups = state.foundGroups.filter(g => g.category !== group.category);
   }
 
   state.foundGroups.push(group);
