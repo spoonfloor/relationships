@@ -17,6 +17,11 @@ export function getDom() {
 
     paletteChipsEl: document.getElementById("paletteChips"),
     puzzleSelect: document.getElementById("puzzleSelect"),
+
+    resultsPopupEl: document.getElementById("results-popup"),
+    resultsNumGuessesEl: document.getElementById("results-num-guesses"),
+    resultsGuessesEl: document.getElementById("results-guesses"),
+    resultsCloseBtn: document.getElementById("results-close-btn"),
   };
 }
 

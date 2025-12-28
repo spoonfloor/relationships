@@ -207,15 +207,39 @@ async function bootstrap() {
 
         renderMostRecentGuess(dom, state.guesses.at(-1), state.activePuzzle.palette);
 
-        if (state.foundGroups.length === 4) {
+                if (state.foundGroups.length === 4) {
 
-          renderGuesses(dom, state.guesses, state.activePuzzle.palette);
+                  showResultsPopup();
 
-        }
+                } else {
 
-        renderStatus(dom, res.message);
+                  renderGuesses(dom, state.guesses, state.activePuzzle.palette);
 
-      });
+                }
+
+                renderStatus(dom, res.message);
+
+              });
+
+        
+
+              function showResultsPopup() {
+
+                dom.resultsNumGuessesEl.textContent = state.guesses.length;
+
+                renderGuesses({ guessesEl: dom.resultsGuessesEl }, state.guesses, state.activePuzzle.palette);
+
+                dom.resultsPopupEl.style.display = "flex";
+
+              }
+
+        
+
+              dom.resultsCloseBtn.addEventListener("click", () => {
+
+                dom.resultsPopupEl.style.display = "none";
+
+              });
 
     
 
