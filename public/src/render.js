@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
+ */
+
 function wordButton({ word, selected, lockedPalette, paletteEntry, revealed, onClick }) {
   const btn = document.createElement("button");
   btn.className = "word";
