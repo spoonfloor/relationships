@@ -36,6 +36,7 @@ export function toggleSelect(state, word) {
 
 export function clearSelection(state) {
   state.selected.clear();
+  state.revealedWords.clear();
 }
 
 export function getGroupBySelection(puzzle, wordsArr) {
@@ -117,7 +118,10 @@ export function hintRevealCategory(state) {
 
   const pick = remaining[Math.floor(Math.random() * remaining.length)];
   state.revealedCategories.add(pick.idx);
-  return { ok: true, message: `Hint: One category is “${pick.g.category}”.` };
+
+  const revealedGroup = { ...pick.g, words: [] };
+  state.foundGroups.push(revealedGroup);
+  return { ok: true, group: revealedGroup, message: `Hint: Revealed a group.` };
 }
 
 export function hintRevealWord(state) {

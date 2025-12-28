@@ -94,7 +94,7 @@ async function bootstrap() {
   dom.submitBtn.addEventListener("click", () => {
     const res = submitSelection(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group);
+      appendFoundGroupCard(dom, res.group, state, true);
       const palEntry = state.activePuzzle.palette?.[res.group.palette];
       const last = dom.foundEl.lastElementChild;
       if (last && palEntry?.bg) last.style.background = palEntry.bg;
@@ -106,7 +106,17 @@ async function bootstrap() {
 
   // (chips are now created dynamically in renderPaletteChips)
 
-  dom.hintCategoryBtn.addEventListener("click", () => renderStatus(dom, hintRevealCategory(state).message));
+  dom.hintCategoryBtn.addEventListener("click", () => {
+    const res = hintRevealCategory(state);
+    if (res.ok && res.group) {
+      appendFoundGroupCard(dom, res.group, state, false);
+      const palEntry = state.activePuzzle.palette?.[res.group.palette];
+      const last = dom.foundEl.lastElementChild;
+      if (last && palEntry?.bg) last.style.background = palEntry.bg;
+      if (last && palEntry?.fg) last.style.color = palEntry.fg;
+    }
+    renderStatus(dom, res.message);
+  });
   dom.hintWordBtn.addEventListener("click", () => { const res = hintRevealWord(state); renderBoard(dom, state, handlers); renderStatus(dom, res.message); });
 
   // Puzzle switching

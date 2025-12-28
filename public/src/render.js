@@ -46,17 +46,25 @@ export function renderStatus({ statusEl }, text) {
   statusEl.textContent = text;
 }
 
-export function appendFoundGroupCard({ foundEl }, group) {
+export function appendFoundGroupCard({ foundEl }, group, state, isSolved) {
   const card = document.createElement("div");
   card.className = "groupCard";
 
   const title = document.createElement("div");
   title.className = "groupTitle";
-  title.textContent = group.category;
+  if (isSolved) {
+    title.textContent = group.category;
+  } else {
+    title.textContent = state.activePuzzle.palette[group.palette].name;
+  }
 
   const words = document.createElement("div");
   words.className = "groupWords";
-  words.textContent = group.words.join(" · ");
+  if (group.words.length > 0) {
+    words.textContent = group.words.join(" · ");
+  } else {
+    words.innerHTML = "&nbsp;"; // Keep height
+  }
 
   card.appendChild(title);
   card.appendChild(words);
