@@ -32,17 +32,6 @@ async function bootstrap() {
     dom.puzzleSelect.appendChild(opt);
   }
 
-  const whimsicalNames = {
-    yellow: "Golden Sunshine",
-    green: "Emerald Forest",
-    blue: "Azure Sky",
-    purple: "Royal Amethyst",
-    a: "Coral Mist",
-    b: "Meadow",
-    c: "Lake",
-    d: "Plum",
-  };
-
   const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
 
   // State is created once; we swap its activePuzzle on selection.
@@ -66,7 +55,7 @@ async function bootstrap() {
       btn.addEventListener("click", () => {
         const res = assignColorToSelection(state, palette);
         if (res.ok && res.group) {
-          appendFoundGroupCard(dom, res.group, whimsicalNames[res.group.palette] || res.group.palette);
+          appendFoundGroupCard(dom, res.group, state.activePuzzle.palette[res.group.palette].name);
           // color the last-added card
           const last = dom.foundEl.lastElementChild;
           if (last && entry.bg) last.style.background = entry.bg;
@@ -105,11 +94,15 @@ async function bootstrap() {
   dom.submitBtn.addEventListener("click", () => {
     const res = submitSelection(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, whimsicalNames[res.group.palette] || res.group.palette);
-      const palEntry = state.activePuzzle.palette?.[res.group.palette];
-      const last = dom.foundEl.lastElementChild;
-      if (last && palEntry?.bg) last.style.background = palEntry.bg;
-      if (last && palEntry?.fg) last.style.color = palEntry.fg;
+      clearFoundGroups(dom);
+      for (const group of state.foundGroups) {
+        const palEntry = state.activePuzzle.palette?.[group.palette];
+        const displayName = group.words.length > 0 ? group.category : palEntry.name;
+        appendFoundGroupCard(dom, group, displayName);
+        const last = dom.foundEl.lastElementChild;
+        if (last && palEntry?.bg) last.style.background = palEntry.bg;
+        if (last && palEntry?.fg) last.style.color = palEntry.fg;
+      }
     }
     renderBoard(dom, state, handlers);
     renderStatus(dom, res.message);
@@ -120,7 +113,7 @@ async function bootstrap() {
   dom.hintCategoryBtn.addEventListener("click", () => {
     const res = hintRevealCategory(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, whimsicalNames[res.group.palette] || res.group.palette);
+      appendFoundGroupCard(dom, res.group, state.activePuzzle.palette[res.group.palette].name);
       const palEntry = state.activePuzzle.palette?.[res.group.palette];
       const last = dom.foundEl.lastElementChild;
       if (last && palEntry?.bg) last.style.background = palEntry.bg;

@@ -45,7 +45,8 @@ export function getGroupBySelection(puzzle, wordsArr) {
 }
 
 export function isGroupFound(state, group) {
-  return state.foundGroups.some(g => g.category === group.category);
+  const found = state.foundGroups.find(g => g.category === group.category);
+  return found && found.words.length > 0;
 }
 
 export function lockWords(state, wordsArr, color) {
@@ -66,17 +67,14 @@ export function submitSelection(state) {
     return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
   }
 
-  if (isGroupFound(state, group)) {
-    const found = state.foundGroups.find(g => g.category === group.category);
-    if (found.words.length > 0) {
-      state.selected.clear();
-      return { ok: false, message: "You already found that group." };
-    }
-    // It's a hinted group, so we can "complete" it.
-    state.foundGroups = state.foundGroups.filter(g => g.category !== group.category);
+  const existing = state.foundGroups.find(g => g.category === group.category);
+  if (existing) {
+    existing.words = group.words;
+    group = existing;
+  } else {
+    state.foundGroups.push(group);
   }
 
-  state.foundGroups.push(group);
   lockWords(state, group.words, group.palette);
   state.selected.clear();
 
