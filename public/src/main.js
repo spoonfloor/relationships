@@ -49,21 +49,16 @@ async function bootstrap() {
       const btn = document.createElement("button");
       btn.className = "chip";
       btn.type = "button";
-      btn.textContent = entry.name ?? palette.toUpperCase();
+
+      const foundGroup = state.foundGroups.find(g => g.palette === palette);
+      if (foundGroup) {
+        btn.textContent = foundGroup.category;
+      } else {
+        btn.textContent = entry.name ?? palette.toUpperCase();
+      }
+
       if (entry.bg) btn.style.background = entry.bg;
       if (entry.fg) btn.style.color = entry.fg;
-      btn.addEventListener("click", () => {
-        const res = assignColorToSelection(state, palette);
-        if (res.ok && res.group) {
-          appendFoundGroupCard(dom, res.group, state.activePuzzle.palette[res.group.palette].name);
-          // color the last-added card
-          const last = dom.foundEl.lastElementChild;
-          if (last && entry.bg) last.style.background = entry.bg;
-          if (last && entry.fg) last.style.color = entry.fg;
-        }
-        renderBoard(dom, state, handlers);
-        renderStatus(dom, res.message);
-      });
       dom.paletteChipsEl.appendChild(btn);
     }
   }
@@ -103,6 +98,7 @@ async function bootstrap() {
         if (last && palEntry?.bg) last.style.background = palEntry.bg;
         if (last && palEntry?.fg) last.style.color = palEntry.fg;
       }
+      renderPaletteChips();
     }
     renderBoard(dom, state, handlers);
     renderStatus(dom, res.message);
@@ -118,6 +114,7 @@ async function bootstrap() {
       const last = dom.foundEl.lastElementChild;
       if (last && palEntry?.bg) last.style.background = palEntry.bg;
       if (last && palEntry?.fg) last.style.color = palEntry.fg;
+      renderPaletteChips();
       renderStatus(dom, `Hint: One category is “${res.group.category}”.`);
     } else {
       renderStatus(dom, res.message);
