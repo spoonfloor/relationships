@@ -97,7 +97,7 @@ async function bootstrap() {
       clearFoundGroups(dom);
       for (const group of state.foundGroups) {
         const palEntry = state.activePuzzle.palette?.[group.palette];
-        const displayName = group.words.length > 0 ? group.category : palEntry.name;
+        const displayName = group.category;
         appendFoundGroupCard(dom, group, displayName);
         const last = dom.foundEl.lastElementChild;
         if (last && palEntry?.bg) last.style.background = palEntry.bg;
@@ -113,7 +113,7 @@ async function bootstrap() {
   dom.hintCategoryBtn.addEventListener("click", () => {
     const res = hintRevealCategory(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, state.activePuzzle.palette[res.group.palette].name);
+      appendFoundGroupCard(dom, res.group, res.group.category);
       const palEntry = state.activePuzzle.palette?.[res.group.palette];
       const last = dom.foundEl.lastElementChild;
       if (last && palEntry?.bg) last.style.background = palEntry.bg;
