@@ -4,6 +4,7 @@ export function getDom() {
     statusEl: document.getElementById("status"),
     vignetteEl: document.getElementById("vignette"),
     foundEl: document.getElementById("foundGroups"),
+    guessesEl: document.getElementById("guesses"),
 
     newGameBtn: document.getElementById("newGameBtn"),
     shuffleBtn: document.getElementById("shuffleBtn"),

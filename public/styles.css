@@ -225,3 +225,19 @@ body{
   color: var(--muted);
   font-weight: 650;
 }
+
+.guesses {
+  margin-top: 18px;
+}
+
+.guess-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.guess-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}

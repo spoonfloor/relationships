@@ -71,3 +71,21 @@ export function clearFoundGroups({ foundEl }) {
   foundEl.innerHTML = "";
 }
 
+export function renderGuesses({ guessesEl }, guesses, palette) {
+  guessesEl.innerHTML = "";
+  for (const guess of guesses) {
+    const row = document.createElement("div");
+    row.className = "guess-row";
+    const shuffledWords = [...guess.words].sort(() => Math.random() - 0.5);
+    for (const word of shuffledWords) {
+      const box = document.createElement("div");
+      box.className = "guess-box";
+      const palEntry = palette[word.palette];
+      if (palEntry?.bg) {
+        box.style.backgroundColor = palEntry.bg;
+      }
+      row.appendChild(box);
+    }
+    guessesEl.appendChild(row);
+  }
+}

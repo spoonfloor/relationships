@@ -19,6 +19,9 @@ export function createInitialState(puzzle) {
 
     // revealedCategories: Set<number> (indices into puzzle.groups)
     revealedCategories: new Set(),
+
+    // guesses: array of guess objects
+    guesses: [],
   };
 }
 

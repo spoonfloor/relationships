@@ -61,7 +61,29 @@ export function submitSelection(state) {
   }
 
   const words = Array.from(state.selected);
+  const guess = {
+    words: words.map(word => {
+      const group = state.wordToGroupMap.get(word);
+      return { word, palette: group.palette };
+    }),
+    isCorrect: false,
+  };
+
+  const isRepeated = state.guesses.some(g =>
+    g.words.length === guess.words.length &&
+    g.words.every((w, i) => w.word === guess.words[i].word)
+  );
+
+  if (isRepeated) {
+    return { ok: false, message: "You've already tried that combination." };
+  }
+
   let group = getGroupBySelection(state.activePuzzle, words);
+
+  if (group) {
+    guess.isCorrect = true;
+  }
+  state.guesses.push(guess);
 
   if (!group) {
     return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };

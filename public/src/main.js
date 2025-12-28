@@ -16,6 +16,7 @@ import {
   renderStatus,
   appendFoundGroupCard,
   clearFoundGroups,
+  renderGuesses,
 } from "./render.js";
 
 const dom = getDom();
@@ -101,6 +102,7 @@ async function bootstrap() {
       renderPaletteChips();
     }
     renderBoard(dom, state, handlers);
+    renderGuesses(dom, state.guesses, state.activePuzzle.palette);
     renderStatus(dom, res.message);
   });
 
