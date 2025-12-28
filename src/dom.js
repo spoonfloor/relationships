@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
+ */
+
 export function getDom() {
   return {
     boardEl: document.getElementById("board"),
@@ -24,4 +28,3 @@ export function getDom() {
     resultsCloseBtn: document.getElementById("results-close-btn"),
   };
 }
-
