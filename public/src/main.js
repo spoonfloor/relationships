@@ -22,13 +22,24 @@ import {
 async function bootstrap() {
   const dom = getDom();
   const urlParams = new URLSearchParams(window.location.search);
-  const puzzleUrl = urlParams.get("puzzle");
+  const puzzleId = urlParams.get("puzzleId");
+  const puzzleUrl = urlParams.get("puzzleUrl");
   const allowedHostnames = ["raw.githubusercontent.com"];
   
   let puzzle;
   let wittyResponses = { repeated_incorrect_guess: [] };
 
-  if (puzzleUrl) {
+  if (puzzleId) {
+    const index = await loadPuzzleIndex("./puzzles/index.json");
+    const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
+    const entry = idToEntry.get(puzzleId);
+    if (entry) {
+      puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+    } else {
+      renderStatus(dom, `Puzzle with id "${puzzleId}" not found.`);
+      return;
+    }
+  } else if (puzzleUrl) {
     try {
       const url = new URL(puzzleUrl);
       if (allowedHostnames.includes(url.hostname)) {
