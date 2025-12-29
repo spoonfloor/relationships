@@ -66,10 +66,12 @@ export function submitSelection(state, wittyResponses) {
   }
 
   const words = Array.from(state.selected);
-  const shuffledWords = shuffle(words);
+  const canonicalWordStrings = [...words].sort(); // For consistent duplicate checking
+  const shuffledWords = shuffle(words); // For consistent random display
 
   const guess = {
-    words: shuffledWords.map(word => {
+    canonicalWords: canonicalWordStrings, // Store for comparison
+    words: shuffledWords.map(word => { // Store for rendering
       const group = state.wordToGroupMap.get(word);
       return { word, palette: group.palette };
     }),
@@ -77,8 +79,8 @@ export function submitSelection(state, wittyResponses) {
   };
 
   const isRepeated = state.guesses.some(g =>
-    g.words.length === guess.words.length &&
-    g.words.every((w, i) => w.word === guess.words[i].word)
+    g.canonicalWords.length === guess.canonicalWords.length &&
+    g.canonicalWords.every((w, i) => w === guess.canonicalWords[i])
   );
 
   let group = getGroupBySelection(state.activePuzzle, words);
