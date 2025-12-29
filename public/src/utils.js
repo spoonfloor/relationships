@@ -10,10 +10,3 @@ export function shuffle(arr) {
   }
   return a;
 }
-
-export function setEq(a, b) {
-  if (a.size !== b.size) return false;
-  for (const x of a) if (!b.has(x)) return false;
-  return true;
-}
-

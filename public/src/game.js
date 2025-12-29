@@ -4,7 +4,7 @@
 
 import { shuffle } from "./utils.js";
 
-export function pickPuzzleWords(puzzle) {
+function pickPuzzleWords(puzzle) {
   const words = puzzle.groups.flatMap(g => g.words);
   return shuffle(words);
 }
@@ -44,17 +44,17 @@ export function clearSelection(state) {
   state.revealedWords.clear();
 }
 
-export function getGroupBySelection(puzzle, wordsArr) {
+function getGroupBySelection(puzzle, wordsArr) {
   const sel = new Set(wordsArr);
   return puzzle.groups.find(g => g.words.every(w => sel.has(w)));
 }
 
-export function isGroupFound(state, group) {
+function isGroupFound(state, group) {
   const found = state.foundGroups.find(g => g.category === group.category);
   return found && found.words.length > 0;
 }
 
-export function lockWords(state, wordsArr, color) {
+function lockWords(state, wordsArr, color) {
   for (const item of state.boardWords) {
     if (wordsArr.includes(item.word)) item.lockedPalette = color;
   }
