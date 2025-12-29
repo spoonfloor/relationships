@@ -236,10 +236,22 @@ body{
   margin-bottom: 10px;
 }
 
+
 .guess-box {
+  position: relative; /* Needed for absolute positioning of the child */
   width: 20px;
   height: 20px;
   border-radius: 5px;
+}
+
+.foreground-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%; /* Adjust size as needed */
+  height: 50%; /* Adjust size as needed */
+  border: 1px solid rgba(0, 0, 0, 0.2); /* Optional: for better visibility */
 }
 
 .popup-container {

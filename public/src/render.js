@@ -87,6 +87,12 @@ export function renderGuesses({ guessesEl }, guesses, palette) {
       if (palEntry?.bg) {
         box.style.backgroundColor = palEntry.bg;
       }
+      if (palEntry?.fg) {
+        const foregroundBox = document.createElement('div');
+        foregroundBox.className = 'foreground-box';
+        foregroundBox.style.backgroundColor = palEntry.fg;
+        box.appendChild(foregroundBox);
+      }
       row.appendChild(box);
     }
     guessesEl.appendChild(row);
