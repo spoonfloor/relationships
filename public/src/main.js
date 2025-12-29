@@ -148,8 +148,6 @@ function initializePage(state, wittyResponses, idToEntry) {
     }
     renderBoard(dom, state, handlers);
     renderMostRecentGuess(dom, state.guesses.at(-1), state.activePuzzle.palette);
-    console.log("checking for showResultsPopup: state.foundGroups now:", state.foundGroups);
-    console.log("checking for showResultsPopup: state.boardWords now:", state.boardWords);
     if (state.boardWords.filter(wordItem => wordItem.lockedPalette !== null).length === 16) {
       showResultsPopup();
     } else {
