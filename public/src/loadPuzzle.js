@@ -10,6 +10,7 @@ export async function loadPuzzle(url) {
   return puzzle;
 }
 
+
 export async function loadPuzzleIndex(url) {
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status} ${res.statusText}`);
