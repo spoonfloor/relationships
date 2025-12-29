@@ -22,10 +22,14 @@ import {
   renderGuesses,
 } from "./render.js";
 
+import { createPuzzleUploader } from "./fileUploader.js";
+import { validatePuzzle } from "./validation.js";
+
 async function bootstrap() {
   const dom = getDom();
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
+  const uploaderContainer = document.getElementById('uploader-container');
 
   const [index, wittyResponses] = await Promise.all([
     loadPuzzleIndex("./puzzles/index.json"),
@@ -40,6 +44,36 @@ async function bootstrap() {
     dom.puzzleSelect.appendChild(opt);
   }
   const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
+
+  const onPuzzleUploaded = (puzzle) => {
+    try {
+      validatePuzzle(puzzle, 'uploaded file');
+      const puzzleId = `~uploaded~${puzzle.id}`;
+      
+      // Remove previous version if it exists
+      const existingOption = dom.puzzleSelect.querySelector(`option[value="${puzzleId}"]`);
+      if (existingOption) {
+        existingOption.remove();
+      }
+
+      const option = document.createElement('option');
+      option.value = puzzleId;
+      option.textContent = `Uploaded: ${puzzle.id}`;
+      dom.puzzleSelect.appendChild(option);
+      
+      idToEntry.set(puzzleId, puzzle);
+      
+      dom.puzzleSelect.value = puzzleId;
+      dom.puzzleSelect.dispatchEvent(new Event('change'));
+    } catch (e) {
+      console.error(e);
+      renderStatus(dom, `Puzzle validation error: ${e.message}`);
+      alert(`Puzzle validation error: ${e.message}`);
+    }
+  };
+
+  const uploader = createPuzzleUploader(onPuzzleUploaded);
+  uploaderContainer.appendChild(uploader);
 
   let puzzle;
   if (puzzleId) {
@@ -192,7 +226,12 @@ function initializePage(state, wittyResponses, idToEntry) {
     try {
       const id = dom.puzzleSelect.value;
       const entry = idToEntry.get(id);
-      const puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      let puzzle;
+      if (id.startsWith('~uploaded~')) {
+        puzzle = entry;
+      } else {
+        puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      }
       startPuzzle(puzzle);
     } catch (e) {
       console.error(e);
@@ -202,7 +241,6 @@ function initializePage(state, wittyResponses, idToEntry) {
 
   startPuzzle(state.activePuzzle);
 }
-
 bootstrap().catch(err => {
   const dom = getDom();
   console.error(err);
