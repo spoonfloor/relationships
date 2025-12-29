@@ -10,7 +10,6 @@ import {
   toggleSelect,
   clearSelection,
   submitSelection,
-  assignColorToSelection,
   shuffleUnlocked,
   hintRevealCategory,
   hintRevealWord,
@@ -27,8 +26,6 @@ async function bootstrap() {
   const dom = getDom();
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
-  const puzzleUrl = urlParams.get("puzzleUrl");
-  const allowedHostnames = ["raw.githubusercontent.com"];
 
   const [index, wittyResponses] = await Promise.all([
     loadPuzzleIndex("./puzzles/index.json"),
@@ -51,19 +48,6 @@ async function bootstrap() {
       puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
     } else {
       renderStatus(dom, `Puzzle with id "${puzzleId}" not found.`);
-      return;
-    }
-  } else if (puzzleUrl) {
-    try {
-      const url = new URL(puzzleUrl);
-      if (allowedHostnames.includes(url.hostname)) {
-        puzzle = await fetch(puzzleUrl).then(res => res.json());
-      } else {
-        throw new Error(`Puzzle host not allowed: ${url.hostname}`);
-      }
-    } catch (e) {
-      console.error(e);
-      renderStatus(dom, `Puzzle load error: ${e.message}`);
       return;
     }
   } else {
