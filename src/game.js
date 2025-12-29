@@ -4,7 +4,7 @@
 
 import { shuffle } from "./utils.js";
 
-export function pickPuzzleWords(puzzle) {
+function pickPuzzleWords(puzzle) {
   const words = puzzle.groups.flatMap(g => g.words);
   return shuffle(words);
 }
@@ -44,17 +44,17 @@ export function clearSelection(state) {
   state.revealedWords.clear();
 }
 
-export function getGroupBySelection(puzzle, wordsArr) {
+function getGroupBySelection(puzzle, wordsArr) {
   const sel = new Set(wordsArr);
   return puzzle.groups.find(g => g.words.every(w => sel.has(w)));
 }
 
-export function isGroupFound(state, group) {
+function isGroupFound(state, group) {
   const found = state.foundGroups.find(g => g.category === group.category);
   return found && found.words.length > 0;
 }
 
-export function lockWords(state, wordsArr, color) {
+function lockWords(state, wordsArr, color) {
   for (const item of state.boardWords) {
     if (wordsArr.includes(item.word)) item.lockedPalette = color;
   }
@@ -96,7 +96,7 @@ export function submitSelection(state, wittyResponses) {
   }
 
   if (!group) {
-    return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
+    return { ok: false, message: "Nope — those 4 don't form a group in this puzzle." };
   }
 
   console.log("submitSelection: state.foundGroups BEFORE:", state.foundGroups);
@@ -122,23 +122,6 @@ export function submitSelection(state, wittyResponses) {
     group,
     message: solved ? "Solved! 🎉" : `Correct! ${4 - solvedGroupsCount} groups left.`,
   };
-}
-
-export function assignColorToSelection(state, palette) {
-  if (state.selected.size !== 4) {
-    return { ok: false, message: "Select exactly 4 words to assign a color." };
-  }
-  const words = Array.from(state.selected);
-  const group = getGroupBySelection(state.activePuzzle, words);
-  if (!group) return { ok: false, message: "That selection isn't a correct group (demo)." };
-
-  const forced = { ...group, palette };
-  if (!isGroupFound(state, forced)) {
-    state.foundGroups.push(forced);
-    lockWords(state, forced.words, forced.palette);
-  }
-  state.selected.clear();
-  return { ok: true, group: forced, message: "Locked." };
 }
 
 export function shuffleUnlocked(state) {
