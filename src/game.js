@@ -66,10 +66,12 @@ export function submitSelection(state, wittyResponses) {
   }
 
   const words = Array.from(state.selected);
-  const shuffledWords = shuffle(words);
+  const canonicalWordStrings = [...words].sort(); // For consistent duplicate checking
+  const shuffledWords = shuffle(words); // For consistent random display
 
   const guess = {
-    words: shuffledWords.map(word => {
+    canonicalWords: canonicalWordStrings, // Store for comparison
+    words: shuffledWords.map(word => { // Store for rendering
       const group = state.wordToGroupMap.get(word);
       return { word, palette: group.palette };
     }),
@@ -77,8 +79,8 @@ export function submitSelection(state, wittyResponses) {
   };
 
   const isRepeated = state.guesses.some(g =>
-    g.words.length === guess.words.length &&
-    g.words.every((w, i) => w.word === guess.words[i].word)
+    g.canonicalWords.length === guess.canonicalWords.length &&
+    g.canonicalWords.every((w, i) => w === guess.canonicalWords[i])
   );
 
   let group = getGroupBySelection(state.activePuzzle, words);
@@ -97,6 +99,8 @@ export function submitSelection(state, wittyResponses) {
     return { ok: false, message: "Nope — those 4 don't form a group (in this demo puzzle)." };
   }
 
+  console.log("submitSelection: state.foundGroups BEFORE:", state.foundGroups);
+
   const existing = state.foundGroups.find(g => g.category === group.category);
   if (existing) {
     existing.words = group.words;
@@ -105,14 +109,18 @@ export function submitSelection(state, wittyResponses) {
     state.foundGroups.push(group);
   }
 
+  console.log("submitSelection: state.foundGroups AFTER:", state.foundGroups);
+
   lockWords(state, group.words, group.palette);
   state.selected.clear();
 
-  const solved = state.foundGroups.length === 4;
+  const solvedGroupsCount = state.foundGroups.filter(g => g.words.length > 0).length;
+  const solved = solvedGroupsCount === 4;
+  console.log("submitSelection: solvedGroupsCount:", solvedGroupsCount, "solved:", solved);
   return {
     ok: true,
     group,
-    message: solved ? "Solved! 🎉" : `Correct! ${4 - state.foundGroups.length} groups left.`,
+    message: solved ? "Solved! 🎉" : `Correct! ${4 - solvedGroupsCount} groups left.`,
   };
 }
 
@@ -154,6 +162,7 @@ export function hintRevealCategory(state) {
 
   const revealedGroup = { ...pick.g, words: [] };
   state.foundGroups.push(revealedGroup);
+  console.log("hintRevealCategory: state.foundGroups AFTER:", state.foundGroups);
   return { ok: true, group: revealedGroup, message: `Hint: Revealed a group.` };
 }
 
