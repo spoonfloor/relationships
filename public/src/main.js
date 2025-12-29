@@ -148,7 +148,7 @@ function initializePage(state, wittyResponses, idToEntry) {
     }
     renderBoard(dom, state, handlers);
     renderMostRecentGuess(dom, state.guesses.at(-1), state.activePuzzle.palette);
-    if (state.foundGroups.length === 4) {
+    if (state.revealedWords.length === 16) {
       showResultsPopup();
     } else {
       renderGuesses(dom, state.guesses, state.activePuzzle.palette);

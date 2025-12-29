@@ -261,6 +261,8 @@ body{
   box-shadow: var(--shadow);
   max-width: 500px;
   width: 90%;
+  max-height: 80vh; /* Set a max height relative to viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 footer {
