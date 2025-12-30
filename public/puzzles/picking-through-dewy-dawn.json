@@ -70,5 +70,72 @@
         "SPORE"
       ]
     }
-  ]
+  ],
+  "glossary": {
+    "BALACLAVA": [
+      "a village in Crimea",
+      "a warm, fitted head and neck covering"
+    ],
+    "CAP": [
+      "A dab of gunpowder in a sealed packet for a toy gun",
+      "A head covering",
+      "The umbrella-like top of a mushroom"
+    ],
+    "CILIUM": [
+      "A tiny hairlike organelle",
+      "An eyelash"
+    ],
+    "CLOAK": [
+      "A warm, loose outer garment",
+      "To camouflage or conceal"
+    ],
+    "COBWEBBY": [
+      "Musty, worn out, like cobwebs in a corner",
+      "Light and thin, like cobwebs drifting in the breeze"
+    ],
+    "DIAPHANOUS": [
+      "Ethereal",
+      "Of a fine almost transparent texture"
+    ],
+    "FIBRIL": [
+      "A small fiber or filament",
+      "A fine thread of muscle tissue"
+    ],
+    "FILAMENT": [
+      "The stalk of a flower stamen",
+      "A single thread or threadlike structure"
+    ],
+    "GAUZY": [
+      "Light like haze",
+      "Fine and thin in texture",
+      "Vague or cloudy"
+    ],
+    "GILL": [
+      "Part of  fish's breathing system",
+      "The spore containing underside of a mushroom cap",
+      "A liquid measure of our fluid ounces"
+    ],
+    "GOSSAMER": [
+      "Light, airy, delicate",
+      "Thin enough to be translucent"
+    ],
+    "HOOD": [
+      "A car's engine covering",
+      "A loose head covering",
+      "An urban neighborhood"
+    ],
+    "HYPHAE": [
+      "Threadlike structures that make up the mycelium of fungi"
+    ],
+    "SHAWL": [
+      "A loose garment for covering the head and/or shoulders"
+    ],
+    "SPORE": [
+      "Small reproductive bodies of plants and fungi"
+    ],
+    "TENDRIL": [
+      "A hairlike tentacle ",
+      "A thin coiling part of a plant"
+    ]
+  }
 }

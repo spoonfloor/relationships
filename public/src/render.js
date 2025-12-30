@@ -2,7 +2,7 @@
  * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
  */
 
-function wordButton({ word, selected, lockedPalette, paletteEntry, revealed, onClick }) {
+function wordButton({ word, selected, lockedPalette, paletteEntry, revealed, onClick, onMouseOver, onMouseOut }) {
   const btn = document.createElement("button");
   btn.className = "word";
   btn.type = "button";
@@ -21,6 +21,8 @@ function wordButton({ word, selected, lockedPalette, paletteEntry, revealed, onC
     if (paletteEntry?.fg) btn.style.color = paletteEntry.fg;
   } else {
     btn.addEventListener("click", onClick);
+    if (onMouseOver) btn.addEventListener("mouseover", (event) => onMouseOver(word, event));
+    if (onMouseOut) btn.addEventListener("mouseout", onMouseOut);
   }
 
   return btn;
@@ -41,6 +43,8 @@ export function renderBoard({ boardEl }, state, handlers) {
         paletteEntry: pal,
         revealed: isRevealed,
         onClick: () => handlers.onToggleSelect(item.word),
+        onMouseOver: state.glossaryEnabled ? handlers.onMouseOverWord : null,
+        onMouseOut: state.glossaryEnabled ? handlers.onMouseOutWord : null,
       })
     );
   }
