@@ -109,7 +109,7 @@ function initializePage(state, wittyResponses, idToEntry) {
   });
 
   function showTooltip(word, definitions, event) {
-    dom.glossaryTooltip.innerHTML = `<p>${word}</p><ol>${definitions.map(def => `<li>${def}</li>`).join('')}</ol>`;
+    dom.glossaryTooltip.innerHTML = `<p>${word}</p><ul>${definitions.map(def => `<li>${def}</li>`).join('')}</ul>`;
     dom.glossaryTooltip.style.left = `${event.clientX + 10}px`;
     dom.glossaryTooltip.style.top = `${event.clientY + 10}px`;
     dom.glossaryTooltip.style.display = 'block';
