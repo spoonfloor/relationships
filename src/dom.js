@@ -26,5 +26,7 @@ export function getDom() {
     resultsNumGuessesEl: document.getElementById("results-num-guesses"),
     resultsGuessesEl: document.getElementById("results-guesses"),
     resultsCloseBtn: document.getElementById("results-close-btn"),
+    glossaryBtn: document.getElementById("glossaryBtn"),
+    glossaryTooltip: document.getElementById("glossary-tooltip"),
   };
 }

@@ -277,9 +277,39 @@ body{
   overflow-y: auto; /* Enable vertical scrolling */
 }
 
-footer {
-  margin-top: 32px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
+
+.tooltip {
+  position: absolute;
+  background-color: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  max-width: 300px;
+  pointer-events: none; /* Allows interaction with elements behind the tooltip */
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.tooltip p {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.tooltip ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.tooltip li {
+  margin-bottom: 2px;
+}
+
+.tooltip li:last-child {
+  margin-bottom: 0;
 }

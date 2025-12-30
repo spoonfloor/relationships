@@ -98,6 +98,26 @@ async function bootstrap() {
 
 function initializePage(state, wittyResponses, idToEntry) {
   const dom = getDom();
+  dom.glossaryTooltip = document.getElementById('glossary-tooltip');
+  dom.glossaryBtn = document.getElementById('glossaryBtn');
+
+  dom.glossaryBtn.addEventListener('click', () => {
+    state.glossaryEnabled = !state.glossaryEnabled;
+    dom.glossaryBtn.textContent = state.glossaryEnabled ? 'Glossary: ON' : 'Glossary: OFF';
+    renderBoard(dom, state, handlers); // Re-render to attach/detach listeners
+    hideTooltip(dom);
+  });
+
+  function showTooltip(word, definitions, event) {
+    dom.glossaryTooltip.innerHTML = `<p>${word}</p><ul>${definitions.map(def => `<li>${def}</li>`).join('')}</ul>`;
+    dom.glossaryTooltip.style.left = `${event.clientX + 10}px`;
+    dom.glossaryTooltip.style.top = `${event.clientY + 10}px`;
+    dom.glossaryTooltip.style.display = 'block';
+  }
+
+  function hideTooltip(dom) {
+    dom.glossaryTooltip.style.display = 'none';
+  }
 
   function renderPaletteChips() {
     const pal = state.activePuzzle.palette || {};
@@ -124,10 +144,20 @@ function initializePage(state, wittyResponses, idToEntry) {
       renderStatus(dom, res.ok ? `${state.selected.size} selected.` : res.message);
       renderBoard(dom, state, handlers);
     },
+    onMouseOverWord(word, event) {
+      if (state.glossaryEnabled && state.activePuzzle.glossary && state.activePuzzle.glossary[word]) {
+        showTooltip(word, state.activePuzzle.glossary[word], event);
+      }
+    },
+    onMouseOutWord() {
+      hideTooltip(dom);
+    }
   };
 
   function startPuzzle(puzzle) {
     state.activePuzzle = puzzle;
+    state.glossaryEnabled = false; // Reset glossary state
+    dom.glossaryBtn.textContent = 'Glossary: OFF'; // Reset button text
     dom.vignetteEl.textContent = puzzle.vignette ?? "";
     initGameState(state);
     clearFoundGroups(dom);

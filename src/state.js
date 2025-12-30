@@ -26,6 +26,9 @@ export function createInitialState(puzzle) {
 
     // guesses: array of guess objects
     guesses: [],
+
+    // glossaryEnabled: boolean
+    glossaryEnabled: false,
   };
 }
 
