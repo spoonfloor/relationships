@@ -8,14 +8,13 @@
 </head>
 <body>
   <main class="app">
-    <label class="label" for="puzzleSelect">Puzzle:</label>
-    <select id="puzzleSelect" class="select"></select>
-    <div id="uploader-container"></div>
     <header class="header">
-      <h1>Relationships</h1>
-      <div id="vignette" class="vignette"></div>
-      <p class="sub">Select 4 words that belong together.</p>
+      <h1>relationships</h1>
+      <div id="paletteChips" class="paletteChips"></div>
+      <p class="sub">find four sets of four</p>
     </header>
+
+    <div id="vignette" class="vignette"></div>
 
     <section class="board" aria-label="Word grid" id="board"></section>
 
@@ -24,10 +23,6 @@
         <button id="newGameBtn" class="btn">New game</button>
         <button id="shuffleBtn" class="btn">Shuffle</button>
         <button id="clearBtn" class="btn btn-secondary">Clear selection</button>
-      </div>
-
-      <div class="row color-row">
-        <div id="paletteChips" class="paletteChips"></div>
       </div>
 
       <div class="row">
@@ -51,6 +46,14 @@
     </section>
 
     <section class="guesses" id="guesses"></section>
+
+    <section class="footer-controls">
+      <div class="row">
+        <label class="label" for="puzzleSelect">Puzzle:</label>
+        <select id="puzzleSelect" class="select"></select>
+      </div>
+      <div id="uploader-container"></div>
+    </section>
   </main>
 
   <script type="module" src="./src/main.js"></script>
