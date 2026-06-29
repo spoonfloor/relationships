@@ -3,71 +3,109 @@
   "title": "“Pick a card” I say",
   "vignette": "“Pick a card” I say , dazzled by your smile in the blacklight, all Cheshire-esque, tattoos twining up your arms, serpentine, the warm, oaky astringency lingering in my throat, music throbbing through my veins, reeling in the feeling of every other moment leading to just this one.",
   "url": "https://connections.swellgarfo.com/game/-Og2hkv1gwWE1OP5MrHj",
-  "palette": {
-    "a": {
-      "name": "Soft Magenta",
-      "bg": "#D5A6BD",
-      "fg": "#741B47",
-      "accent": "#9B5376"
-    },
-    "b": {
-      "name": "Stormy Mulberry",
-      "bg": "#A64D79",
-      "fg": "#EA9999",
-      "accent": "#CF7B8C"
-    },
-    "c": {
-      "name": "Night Rose",
-      "bg": "#990000",
-      "fg": "#E66438",
-      "accent": "#C73C22"
-    },
-    "d": {
-      "name": "Dappled Cherry",
-      "bg": "#FF4C63",
-      "fg": "#990000",
-      "accent": "#C21E28"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "GETTIN’ READY",
+      "title": "GETTIN’ READY",
+      "colors": {
+        "text": "#741B47",
+        "bg": "#D5A6BD",
+        "border": "#9B5376"
+      },
       "words": [
-        "GROUNDWORK",
-        "HOMEWORK",
-        "LEGWORK",
-        "PREP WORK"
+        {
+          "text": "GROUNDWORK",
+          "definitions": []
+        },
+        {
+          "text": "HOMEWORK",
+          "definitions": []
+        },
+        {
+          "text": "LEGWORK",
+          "definitions": []
+        },
+        {
+          "text": "PREP WORK",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "TAKE ME OUT TONIGHT",
+      "title": "TAKE ME OUT TONIGHT",
+      "colors": {
+        "text": "#EA9999",
+        "bg": "#A64D79",
+        "border": "#CF7B8C"
+      },
       "words": [
-        "DISCOTHEQUE",
-        "NIGHTSPOT",
-        "ROADHOUSE",
-        "SPEAKEASY"
+        {
+          "text": "DISCOTHEQUE",
+          "definitions": []
+        },
+        {
+          "text": "NIGHTSPOT",
+          "definitions": []
+        },
+        {
+          "text": "ROADHOUSE",
+          "definitions": []
+        },
+        {
+          "text": "SPEAKEASY",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "LOOK OUT - SNAKES!!! ] [",
+      "title": "LOOK OUT - SNAKES!!! ] [",
+      "colors": {
+        "text": "#E66438",
+        "bg": "#990000",
+        "border": "#C73C22"
+      },
       "words": [
-        "COPPERHEAD",
-        "COTTONMOUTH",
-        "RATTLESNAKE",
-        "WATER MOCCASIN"
+        {
+          "text": "COPPERHEAD",
+          "definitions": []
+        },
+        {
+          "text": "COTTONMOUTH",
+          "definitions": []
+        },
+        {
+          "text": "RATTLESNAKE",
+          "definitions": []
+        },
+        {
+          "text": "WATER MOCCASIN",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "SUITS THAT ARE ONLY PART OF THE STORY",
+      "title": "SUITS THAT ARE ONLY PART OF THE STORY",
+      "colors": {
+        "text": "#990000",
+        "bg": "#FF4C63",
+        "border": "#C21E28"
+      },
       "words": [
-        "CLUBLAND",
-        "DIAMONDBACK",
-        "HEARTTHROB",
-        "SPADEWORK"
+        {
+          "text": "CLUBLAND",
+          "definitions": []
+        },
+        {
+          "text": "DIAMONDBACK",
+          "definitions": []
+        },
+        {
+          "text": "HEARTTHROB",
+          "definitions": []
+        },
+        {
+          "text": "SPADEWORK",
+          "definitions": []
+        }
       ]
     }
   ]

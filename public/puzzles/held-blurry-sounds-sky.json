@@ -3,71 +3,109 @@
   "title": "Held in the blurry sounds of the sky and the sea",
   "vignette": "Held in the blurry sounds of the sky and the sea , I watched you mesmerized by their flight, your cheeks glistening and ruddy, your lips open and moving slightly as if in prayer.",
   "url": "https://connections.swellgarfo.com/game/-OdseGR8d8m3V9TAoVE9",
-  "palette": {
-    "a": {
-      "name": "Dusty Sky",
-      "bg": "#6FA8DC",
-      "fg": "#CFE2F3",
-      "accent": "#A9CBEA"
-    },
-    "b": {
-      "name": "Silk Twilight",
-      "bg": "#A4C2F4",
-      "fg": "#F3F3F3",
-      "accent": "#D3DFF3"
-    },
-    "c": {
-      "name": "Soft Seafoam",
-      "bg": "#A2C4C9",
-      "fg": "#134F5C",
-      "accent": "#4C7E88"
-    },
-    "d": {
-      "name": "Stormy Teal",
-      "bg": "#45818E",
-      "fg": "#D0E0E3",
-      "accent": "#98BAC1"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "PROFOUND AWE",
+      "title": "PROFOUND AWE",
+      "colors": {
+        "text": "#CFE2F3",
+        "bg": "#6FA8DC",
+        "border": "#A9CBEA"
+      },
       "words": [
-        "ADORATION",
-        "ADULATION",
-        "VENERATION",
-        "WORSHIP"
+        {
+          "text": "ADORATION",
+          "definitions": []
+        },
+        {
+          "text": "ADULATION",
+          "definitions": []
+        },
+        {
+          "text": "VENERATION",
+          "definitions": []
+        },
+        {
+          "text": "WORSHIP",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "SOFT REVERBERATIONS",
+      "title": "SOFT REVERBERATIONS",
+      "colors": {
+        "text": "#F3F3F3",
+        "bg": "#A4C2F4",
+        "border": "#D3DFF3"
+      },
       "words": [
-        "HUM",
-        "SIGH",
-        "SOUGH",
-        "SUSURRATION"
+        {
+          "text": "HUM",
+          "definitions": []
+        },
+        {
+          "text": "SIGH",
+          "definitions": []
+        },
+        {
+          "text": "SOUGH",
+          "definitions": []
+        },
+        {
+          "text": "SUSURRATION",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "TINY DROPLETS DANCING ON AIR",
+      "title": "TINY DROPLETS DANCING ON AIR",
+      "colors": {
+        "text": "#134F5C",
+        "bg": "#A2C4C9",
+        "border": "#4C7E88"
+      },
       "words": [
-        "MIST",
-        "MIZZLE",
-        "SPINDRIFT",
-        "VAPOR"
+        {
+          "text": "MIST",
+          "definitions": []
+        },
+        {
+          "text": "MIZZLE",
+          "definitions": []
+        },
+        {
+          "text": "SPINDRIFT",
+          "definitions": []
+        },
+        {
+          "text": "VAPOR",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "GROUPS OF BIRDS",
+      "title": "GROUPS OF BIRDS",
+      "colors": {
+        "text": "#D0E0E3",
+        "bg": "#45818E",
+        "border": "#98BAC1"
+      },
       "words": [
-        "EXALTATION",
-        "FLOCK",
-        "GAGGLE",
-        "MURMURATION"
+        {
+          "text": "EXALTATION",
+          "definitions": []
+        },
+        {
+          "text": "FLOCK",
+          "definitions": []
+        },
+        {
+          "text": "GAGGLE",
+          "definitions": []
+        },
+        {
+          "text": "MURMURATION",
+          "definitions": []
+        }
       ]
     }
   ]

@@ -3,71 +3,109 @@
   "title": "Through the warm, slant light",
   "vignette": "Through the warm, slant light and shade striping the path, our unhurried steps kicking up resinous dust, I catch the peculiar, unplaceable sweetness of your scent, feeling the nearness of your unreachable hand.",
   "url": "https://connections.swellgarfo.com/game/-OfKRu5xekEfeEew-q9e",
-  "palette": {
-    "a": {
-      "name": "Powder Apricot",
-      "bg": "#E9C478",
-      "fg": "#916026",
-      "accent": "#B48847"
-    },
-    "b": {
-      "name": "Light Cinnamon",
-      "bg": "#C9BBA3",
-      "fg": "#FFFADE",
-      "accent": "#E9E1C6"
-    },
-    "c": {
-      "name": "Dusty Honey",
-      "bg": "#B9C08C",
-      "fg": "#783F04",
-      "accent": "#92733A"
-    },
-    "d": {
-      "name": "Stormy Parchment",
-      "bg": "#688364",
-      "fg": "#BDC7AE",
-      "accent": "#9BAC90"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "_____ SYRUP",
+      "title": "_____ SYRUP",
+      "colors": {
+        "text": "#916026",
+        "bg": "#E9C478",
+        "border": "#B48847"
+      },
       "words": [
-        "DATE",
-        "GOLDEN",
-        "MAPLE",
-        "SIMPLE"
+        {
+          "text": "DATE",
+          "definitions": []
+        },
+        {
+          "text": "GOLDEN",
+          "definitions": []
+        },
+        {
+          "text": "MAPLE",
+          "definitions": []
+        },
+        {
+          "text": "SIMPLE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "PONDEROUSLY, BIT BY BIT",
+      "title": "PONDEROUSLY, BIT BY BIT",
+      "colors": {
+        "text": "#FFFADE",
+        "bg": "#C9BBA3",
+        "border": "#E9E1C6"
+      },
       "words": [
-        "INCHMEAL",
-        "LARGO",
-        "LINGERINGLY",
-        "SLOW AS MOLASSES"
+        {
+          "text": "INCHMEAL",
+          "definitions": []
+        },
+        {
+          "text": "LARGO",
+          "definitions": []
+        },
+        {
+          "text": "LINGERINGLY",
+          "definitions": []
+        },
+        {
+          "text": "SLOW AS MOLASSES",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "CONSTANT CRAVING",
+      "title": "CONSTANT CRAVING",
+      "colors": {
+        "text": "#783F04",
+        "bg": "#B9C08C",
+        "border": "#92733A"
+      },
       "words": [
-        "HANKER",
-        "PINE",
-        "THIRST",
-        "YEARN"
+        {
+          "text": "HANKER",
+          "definitions": []
+        },
+        {
+          "text": "PINE",
+          "definitions": []
+        },
+        {
+          "text": "THIRST",
+          "definitions": []
+        },
+        {
+          "text": "YEARN",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "IN THE PINES, IN THE PINES",
+      "title": "IN THE PINES, IN THE PINES",
+      "colors": {
+        "text": "#BDC7AE",
+        "bg": "#688364",
+        "border": "#9BAC90"
+      },
       "words": [
-        "LOBLOLLY",
-        "LODGEPOLE",
-        "PONDEROSA",
-        "SUGAR"
+        {
+          "text": "LOBLOLLY",
+          "definitions": []
+        },
+        {
+          "text": "LODGEPOLE",
+          "definitions": []
+        },
+        {
+          "text": "PONDEROSA",
+          "definitions": []
+        },
+        {
+          "text": "SUGAR",
+          "definitions": []
+        }
       ]
     }
   ]

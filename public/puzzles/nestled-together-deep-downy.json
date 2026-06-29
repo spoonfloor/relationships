@@ -3,71 +3,109 @@
   "title": "Nestled together on the deep, downy sofa",
   "vignette": "Nestled together on the deep, downy sofa , watching the lights twinkle in the wet pavement’s reflection, you both turn back to the stacks of books and cards we’ve been devouring, as I return with a tottering, brimming tea tray.",
   "url": "https://connections.swellgarfo.com/game/-OfjSfz0RuilRTcXxywS",
-  "palette": {
-    "a": {
-      "name": "Powder Raspberry",
-      "bg": "#FF8C75",
-      "fg": "#FDD8C5",
-      "accent": "#FEBAA5"
-    },
-    "b": {
-      "name": "Light Amber",
-      "bg": "#FFE599",
-      "fg": "#FF8C75",
-      "accent": "#FFB083"
-    },
-    "c": {
-      "name": "Silk Amber",
-      "bg": "#DBD3C4",
-      "fg": "#A09582",
-      "accent": "#B8AE9C"
-    },
-    "d": {
-      "name": "Sunlit Azure",
-      "bg": "#8496B4",
-      "fg": "#1C4587",
-      "accent": "#466599"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "TO GIVE GENEROUSLY",
+      "title": "TO GIVE GENEROUSLY",
+      "colors": {
+        "text": "#FDD8C5",
+        "bg": "#FF8C75",
+        "border": "#FEBAA5"
+      },
       "words": [
-        "BESTOW",
-        "LAVISH",
-        "PAMPER",
-        "SHOWER"
+        {
+          "text": "BESTOW",
+          "definitions": []
+        },
+        {
+          "text": "LAVISH",
+          "definitions": []
+        },
+        {
+          "text": "PAMPER",
+          "definitions": []
+        },
+        {
+          "text": "SHOWER",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "_______ UP (ALL WARM AND COZY-LIKE)",
+      "title": "_______ UP (ALL WARM AND COZY-LIKE)",
+      "colors": {
+        "text": "#FF8C75",
+        "bg": "#FFE599",
+        "border": "#FFB083"
+      },
       "words": [
-        "BUNDLE",
-        "CUDDLE",
-        "HUDDLE",
-        "SNUGGLE"
+        {
+          "text": "BUNDLE",
+          "definitions": []
+        },
+        {
+          "text": "CUDDLE",
+          "definitions": []
+        },
+        {
+          "text": "HUDDLE",
+          "definitions": []
+        },
+        {
+          "text": "SNUGGLE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "A GREAT QUANTIT Y",
+      "title": "A GREAT QUANTIT Y",
+      "colors": {
+        "text": "#A09582",
+        "bg": "#DBD3C4",
+        "border": "#B8AE9C"
+      },
       "words": [
-        "FISTFUL",
-        "HEAP",
-        "MOUNTAIN",
-        "WODGE"
+        {
+          "text": "FISTFUL",
+          "definitions": []
+        },
+        {
+          "text": "HEAP",
+          "definitions": []
+        },
+        {
+          "text": "MOUNTAIN",
+          "definitions": []
+        },
+        {
+          "text": "WODGE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "HERE COMES THE RAIN AGAIN",
+      "title": "HERE COMES THE RAIN AGAIN",
+      "colors": {
+        "text": "#1C4587",
+        "bg": "#8496B4",
+        "border": "#466599"
+      },
       "words": [
-        "CLOUDBURST",
-        "DOWNPOUR",
-        "DRENCHER",
-        "THUNDERSTORM"
+        {
+          "text": "CLOUDBURST",
+          "definitions": []
+        },
+        {
+          "text": "DOWNPOUR",
+          "definitions": []
+        },
+        {
+          "text": "DRENCHER",
+          "definitions": []
+        },
+        {
+          "text": "THUNDERSTORM",
+          "definitions": []
+        }
       ]
     }
   ]

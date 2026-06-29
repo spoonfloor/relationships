@@ -21,6 +21,7 @@ import {
   clearFoundGroups,
   renderGuesses,
 } from "./render.js";
+import { findWordEntry } from "./puzzleSchema.js";
 
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
@@ -29,42 +30,49 @@ async function bootstrap() {
   const dom = getDom();
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
-  const uploaderContainer = document.getElementById('uploader-container');
+  const uploaderContainer = document.getElementById("uploader-container");
 
   const [index, wittyResponses] = await Promise.all([
     loadPuzzleIndex("./puzzles/index.json"),
-    fetch("./witty_responses.json").then(res => res.json()),
+    fetch("./witty_responses.json").then((res) => res.json()),
   ]);
+
+  const puzzleCache = new Map();
+  await Promise.all(
+    index.puzzles.map(async (entry) => {
+      const puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      puzzleCache.set(entry.id, puzzle);
+    })
+  );
 
   dom.puzzleSelect.innerHTML = "";
   for (const p of index.puzzles) {
     const opt = document.createElement("option");
     opt.value = p.id;
-    opt.textContent = p.label ?? p.id;
+    opt.textContent = puzzleCache.get(p.id)?.title ?? p.id;
     dom.puzzleSelect.appendChild(opt);
   }
-  const idToEntry = new Map(index.puzzles.map(p => [p.id, p]));
+  const idToEntry = new Map(index.puzzles.map((p) => [p.id, p]));
 
   const onPuzzleUploaded = (puzzle) => {
     try {
-      validatePuzzle(puzzle, 'uploaded file');
-      const puzzleId = `~uploaded~${puzzle.id}`;
-      
-      // Remove previous version if it exists
-      const existingOption = dom.puzzleSelect.querySelector(`option[value="${puzzleId}"]`);
+      validatePuzzle(puzzle, "uploaded file");
+      const uploadedId = `~uploaded~${puzzle.id}`;
+
+      const existingOption = dom.puzzleSelect.querySelector(`option[value="${uploadedId}"]`);
       if (existingOption) {
         existingOption.remove();
       }
 
-      const option = document.createElement('option');
-      option.value = puzzleId;
-      option.textContent = `Uploaded: ${puzzle.id}`;
+      const option = document.createElement("option");
+      option.value = uploadedId;
+      option.textContent = `Uploaded: ${puzzle.title ?? puzzle.id}`;
       dom.puzzleSelect.appendChild(option);
-      
-      idToEntry.set(puzzleId, puzzle);
-      
-      dom.puzzleSelect.value = puzzleId;
-      dom.puzzleSelect.dispatchEvent(new Event('change'));
+
+      idToEntry.set(uploadedId, puzzle);
+
+      dom.puzzleSelect.value = uploadedId;
+      dom.puzzleSelect.dispatchEvent(new Event("change"));
     } catch (e) {
       console.error(e);
       renderStatus(dom, `Puzzle validation error: ${e.message}`);
@@ -77,64 +85,67 @@ async function bootstrap() {
 
   let puzzle;
   if (puzzleId) {
-    const entry = idToEntry.get(puzzleId);
-    if (entry) {
-      puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+    if (puzzleCache.has(puzzleId)) {
+      puzzle = puzzleCache.get(puzzleId);
     } else {
       renderStatus(dom, `Puzzle with id "${puzzleId}" not found.`);
       return;
     }
   } else {
-    const initialId = index.defaultId && idToEntry.has(index.defaultId)
-      ? index.defaultId
-      : index.puzzles[0].id;
-    puzzle = await loadPuzzle(`./puzzles/${idToEntry.get(initialId).file}`);
+    const initialId =
+      index.defaultId && idToEntry.has(index.defaultId)
+        ? index.defaultId
+        : index.puzzles[0].id;
+    puzzle = puzzleCache.get(initialId);
     dom.puzzleSelect.value = initialId;
   }
 
   const state = createInitialState(puzzle);
-  initializePage(state, wittyResponses.repeated_incorrect_guess, idToEntry);
+  initializePage(state, wittyResponses.repeated_incorrect_guess, idToEntry, puzzleCache);
 }
 
-function initializePage(state, wittyResponses, idToEntry) {
+function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
   const dom = getDom();
-  dom.glossaryTooltip = document.getElementById('glossary-tooltip');
-  dom.glossaryBtn = document.getElementById('glossaryBtn');
+  dom.glossaryTooltip = document.getElementById("glossary-tooltip");
+  dom.glossaryBtn = document.getElementById("glossaryBtn");
 
-  dom.glossaryBtn.addEventListener('click', () => {
+  dom.glossaryBtn.addEventListener("click", () => {
     state.glossaryEnabled = !state.glossaryEnabled;
-    dom.glossaryBtn.textContent = state.glossaryEnabled ? 'Glossary: ON' : 'Glossary: OFF';
-    renderBoard(dom, state, handlers); // Re-render to attach/detach listeners
-    hideTooltip(dom);
+    dom.glossaryBtn.textContent = state.glossaryEnabled ? "Glossary: ON" : "Glossary: OFF";
+    renderBoard(dom, state, handlers);
+    hideTooltip();
   });
 
   function showTooltip(word, definitions, event) {
-    dom.glossaryTooltip.innerHTML = `<p>${word}</p><ul>${definitions.map(def => `<li>${def}</li>`).join('')}</ul>`;
+    dom.glossaryTooltip.innerHTML = `<p>${word}</p><ul>${definitions.map((def) => `<li>${def}</li>`).join("")}</ul>`;
     dom.glossaryTooltip.style.left = `${event.clientX + 10}px`;
     dom.glossaryTooltip.style.top = `${event.clientY + 10}px`;
-    dom.glossaryTooltip.style.display = 'block';
+    dom.glossaryTooltip.style.display = "block";
   }
 
-  function hideTooltip(dom) {
-    dom.glossaryTooltip.style.display = 'none';
+  function hideTooltip() {
+    dom.glossaryTooltip.style.display = "none";
   }
 
   function renderPaletteChips() {
-    const pal = state.activePuzzle.palette || {};
+    if (!dom.paletteChipsEl) return;
     dom.paletteChipsEl.innerHTML = "";
-    for (const [palette, entry] of Object.entries(pal)) {
+    for (const group of state.activePuzzle.groups) {
       const btn = document.createElement("button");
       btn.className = "chip";
       btn.type = "button";
-      const foundGroup = state.foundGroups.find(g => g.palette === palette);
-      if (foundGroup) {
-        btn.textContent = foundGroup.category;
-      } else {
-        btn.textContent = entry.name ?? palette.toUpperCase();
-      }
-      if (entry.bg) btn.style.background = entry.bg;
-      if (entry.fg) btn.style.color = entry.fg;
+      const foundGroup = state.foundGroups.find((g) => g.title === group.title);
+      btn.textContent = foundGroup ? group.title : "?";
+      if (group.colors?.bg) btn.style.background = group.colors.bg;
+      if (group.colors?.text) btn.style.color = group.colors.text;
       dom.paletteChipsEl.appendChild(btn);
+    }
+  }
+
+  function renderAllFoundGroups() {
+    clearFoundGroups(dom);
+    for (const group of state.foundGroups) {
+      appendFoundGroupCard(dom, group, group.title, group.colors);
     }
   }
 
@@ -145,19 +156,22 @@ function initializePage(state, wittyResponses, idToEntry) {
       renderBoard(dom, state, handlers);
     },
     onMouseOverWord(word, event) {
-      if (state.glossaryEnabled && state.activePuzzle.glossary && state.activePuzzle.glossary[word]) {
-        showTooltip(word, state.activePuzzle.glossary[word], event);
+      if (!state.glossaryEnabled) return;
+      const entry = findWordEntry(state.activePuzzle, word);
+      const definitions = entry?.definitions ?? [];
+      if (definitions.length > 0) {
+        showTooltip(word, definitions, event);
       }
     },
     onMouseOutWord() {
-      hideTooltip(dom);
-    }
+      hideTooltip();
+    },
   };
 
   function startPuzzle(puzzle) {
     state.activePuzzle = puzzle;
-    state.glossaryEnabled = false; // Reset glossary state
-    dom.glossaryBtn.textContent = 'Glossary: OFF'; // Reset button text
+    state.glossaryEnabled = false;
+    dom.glossaryBtn.textContent = "Glossary: OFF";
     dom.vignetteEl.textContent = puzzle.vignette ?? "";
     initGameState(state);
     clearFoundGroups(dom);
@@ -183,30 +197,22 @@ function initializePage(state, wittyResponses, idToEntry) {
   dom.submitBtn.addEventListener("click", () => {
     const res = submitSelection(state, wittyResponses);
     if (res.ok && res.group) {
-      clearFoundGroups(dom);
-      for (const group of state.foundGroups) {
-        const palEntry = state.activePuzzle.palette?.[group.palette];
-        const displayName = group.category;
-        appendFoundGroupCard(dom, group, displayName);
-        const last = dom.foundEl.lastElementChild;
-        if (last && palEntry?.bg) last.style.background = palEntry.bg;
-        if (last && palEntry?.fg) last.style.color = palEntry.fg;
-      }
+      renderAllFoundGroups();
       renderPaletteChips();
     }
     renderBoard(dom, state, handlers);
-    renderMostRecentGuess(dom, state.guesses.at(-1), state.activePuzzle.palette);
-    if (state.boardWords.filter(wordItem => wordItem.lockedPalette !== null).length === 16) {
+    renderMostRecentGuess(dom, state.guesses.at(-1));
+    if (state.boardWords.filter((wordItem) => wordItem.lockedGroupIndex != null).length === 16) {
       showResultsPopup();
     } else {
-      renderGuesses(dom, state.guesses, state.activePuzzle.palette);
+      renderGuesses(dom, state.guesses);
     }
     renderStatus(dom, res.message);
   });
 
   function showResultsPopup() {
     dom.resultsNumGuessesEl.textContent = state.guesses.length;
-    renderGuesses({ guessesEl: dom.resultsGuessesEl }, state.guesses, state.activePuzzle.palette);
+    renderGuesses({ guessesEl: dom.resultsGuessesEl }, state.guesses);
     dom.resultsPopupEl.style.display = "flex";
   }
 
@@ -214,33 +220,17 @@ function initializePage(state, wittyResponses, idToEntry) {
     dom.resultsPopupEl.style.display = "none";
   });
 
-  function renderMostRecentGuess(dom, guess, palette) {
+  function renderMostRecentGuess(dom, guess) {
     if (!guess) return;
-    const row = document.createElement("div");
-    row.className = "guess-row";
-    for (const word of guess.words) {
-      const box = document.createElement("div");
-      box.className = "guess-box";
-      const palEntry = palette[word.palette];
-      if (palEntry?.bg) {
-        box.style.backgroundColor = palEntry.bg;
-      }
-      row.appendChild(box);
-    }
-    dom.mostRecentGuessEl.innerHTML = "";
-    dom.mostRecentGuessEl.appendChild(row);
+    renderGuesses({ guessesEl: dom.mostRecentGuessEl }, [guess]);
   }
 
   dom.hintCategoryBtn.addEventListener("click", () => {
     const res = hintRevealCategory(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, res.group.category);
-      const palEntry = state.activePuzzle.palette?.[res.group.palette];
-      const last = dom.foundEl.lastElementChild;
-      if (last && palEntry?.bg) last.style.background = palEntry.bg;
-      if (last && palEntry?.fg) last.style.color = palEntry.fg;
+      appendFoundGroupCard(dom, res.group, res.group.title, res.group.colors);
       renderPaletteChips();
-      renderStatus(dom, `Hint: One category is “${res.group.category}”.`);
+      renderStatus(dom, `Hint: One category is “${res.group.title}”.`);
     } else {
       renderStatus(dom, res.message);
     }
@@ -255,12 +245,15 @@ function initializePage(state, wittyResponses, idToEntry) {
   dom.puzzleSelect.addEventListener("change", async () => {
     try {
       const id = dom.puzzleSelect.value;
-      const entry = idToEntry.get(id);
       let puzzle;
-      if (id.startsWith('~uploaded~')) {
-        puzzle = entry;
+      if (id.startsWith("~uploaded~")) {
+        puzzle = idToEntry.get(id);
+      } else if (puzzleCache.has(id)) {
+        puzzle = puzzleCache.get(id);
       } else {
+        const entry = idToEntry.get(id);
         puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+        puzzleCache.set(id, puzzle);
       }
       startPuzzle(puzzle);
     } catch (e) {
@@ -271,10 +264,9 @@ function initializePage(state, wittyResponses, idToEntry) {
 
   startPuzzle(state.activePuzzle);
 }
-bootstrap().catch(err => {
+
+bootstrap().catch((err) => {
   const dom = getDom();
   console.error(err);
   dom.statusEl.textContent = `Startup error: ${err.message}`;
 });
-
-

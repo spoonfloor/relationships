@@ -3,71 +3,109 @@
   "title": "The paper crinkling",
   "vignette": "The paper crinkling as you pulled from your pocket the sweets you pinched from the party, laughing through chattering teeth we left a trail of crumbs, trundling home to the sounds of revelry tinkling over snow",
   "url": "https://connections.swellgarfo.com/game/-OdZA-LLx3Du2GTKCXJp",
-  "palette": {
-    "a": {
-      "name": "Feather Twilight",
-      "bg": "#CFE2F3",
-      "fg": "#3C78D8",
-      "accent": "#77A2E3"
-    },
-    "b": {
-      "name": "Stormy Honey",
-      "bg": "#BF9000",
-      "fg": "#FFE599",
-      "accent": "#E5C35C"
-    },
-    "c": {
-      "name": "Deep Raspberry",
-      "bg": "#CC0000",
-      "fg": "#FFFFFF",
-      "accent": "#EB9999"
-    },
-    "d": {
-      "name": "Night Rose",
-      "bg": "#990000",
-      "fg": "#EAD1DC",
-      "accent": "#CA7D84"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "BABY, IT'S COLD OUTSIDE",
+      "title": "BABY, IT'S COLD OUTSIDE",
+      "colors": {
+        "text": "#3C78D8",
+        "bg": "#CFE2F3",
+        "border": "#77A2E3"
+      },
       "words": [
-        "CHILLY",
-        "CRISP",
-        "NIPPY",
-        "SHIVERY"
+        {
+          "text": "CHILLY",
+          "definitions": []
+        },
+        {
+          "text": "CRISP",
+          "definitions": []
+        },
+        {
+          "text": "NIPPY",
+          "definitions": []
+        },
+        {
+          "text": "SHIVERY",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "A CAROL OF ____ BELLS ]",
+      "title": "A CAROL OF ____ BELLS ]",
+      "colors": {
+        "text": "#FFE599",
+        "bg": "#BF9000",
+        "border": "#E5C35C"
+      },
       "words": [
-        "BLUE",
-        "JINGLE",
-        "SILVER",
-        "SLEIGH"
+        {
+          "text": "BLUE",
+          "definitions": []
+        },
+        {
+          "text": "JINGLE",
+          "definitions": []
+        },
+        {
+          "text": "SILVER",
+          "definitions": []
+        },
+        {
+          "text": "SLEIGH",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "THE LIFE OF THE PARTY",
+      "title": "THE LIFE OF THE PARTY",
+      "colors": {
+        "text": "#FFFFFF",
+        "bg": "#CC0000",
+        "border": "#EB9999"
+      },
       "words": [
-        "CARD",
-        "HOOT",
-        "JOKER",
-        "WISECRACKER"
+        {
+          "text": "CARD",
+          "definitions": []
+        },
+        {
+          "text": "HOOT",
+          "definitions": []
+        },
+        {
+          "text": "JOKER",
+          "definitions": []
+        },
+        {
+          "text": "WISECRACKER",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "OLD FASHIONED WINTER TREATS",
+      "title": "OLD FASHIONED WINTER TREATS",
+      "colors": {
+        "text": "#EAD1DC",
+        "bg": "#990000",
+        "border": "#CA7D84"
+      },
       "words": [
-        "FIGGY PUDDING",
-        "FRUITCAKE",
-        "MINCE PIE",
-        "SUGAR PLUM"
+        {
+          "text": "FIGGY PUDDING",
+          "definitions": []
+        },
+        {
+          "text": "FRUITCAKE",
+          "definitions": []
+        },
+        {
+          "text": "MINCE PIE",
+          "definitions": []
+        },
+        {
+          "text": "SUGAR PLUM",
+          "definitions": []
+        }
       ]
     }
   ]

@@ -3,8 +3,8 @@ import path from 'node:path';
 import { hexToRgb, rgbToLab, rgbToHex, deltaE } from '../public/src/color.js';
 
 const PUZZLES_DIR = './public/puzzles';
-const MIN_DELTA_E = 20; // Threshold for perceived color difference
-const ADJUSTMENT_FACTOR = 0.1; // Modest adjustment for L component
+const MIN_DELTA_E = 20;
+const ADJUSTMENT_FACTOR = 0.1;
 
 async function adjustColorsInPuzzles() {
   const files = await fs.readdir(PUZZLES_DIR);
@@ -19,81 +19,55 @@ async function adjustColorsInPuzzles() {
       const puzzle = JSON.parse(content);
       let modified = false;
 
-      if (puzzle.palette) {
-        for (const key in puzzle.palette) {
-          const entry = puzzle.palette[key];
-          if (entry.fg && entry.bg) {
-            const fgRgb = hexToRgb(entry.fg);
-            const bgRgb = hexToRgb(entry.bg);
+      for (const group of puzzle.groups ?? []) {
+        const colors = group.colors;
+        if (!colors?.text || !colors?.bg) continue;
 
-            if (!fgRgb || !bgRgb) {
-              console.warn(`Skipping ${file} - invalid hex code in palette entry ${key}`);
-              continue;
-            }
+        const textRgb = hexToRgb(colors.text);
+        const bgRgb = hexToRgb(colors.bg);
 
-            const fgLab = rgbToLab(fgRgb);
-            const bgLab = rgbToLab(bgRgb);
-            const dE = deltaE(fgLab, bgLab);
+        if (!textRgb || !bgRgb) {
+          console.warn(`Skipping ${file} - invalid hex code in group "${group.title}"`);
+          continue;
+        }
 
-            if (dE < MIN_DELTA_E) {
-              console.log(`  ${file} - Palette entry "${key}" (FG: ${entry.fg}, BG: ${entry.bg}) has Delta E of ${dE.toFixed(2)}. Adjusting FG.`);
+        const textLab = rgbToLab(textRgb);
+        const bgLab = rgbToLab(bgRgb);
+        const dE = deltaE(textLab, bgLab);
 
-              // Adjust foreground color slightly to increase contrast
-              let newFgRgb = { ...fgRgb };
-              let newFgLab = { ...fgLab };
+        if (dE < MIN_DELTA_E) {
+          console.log(`  ${file} - Group "${group.title}" (text: ${colors.text}, bg: ${colors.bg}) has Delta E of ${dE.toFixed(2)}. Adjusting text.`);
 
-              // Try to increase lightness difference
-              if (fgLab.l > bgLab.l) {
-                // FG is lighter, try to make it even lighter
-                newFgLab.l = Math.min(100, fgLab.l + (100 - fgLab.l) * ADJUSTMENT_FACTOR);
-              } else {
-                // FG is darker, try to make it even darker
-                newFgLab.l = Math.max(0, fgLab.l - (fgLab.l) * ADJUSTMENT_FACTOR);
-              }
-              
-              // Simple conversion from LAB to RGB (approximation, full conversion is complex)
-              // For a simple adjustment, we'll just try to change the L value and convert back.
-              // This is a simplified approach, a full LAB-to-RGB conversion is more involved.
-              // For this task, we will make a small adjustment to the RGB values directly,
-              // as a full LAB-RGB conversion might be too complex to implement here directly
-              // without a proper library.
-              // Instead, we will directly adjust the RGB values in a direction that
-              // increases contrast based on initial lightness comparison.
+          let newTextRgb = { ...textRgb };
+          let newTextLab = { ...textLab };
+          const targetLab = { ...bgLab };
 
-              const lDiff = fgLab.l - bgLab.l;
-
-              // Adjust RGB components to move lightness away from background
-              newFgRgb.r = Math.max(0, Math.min(255, fgRgb.r + (lDiff > 0 ? 255 - fgRgb.r : -fgRgb.r) * ADJUSTMENT_FACTOR));
-              newFgRgb.g = Math.max(0, Math.min(255, fgRgb.g + (lDiff > 0 ? 255 - fgRgb.g : -fgRgb.g) * ADJUSTMENT_FACTOR));
-              newFgRgb.b = Math.max(0, Math.min(255, fgRgb.b + (lDiff > 0 ? 255 - fgRgb.b : -fgRgb.b) * ADJUSTMENT_FACTOR));
-
-              const adjustedFgHex = rgbToHex(
-                Math.round(newFgRgb.r),
-                Math.round(newFgRgb.g),
-                Math.round(newFgRgb.b)
-              );
-              
-              const newDE = deltaE(rgbToLab(hexToRgb(adjustedFgHex)), bgLab);
-              console.log(`    Adjusted FG to ${adjustedFgHex}, new Delta E: ${newDE.toFixed(2)}`);
-
-              entry.fg = adjustedFgHex;
-              modified = true;
-            }
+          if (textLab.L <= bgLab.L) {
+            targetLab.L = Math.max(0, bgLab.L - MIN_DELTA_E);
+          } else {
+            targetLab.L = Math.min(100, bgLab.L + MIN_DELTA_E);
           }
+
+          for (let i = 0; i < 20; i++) {
+            newTextLab.L += (targetLab.L - newTextLab.L) * ADJUSTMENT_FACTOR;
+            newTextRgb = rgbToHex(newTextLab);
+            const adjustedLab = rgbToLab(newTextRgb);
+            if (deltaE(adjustedLab, bgLab) >= MIN_DELTA_E) break;
+          }
+
+          colors.text = rgbToHex(newTextLab);
+          modified = true;
         }
       }
 
       if (modified) {
-        await fs.writeFile(filePath, JSON.stringify(puzzle, null, 2), 'utf8');
-        console.log(`  ${file} modified.`);
-      } else {
-        console.log(`  ${file} no changes needed.`);
+        await fs.writeFile(filePath, JSON.stringify(puzzle, null, 2) + '\n');
+        console.log(`  Updated ${file}`);
       }
-    } catch (error) {
-      console.error(`Error processing file ${file}:`, error);
+    } catch (err) {
+      console.error(`Error processing ${file}:`, err.message);
     }
   }
-  console.log('Color adjustment process complete.');
 }
 
 adjustColorsInPuzzles();

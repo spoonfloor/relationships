@@ -3,71 +3,109 @@
   "title": "Spinning together on the grass",
   "vignette": "Spinning together on the grass , the scene behind your laughing face a kaleidoscope, a particolored blurr, the day with you a whirling in my mind, the birds in the zoo, the fish in the aquarium, the picnic - everything, everything shot through with color.",
   "url": "https://connections.swellgarfo.com/game/-OebLgjn9um9WRijR_1i",
-  "palette": {
-    "a": {
-      "name": "Powder Cinnamon",
-      "bg": "#F59973",
-      "fg": "#AC4101",
-      "accent": "#C9642F"
-    },
-    "b": {
-      "name": "Pale Raspberry",
-      "bg": "#FCC2B6",
-      "fg": "#CC003C",
-      "accent": "#DF4E6D"
-    },
-    "c": {
-      "name": "Warm Mint",
-      "bg": "#B0E262",
-      "fg": "#747501",
-      "accent": "#8CA128"
-    },
-    "d": {
-      "name": "Dark Teal",
-      "bg": "#07818A",
-      "fg": "#C3EEEB",
-      "accent": "#78C2C4"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "COLORS AS ANIMALS",
+      "title": "COLORS AS ANIMALS",
+      "colors": {
+        "text": "#AC4101",
+        "bg": "#F59973",
+        "border": "#C9642F"
+      },
       "words": [
-        "CAMEL",
-        "CORAL",
-        "RAVEN",
-        "SALMON"
+        {
+          "text": "CAMEL",
+          "definitions": []
+        },
+        {
+          "text": "CORAL",
+          "definitions": []
+        },
+        {
+          "text": "RAVEN",
+          "definitions": []
+        },
+        {
+          "text": "SALMON",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "COLORS AS FLOWERS",
+      "title": "COLORS AS FLOWERS",
+      "colors": {
+        "text": "#CC003C",
+        "bg": "#FCC2B6",
+        "border": "#DF4E6D"
+      },
       "words": [
-        "FUCHSIA",
-        "GOLDENROD",
-        "ROSE",
-        "VIOLET"
+        {
+          "text": "FUCHSIA",
+          "definitions": []
+        },
+        {
+          "text": "GOLDENROD",
+          "definitions": []
+        },
+        {
+          "text": "ROSE",
+          "definitions": []
+        },
+        {
+          "text": "VIOLET",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "COLORS AS TREES",
+      "title": "COLORS AS TREES",
+      "colors": {
+        "text": "#747501",
+        "bg": "#B0E262",
+        "border": "#8CA128"
+      },
       "words": [
-        "ASH",
-        "CHERRY",
-        "CHESTNUT",
-        "EBONY"
+        {
+          "text": "ASH",
+          "definitions": []
+        },
+        {
+          "text": "CHERRY",
+          "definitions": []
+        },
+        {
+          "text": "CHESTNUT",
+          "definitions": []
+        },
+        {
+          "text": "EBONY",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "COLORS AS VERBS",
+      "title": "COLORS AS VERBS",
+      "colors": {
+        "text": "#C3EEEB",
+        "bg": "#07818A",
+        "border": "#78C2C4"
+      },
       "words": [
-        "BLUSH",
-        "FAWN",
-        "JET",
-        "MAROON"
+        {
+          "text": "BLUSH",
+          "definitions": []
+        },
+        {
+          "text": "FAWN",
+          "definitions": []
+        },
+        {
+          "text": "JET",
+          "definitions": []
+        },
+        {
+          "text": "MAROON",
+          "definitions": []
+        }
       ]
     }
   ]

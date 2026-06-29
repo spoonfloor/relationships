@@ -3,71 +3,109 @@
   "title": "Lolling on the soft bright blanket",
   "vignette": "Lolling on the soft bright blanket , watching the bees amble in and out of the year’s very last roses, reading to each other, snorting and sighing at the story between bites of persimmon, sharp cheddar and each other.",
   "url": "https://connections.swellgarfo.com/game/-OcfThyYZLJ5pPYXnggg",
-  "palette": {
-    "a": {
-      "name": "Light Amber",
-      "bg": "#FFE599",
-      "fg": "#E69138",
-      "accent": "#F0B35F"
-    },
-    "b": {
-      "name": "Sunlit Coral",
-      "bg": "#FFCF56",
-      "fg": "#CC0000",
-      "accent": "#E05322"
-    },
-    "c": {
-      "name": "Sunlit Cinnamon",
-      "bg": "#F78330",
-      "fg": "#FFE599",
-      "accent": "#FCBE6F"
-    },
-    "d": {
-      "name": "Evening Cherry",
-      "bg": "#FF0000",
-      "fg": "#FFCBDC",
-      "accent": "#FF7A84"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "ALL ABOUT THE BEES",
+      "title": "ALL ABOUT THE BEES",
+      "colors": {
+        "text": "#E69138",
+        "bg": "#FFE599",
+        "border": "#F0B35F"
+      },
       "words": [
-        "DRONE",
-        "HIVE",
-        "JELLY",
-        "QUEEN"
+        {
+          "text": "DRONE",
+          "definitions": []
+        },
+        {
+          "text": "HIVE",
+          "definitions": []
+        },
+        {
+          "text": "JELLY",
+          "definitions": []
+        },
+        {
+          "text": "QUEEN",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "TERMS OF ENDEARMENT",
+      "title": "TERMS OF ENDEARMENT",
+      "colors": {
+        "text": "#CC0000",
+        "bg": "#FFCF56",
+        "border": "#E05322"
+      },
       "words": [
-        "BABY",
-        "DARLING",
-        "HONEY",
-        "SUGAR"
+        {
+          "text": "BABY",
+          "definitions": []
+        },
+        {
+          "text": "DARLING",
+          "definitions": []
+        },
+        {
+          "text": "HONEY",
+          "definitions": []
+        },
+        {
+          "text": "SUGAR",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "TASTE SENSATIONS",
+      "title": "TASTE SENSATIONS",
+      "colors": {
+        "text": "#FFE599",
+        "bg": "#F78330",
+        "border": "#FCBE6F"
+      },
       "words": [
-        "CHEESY",
-        "SALTY",
-        "SWEET",
-        "TANGY"
+        {
+          "text": "CHEESY",
+          "definitions": []
+        },
+        {
+          "text": "SALTY",
+          "definitions": []
+        },
+        {
+          "text": "SWEET",
+          "definitions": []
+        },
+        {
+          "text": "TANGY",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "SENTIMENTAL TO THE MAX [",
+      "title": "SENTIMENTAL TO THE MAX [",
+      "colors": {
+        "text": "#FFCBDC",
+        "bg": "#FF0000",
+        "border": "#FF7A84"
+      },
       "words": [
-        "CORNY",
-        "SAPPY",
-        "SCHMALTZY",
-        "SOPPY"
+        {
+          "text": "CORNY",
+          "definitions": []
+        },
+        {
+          "text": "SAPPY",
+          "definitions": []
+        },
+        {
+          "text": "SCHMALTZY",
+          "definitions": []
+        },
+        {
+          "text": "SOPPY",
+          "definitions": []
+        }
       ]
     }
   ]

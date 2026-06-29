@@ -3,71 +3,109 @@
   "title": "Goofing off",
   "vignette": "Goofing off , playing games, laughing about stupid stuff until we nearly pee our pants, for a couple of little bookworms, too sharp by half, we sure got a lot of mileage out of potty humor.",
   "url": "https://connections.swellgarfo.com/game/-OgyivixBWM13KqLLs2V",
-  "palette": {
-    "a": {
-      "name": "Feather Mint",
-      "bg": "#BCEED4",
-      "fg": "#6EA792",
-      "accent": "#8DC3AC"
-    },
-    "b": {
-      "name": "Icy Lagoon",
-      "bg": "#B3E5F0",
-      "fg": "#5998A3",
-      "accent": "#7DB7C2"
-    },
-    "c": {
-      "name": "Soft Honey",
-      "bg": "#FFD966",
-      "fg": "#C9881D",
-      "accent": "#DFA83A"
-    },
-    "d": {
-      "name": "Warm Amber",
-      "bg": "#FAA146",
-      "fg": "#C54A00",
-      "accent": "#DA6D1C"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "CLEVER BEANS [O][O][O][O][O][O][O][O][O]",
+      "title": "CLEVER BEANS [O][O][O][O][O][O][O][O][O]",
+      "colors": {
+        "text": "#6EA792",
+        "bg": "#BCEED4",
+        "border": "#8DC3AC"
+      },
       "words": [
-        "ACE",
-        "CRACKERJACK",
-        "SMARTY PANTS",
-        "WHIZ"
+        {
+          "text": "ACE",
+          "definitions": []
+        },
+        {
+          "text": "CRACKERJACK",
+          "definitions": []
+        },
+        {
+          "text": "SMARTY PANTS",
+          "definitions": []
+        },
+        {
+          "text": "WHIZ",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "_____ AROUND DOING NOTHING IN PARTICULAR",
+      "title": "_____ AROUND DOING NOTHING IN PARTICULAR",
+      "colors": {
+        "text": "#5998A3",
+        "bg": "#B3E5F0",
+        "border": "#7DB7C2"
+      },
       "words": [
-        "LAZE",
-        "LOAF",
-        "LOUNGE",
-        "PIDDLE [O][O][O][O][O][O][O ]"
+        {
+          "text": "LAZE",
+          "definitions": []
+        },
+        {
+          "text": "LOAF",
+          "definitions": []
+        },
+        {
+          "text": "LOUNGE",
+          "definitions": []
+        },
+        {
+          "text": "PIDDLE [O][O][O][O][O][O][O ]",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "SHALL WE PLAY A GAME? [O][OO]",
+      "title": "SHALL WE PLAY A GAME? [O][OO]",
+      "colors": {
+        "text": "#C9881D",
+        "bg": "#FFD966",
+        "border": "#DFA83A"
+      },
       "words": [
-        "CHECKERS",
-        "CHESS",
-        "GO",
-        "MANCALA"
+        {
+          "text": "CHECKERS",
+          "definitions": []
+        },
+        {
+          "text": "CHESS",
+          "definitions": []
+        },
+        {
+          "text": "GO",
+          "definitions": []
+        },
+        {
+          "text": "MANCALA",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "KNEE HIGH TO GRASSHOPPER O]",
+      "title": "KNEE HIGH TO GRASSHOPPER O]",
+      "colors": {
+        "text": "#C54A00",
+        "bg": "#FAA146",
+        "border": "#DA6D1C"
+      },
       "words": [
-        "ICKLE",
-        "ITTY-BITTY",
-        "PINTSIZE",
-        "WEE"
+        {
+          "text": "ICKLE",
+          "definitions": []
+        },
+        {
+          "text": "ITTY-BITTY",
+          "definitions": []
+        },
+        {
+          "text": "PINTSIZE",
+          "definitions": []
+        },
+        {
+          "text": "WEE",
+          "definitions": []
+        }
       ]
     }
   ]

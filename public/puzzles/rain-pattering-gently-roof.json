@@ -3,71 +3,109 @@
   "title": "The rain pattering gently",
   "vignette": "The rain pattering gently on the roof of our little fort in the yard, your sma ll hand unclenched, your small treasure resting there in your palm, your lids fluttering, your hair in lazy loops on my lap, I hear a clock faintly, lean back and close my eyes again.",
   "url": "https://connections.swellgarfo.com/game/-OeqeGkCKacV2jAZzOVL",
-  "palette": {
-    "a": {
-      "name": "Airy Fern",
-      "bg": "#E4EEE0",
-      "fg": "#A3AD9E",
-      "accent": "#BDC7B8"
-    },
-    "b": {
-      "name": "Airy Teal",
-      "bg": "#D0E0E3",
-      "fg": "#76A5AF",
-      "accent": "#9ABDC4"
-    },
-    "c": {
-      "name": "Feather Twilight",
-      "bg": "#CFE2F3",
-      "fg": "#749CC0",
-      "accent": "#98B8D4"
-    },
-    "d": {
-      "name": "Pale Lavender",
-      "bg": "#EADDEC",
-      "fg": "#B4A7D6",
-      "accent": "#CABDDF"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "LIKE A LITTLE BELL RINGING",
+      "title": "LIKE A LITTLE BELL RINGING",
+      "colors": {
+        "text": "#A3AD9E",
+        "bg": "#E4EEE0",
+        "border": "#BDC7B8"
+      },
       "words": [
-        "CHIME",
-        "PEAL",
-        "TINKLE",
-        "TINTINNABULATION"
+        {
+          "text": "CHIME",
+          "definitions": []
+        },
+        {
+          "text": "PEAL",
+          "definitions": []
+        },
+        {
+          "text": "TINKLE",
+          "definitions": []
+        },
+        {
+          "text": "TINTINNABULATION",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "UNTROUBLED",
+      "title": "UNTROUBLED",
+      "colors": {
+        "text": "#76A5AF",
+        "bg": "#D0E0E3",
+        "border": "#9ABDC4"
+      },
       "words": [
-        "HALCYON",
-        "SERENE",
-        "STILLY",
-        "TRANQUIL"
+        {
+          "text": "HALCYON",
+          "definitions": []
+        },
+        {
+          "text": "SERENE",
+          "definitions": []
+        },
+        {
+          "text": "STILLY",
+          "definitions": []
+        },
+        {
+          "text": "TRANQUIL",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "SLEEPYHEADED",
+      "title": "SLEEPYHEADED",
+      "colors": {
+        "text": "#749CC0",
+        "bg": "#CFE2F3",
+        "border": "#98B8D4"
+      },
       "words": [
-        "DOZY",
-        "DROWSY",
-        "LANGUID",
-        "SLUMBROUS"
+        {
+          "text": "DOZY",
+          "definitions": []
+        },
+        {
+          "text": "DROWSY",
+          "definitions": []
+        },
+        {
+          "text": "LANGUID",
+          "definitions": []
+        },
+        {
+          "text": "SLUMBROUS",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "_____RING",
+      "title": "_____RING",
+      "colors": {
+        "text": "#B4A7D6",
+        "bg": "#EADDEC",
+        "border": "#CABDDF"
+      },
       "words": [
-        "FAIRY",
-        "KEY",
-        "PINKY",
-        "PROMISE"
+        {
+          "text": "FAIRY",
+          "definitions": []
+        },
+        {
+          "text": "KEY",
+          "definitions": []
+        },
+        {
+          "text": "PINKY",
+          "definitions": []
+        },
+        {
+          "text": "PROMISE",
+          "definitions": []
+        }
       ]
     }
   ]
