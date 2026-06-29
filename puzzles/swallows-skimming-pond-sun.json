@@ -3,71 +3,109 @@
   "title": "Swallows skimming over the pond",
   "vignette": "Swallows skimming over the pond as the sun sank to the horizon, through pale pink petals dancing on the breeze, I’d catch a glance through drifting dark hair, over their shoulder as I followed them ever deeper into the vast tea garden.",
   "url": "https://connections.swellgarfo.com/game/-OdMQ1yVEsFVU91cBWPz",
-  "palette": {
-    "a": {
-      "name": "Airy Wine",
-      "bg": "#FCB6CD",
-      "fg": "#DF7091",
-      "accent": "#EB8CA9"
-    },
-    "b": {
-      "name": "Light Amber",
-      "bg": "#FFE599",
-      "fg": "#F0A933",
-      "accent": "#F6C15C"
-    },
-    "c": {
-      "name": "Warm Lagoon",
-      "bg": "#57A8C7",
-      "fg": "#0B425C",
-      "accent": "#296B87"
-    },
-    "d": {
-      "name": "Sunlit Apricot",
-      "bg": "#EE5C2B",
-      "fg": "#A61C00",
-      "accent": "#C33611"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "COY",
+      "title": "COY",
+      "colors": {
+        "text": "#DF7091",
+        "bg": "#FCB6CD",
+        "border": "#EB8CA9"
+      },
       "words": [
-        "ARCH",
-        "FEY",
-        "KITTENISH",
-        "PUCKISH"
+        {
+          "text": "ARCH",
+          "definitions": []
+        },
+        {
+          "text": "FEY",
+          "definitions": []
+        },
+        {
+          "text": "KITTENISH",
+          "definitions": []
+        },
+        {
+          "text": "PUCKISH",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "LOOK A WHAT THE LIGHT DID NOW",
+      "title": "LOOK A WHAT THE LIGHT DID NOW",
+      "colors": {
+        "text": "#F0A933",
+        "bg": "#FFE599",
+        "border": "#F6C15C"
+      },
       "words": [
-        "CORUSCATION",
-        "GLIMMER",
-        "SCINTILLATION",
-        "TWINKLE"
+        {
+          "text": "CORUSCATION",
+          "definitions": []
+        },
+        {
+          "text": "GLIMMER",
+          "definitions": []
+        },
+        {
+          "text": "SCINTILLATION",
+          "definitions": []
+        },
+        {
+          "text": "TWINKLE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "FOUND ON THE SURFACE OF A POND",
+      "title": "FOUND ON THE SURFACE OF A POND",
+      "colors": {
+        "text": "#0B425C",
+        "bg": "#57A8C7",
+        "border": "#296B87"
+      },
       "words": [
-        "ALGAE",
-        "REFLECTIONS",
-        "RIPPLES",
-        "WATER STRIDERS"
+        {
+          "text": "ALGAE",
+          "definitions": []
+        },
+        {
+          "text": "REFLECTIONS",
+          "definitions": []
+        },
+        {
+          "text": "RIPPLES",
+          "definitions": []
+        },
+        {
+          "text": "WATER STRIDERS",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "JAPANESE GARDEN FEATURES",
+      "title": "JAPANESE GARDEN FEATURES",
+      "colors": {
+        "text": "#A61C00",
+        "bg": "#EE5C2B",
+        "border": "#C33611"
+      },
       "words": [
-        "BONSAI",
-        "CHERRY TREES",
-        "KOI",
-        "PAGODA"
+        {
+          "text": "BONSAI",
+          "definitions": []
+        },
+        {
+          "text": "CHERRY TREES",
+          "definitions": []
+        },
+        {
+          "text": "KOI",
+          "definitions": []
+        },
+        {
+          "text": "PAGODA",
+          "definitions": []
+        }
       ]
     }
   ]

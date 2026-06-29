@@ -3,71 +3,109 @@
   "title": "Racing towards you and away",
   "vignette": "Racing towards you and away , in the autumn field, passing from arm to arm to arm back to yours, the strings reeling us all along, till at last we stumble to the side, rousing a bevy of finches from their rest as we drop sweaty and breathless beneath the branches, for ours.",
   "url": "https://connections.swellgarfo.com/game/-OeH_yW10JCfBc_s3SEU",
-  "palette": {
-    "a": {
-      "name": "Night Butter",
-      "bg": "#747501",
-      "fg": "#CBDA86",
-      "accent": "#A8B251"
-    },
-    "b": {
-      "name": "Rich Marigold",
-      "bg": "#ECB200",
-      "fg": "#FFF2CC",
-      "accent": "#F7D87A"
-    },
-    "c": {
-      "name": "Stormy Amber",
-      "bg": "#C26421",
-      "fg": "#F0B460",
-      "accent": "#DE9447"
-    },
-    "d": {
-      "name": "Stormy Raspberry",
-      "bg": "#A3381B",
-      "fg": "#FCC2B6",
-      "accent": "#D88B78"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "A SMALL DENSE GROUP OF TREES OR SHRUBS",
+      "title": "A SMALL DENSE GROUP OF TREES OR SHRUBS",
+      "colors": {
+        "text": "#CBDA86",
+        "bg": "#747501",
+        "border": "#A8B251"
+      },
       "words": [
-        "COPSE",
-        "HEDGEROW",
-        "SPINNEY",
-        "THICKET"
+        {
+          "text": "COPSE",
+          "definitions": []
+        },
+        {
+          "text": "HEDGEROW",
+          "definitions": []
+        },
+        {
+          "text": "SPINNEY",
+          "definitions": []
+        },
+        {
+          "text": "THICKET",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "DELIGHTFULLY LIGHTHEADED ]",
+      "title": "DELIGHTFULLY LIGHTHEADED ]",
+      "colors": {
+        "text": "#FFF2CC",
+        "bg": "#ECB200",
+        "border": "#F7D87A"
+      },
       "words": [
-        "DIZZY",
-        "GIDDY",
-        "SWIMMY",
-        "WOOZY ]"
+        {
+          "text": "DIZZY",
+          "definitions": []
+        },
+        {
+          "text": "GIDDY",
+          "definitions": []
+        },
+        {
+          "text": "SWIMMY",
+          "definitions": []
+        },
+        {
+          "text": "WOOZY ]",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "SO VERY FULL",
+      "title": "SO VERY FULL",
+      "colors": {
+        "text": "#F0B460",
+        "bg": "#C26421",
+        "border": "#DE9447"
+      },
       "words": [
-        "BRIMFUL",
-        "CHOCKABLOCK",
-        "FLUSH",
-        "REPLETE"
+        {
+          "text": "BRIMFUL",
+          "definitions": []
+        },
+        {
+          "text": "CHOCKABLOCK",
+          "definitions": []
+        },
+        {
+          "text": "FLUSH",
+          "definitions": []
+        },
+        {
+          "text": "REPLETE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "LIKE SOMEONE IN LOVE",
+      "title": "LIKE SOMEONE IN LOVE",
+      "colors": {
+        "text": "#FCC2B6",
+        "bg": "#A3381B",
+        "border": "#D88B78"
+      },
       "words": [
-        "BEGUILED",
-        "BESOTTED",
-        "SMITTEN",
-        "TWITTERPATED"
+        {
+          "text": "BEGUILED",
+          "definitions": []
+        },
+        {
+          "text": "BESOTTED",
+          "definitions": []
+        },
+        {
+          "text": "SMITTEN",
+          "definitions": []
+        },
+        {
+          "text": "TWITTERPATED",
+          "definitions": []
+        }
       ]
     }
   ]

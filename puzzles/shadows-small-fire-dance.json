@@ -3,71 +3,109 @@
   "title": "Shadows from our small fire",
   "vignette": "Shadows from our small fire dance along the tree-lined shore, under a gibbous moon, while all in black, we whisper and giggle at each other’s stories, shivering at the odd unseen splash and the occasional crack of a twig under who-knows-whose foot from the woods.",
   "url": "https://connections.swellgarfo.com/game/-OcpcvRwYRTR2zF6cG3H",
-  "palette": {
-    "a": {
-      "name": "Feather Twilight",
-      "bg": "#D9D2E9",
-      "fg": "#741B47",
-      "accent": "#9C6488"
-    },
-    "b": {
-      "name": "Warm Amber",
-      "bg": "#FFAA32",
-      "fg": "#006D86",
-      "accent": "#668564"
-    },
-    "c": {
-      "name": "Ink Teal",
-      "bg": "#006D86",
-      "fg": "#A6D6CF",
-      "accent": "#64ACB2"
-    },
-    "d": {
-      "name": "Dark Blush",
-      "bg": "#4C1130",
-      "fg": "#B4A7D6",
-      "accent": "#8A6B94"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "GOTH GIRLS",
+      "title": "GOTH GIRLS",
+      "colors": {
+        "text": "#741B47",
+        "bg": "#D9D2E9",
+        "border": "#9C6488"
+      },
       "words": [
-        "ELVIRA",
-        "LILITH",
-        "OPHELIA",
-        "WEDNESDAY"
+        {
+          "text": "ELVIRA",
+          "definitions": []
+        },
+        {
+          "text": "LILITH",
+          "definitions": []
+        },
+        {
+          "text": "OPHELIA",
+          "definitions": []
+        },
+        {
+          "text": "WEDNESDAY",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "EERIE ;)",
+      "title": "EERIE ;)",
+      "colors": {
+        "text": "#006D86",
+        "bg": "#FFAA32",
+        "border": "#668564"
+      },
       "words": [
-        "CURIOUS",
-        "ELDRICH",
-        "QUEER",
-        "UNCANNY"
+        {
+          "text": "CURIOUS",
+          "definitions": []
+        },
+        {
+          "text": "ELDRICH",
+          "definitions": []
+        },
+        {
+          "text": "QUEER",
+          "definitions": []
+        },
+        {
+          "text": "UNCANNY",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "FAMOUS LAKES",
+      "title": "FAMOUS LAKES",
+      "colors": {
+        "text": "#A6D6CF",
+        "bg": "#006D86",
+        "border": "#64ACB2"
+      },
       "words": [
-        "ERIE",
-        "LOCH NESS",
-        "SUPERIOR",
-        "VICTORIA"
+        {
+          "text": "ERIE",
+          "definitions": []
+        },
+        {
+          "text": "LOCH NESS",
+          "definitions": []
+        },
+        {
+          "text": "SUPERIOR",
+          "definitions": []
+        },
+        {
+          "text": "VICTORIA",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "CRYPTIDS",
+      "title": "CRYPTIDS",
+      "colors": {
+        "text": "#B4A7D6",
+        "bg": "#4C1130",
+        "border": "#8A6B94"
+      },
       "words": [
-        "CHUPACABRA",
-        "KRAKEN",
-        "NOT-DEER",
-        "SASQUATCH"
+        {
+          "text": "CHUPACABRA",
+          "definitions": []
+        },
+        {
+          "text": "KRAKEN",
+          "definitions": []
+        },
+        {
+          "text": "NOT-DEER",
+          "definitions": []
+        },
+        {
+          "text": "SASQUATCH",
+          "definitions": []
+        }
       ]
     }
   ]

@@ -3,71 +3,109 @@
   "title": "Glittering on the sand",
   "vignette": "Glittering on the sand , clear round humps the other girls said were jewels as they piled them in their plastic pail, but you, my towheaded beauty, leaving your lunch on the blanket, running to see their treasure, held each tenderly, placing them, one by one, back in their briney home.",
   "url": "https://connections.swellgarfo.com/game/-Oftedc9q7YDbiZbSh1n",
-  "palette": {
-    "a": {
-      "name": "Silk Amber",
-      "bg": "#DBD3C4",
-      "fg": "#B98149",
-      "accent": "#C7A27A"
-    },
-    "b": {
-      "name": "Airy Butter",
-      "bg": "#FAEDB8",
-      "fg": "#F1C232",
-      "accent": "#F5D368"
-    },
-    "c": {
-      "name": "Icy Teal",
-      "bg": "#D6F7E9",
-      "fg": "#6AA84F",
-      "accent": "#95C88D"
-    },
-    "d": {
-      "name": "Soft Lagoon",
-      "bg": "#94E5EB",
-      "fg": "#FFFFFF",
-      "accent": "#D4F5F7"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "MAKIN’ LITTLE SANDWICHES",
+      "title": "MAKIN’ LITTLE SANDWICHES",
+      "colors": {
+        "text": "#B98149",
+        "bg": "#DBD3C4",
+        "border": "#C7A27A"
+      },
       "words": [
-        "BANANA",
-        "BREAD",
-        "HONEY",
-        "PEANUT BUTTER"
+        {
+          "text": "BANANA",
+          "definitions": []
+        },
+        {
+          "text": "BREAD",
+          "definitions": []
+        },
+        {
+          "text": "HONEY",
+          "definitions": []
+        },
+        {
+          "text": "PEANUT BUTTER",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "4 BLONDES",
+      "title": "4 BLONDES",
+      "colors": {
+        "text": "#F1C232",
+        "bg": "#FAEDB8",
+        "border": "#F5D368"
+      },
       "words": [
-        "FLAXEN",
-        "SANDY",
-        "STRAW",
-        "YELLOW"
+        {
+          "text": "FLAXEN",
+          "definitions": []
+        },
+        {
+          "text": "SANDY",
+          "definitions": []
+        },
+        {
+          "text": "STRAW",
+          "definitions": []
+        },
+        {
+          "text": "YELLOW",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "THE VERY HEART OF COMPASSION",
+      "title": "THE VERY HEART OF COMPASSION",
+      "colors": {
+        "text": "#6AA84F",
+        "bg": "#D6F7E9",
+        "border": "#95C88D"
+      },
       "words": [
-        "GENTLE",
-        "KIND",
-        "SWEET",
-        "WARM"
+        {
+          "text": "GENTLE",
+          "definitions": []
+        },
+        {
+          "text": "KIND",
+          "definitions": []
+        },
+        {
+          "text": "SWEET",
+          "definitions": []
+        },
+        {
+          "text": "WARM",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "______ FISH",
+      "title": "______ FISH",
+      "colors": {
+        "text": "#FFFFFF",
+        "bg": "#94E5EB",
+        "border": "#D4F5F7"
+      },
       "words": [
-        "GOLD",
-        "JELLY",
-        "STAR",
-        "SUN"
+        {
+          "text": "GOLD",
+          "definitions": []
+        },
+        {
+          "text": "JELLY",
+          "definitions": []
+        },
+        {
+          "text": "STAR",
+          "definitions": []
+        },
+        {
+          "text": "SUN",
+          "definitions": []
+        }
       ]
     }
   ]

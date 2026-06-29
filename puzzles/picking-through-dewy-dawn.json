@@ -3,139 +3,159 @@
   "title": "Picking through the dewy dawn forest",
   "vignette": "Picking through the dewy dawn forest , having thrown something on over our nightshirts against the cold, looking for and leaving behind traces and delights.",
   "url": "https://connections.swellgarfo.com/game/-OfKZXDuFHUQPHISB8ZQ",
-  "palette": {
-    "a": {
-      "name": "Airy Blush",
-      "bg": "#E0D1D5",
-      "fg": "#741B47",
-      "accent": "#9F6480"
-    },
-    "b": {
-      "name": "Warm Stone",
-      "bg": "#A09582",
-      "fg": "#493D2F",
-      "accent": "#6C6050"
-    },
-    "c": {
-      "name": "Dark Moss",
-      "bg": "#476935",
-      "fg": "#B9C08C",
-      "accent": "#8B9D69"
-    },
-    "d": {
-      "name": "Ink Apricot",
-      "bg": "#574937",
-      "fg": "#C9BBA3",
-      "accent": "#9B8D78"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "THIN, FINE TEXTURES",
+      "title": "THIN, FINE TEXTURES",
+      "colors": {
+        "text": "#741B47",
+        "bg": "#E0D1D5",
+        "border": "#9F6480"
+      },
       "words": [
-        "COBWEBBY",
-        "DIAPHANOUS",
-        "GAUZY",
-        "GOSSAMER"
+        {
+          "text": "COBWEBBY",
+          "definitions": [
+            "Musty, worn out, like cobwebs in a corner",
+            "Light and thin, like cobwebs drifting in the breeze"
+          ]
+        },
+        {
+          "text": "DIAPHANOUS",
+          "definitions": [
+            "Ethereal",
+            "Of a fine almost transparent texture"
+          ]
+        },
+        {
+          "text": "GAUZY",
+          "definitions": [
+            "Light like haze",
+            "Fine and thin in texture",
+            "Vague or cloudy"
+          ]
+        },
+        {
+          "text": "GOSSAMER",
+          "definitions": [
+            "Light, airy, delicate",
+            "Thin enough to be translucent"
+          ]
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "THREADLIKE STRUCTURES",
+      "title": "THREADLIKE STRUCTURES",
+      "colors": {
+        "text": "#493D2F",
+        "bg": "#A09582",
+        "border": "#6C6050"
+      },
       "words": [
-        "CILIUM",
-        "FIBRIL",
-        "FILAMENT",
-        "TENDRIL"
+        {
+          "text": "CILIUM",
+          "definitions": [
+            "A tiny hairlike organelle",
+            "An eyelash"
+          ]
+        },
+        {
+          "text": "FIBRIL",
+          "definitions": [
+            "A small fiber or filament",
+            "A fine thread of muscle tissue"
+          ]
+        },
+        {
+          "text": "FILAMENT",
+          "definitions": [
+            "The stalk of a flower stamen",
+            "A single thread or threadlike structure"
+          ]
+        },
+        {
+          "text": "TENDRIL",
+          "definitions": [
+            "A hairlike tentacle ",
+            "A thin coiling part of a plant"
+          ]
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "COZY LAYERS",
+      "title": "COZY LAYERS",
+      "colors": {
+        "text": "#B9C08C",
+        "bg": "#476935",
+        "border": "#8B9D69"
+      },
       "words": [
-        "SHAWL",
-        "HOOD",
-        "CLOAK",
-        "BALACLAVA"
+        {
+          "text": "SHAWL",
+          "definitions": [
+            "A loose garment for covering the head and/or shoulders"
+          ]
+        },
+        {
+          "text": "HOOD",
+          "definitions": [
+            "A car's engine covering",
+            "A loose head covering",
+            "An urban neighborhood"
+          ]
+        },
+        {
+          "text": "CLOAK",
+          "definitions": [
+            "A warm, loose outer garment",
+            "To camouflage or conceal"
+          ]
+        },
+        {
+          "text": "BALACLAVA",
+          "definitions": [
+            "a village in Crimea",
+            "a warm, fitted head and neck covering"
+          ]
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "MUSHROOM PARTS",
+      "title": "MUSHROOM PARTS",
+      "colors": {
+        "text": "#C9BBA3",
+        "bg": "#574937",
+        "border": "#9B8D78"
+      },
       "words": [
-        "CAP",
-        "GILL",
-        "HYPHAE",
-        "SPORE"
+        {
+          "text": "CAP",
+          "definitions": [
+            "A dab of gunpowder in a sealed packet for a toy gun",
+            "A head covering",
+            "The umbrella-like top of a mushroom"
+          ]
+        },
+        {
+          "text": "GILL",
+          "definitions": [
+            "Part of  fish's breathing system",
+            "The spore containing underside of a mushroom cap",
+            "A liquid measure of our fluid ounces"
+          ]
+        },
+        {
+          "text": "HYPHAE",
+          "definitions": [
+            "Threadlike structures that make up the mycelium of fungi"
+          ]
+        },
+        {
+          "text": "SPORE",
+          "definitions": [
+            "Small reproductive bodies of plants and fungi"
+          ]
+        }
       ]
     }
-  ],
-  "glossary": {
-    "BALACLAVA": [
-      "a village in Crimea",
-      "a warm, fitted head and neck covering"
-    ],
-    "CAP": [
-      "A dab of gunpowder in a sealed packet for a toy gun",
-      "A head covering",
-      "The umbrella-like top of a mushroom"
-    ],
-    "CILIUM": [
-      "A tiny hairlike organelle",
-      "An eyelash"
-    ],
-    "CLOAK": [
-      "A warm, loose outer garment",
-      "To camouflage or conceal"
-    ],
-    "COBWEBBY": [
-      "Musty, worn out, like cobwebs in a corner",
-      "Light and thin, like cobwebs drifting in the breeze"
-    ],
-    "DIAPHANOUS": [
-      "Ethereal",
-      "Of a fine almost transparent texture"
-    ],
-    "FIBRIL": [
-      "A small fiber or filament",
-      "A fine thread of muscle tissue"
-    ],
-    "FILAMENT": [
-      "The stalk of a flower stamen",
-      "A single thread or threadlike structure"
-    ],
-    "GAUZY": [
-      "Light like haze",
-      "Fine and thin in texture",
-      "Vague or cloudy"
-    ],
-    "GILL": [
-      "Part of  fish's breathing system",
-      "The spore containing underside of a mushroom cap",
-      "A liquid measure of our fluid ounces"
-    ],
-    "GOSSAMER": [
-      "Light, airy, delicate",
-      "Thin enough to be translucent"
-    ],
-    "HOOD": [
-      "A car's engine covering",
-      "A loose head covering",
-      "An urban neighborhood"
-    ],
-    "HYPHAE": [
-      "Threadlike structures that make up the mycelium of fungi"
-    ],
-    "SHAWL": [
-      "A loose garment for covering the head and/or shoulders"
-    ],
-    "SPORE": [
-      "Small reproductive bodies of plants and fungi"
-    ],
-    "TENDRIL": [
-      "A hairlike tentacle ",
-      "A thin coiling part of a plant"
-    ]
-  }
+  ]
 }

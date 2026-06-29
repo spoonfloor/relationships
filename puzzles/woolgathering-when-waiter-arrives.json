@@ -3,71 +3,109 @@
   "title": "Woolgathering",
   "vignette": "Woolgathering when the waiter arrives, rambling about a funny thing that happened this morning, she likes it here — folks seem entirely themselves, unapologetically friendly or grumpy, and there’s a sense of the messy-beautiful way we’re all tangled together.",
   "url": "https://connections.swellgarfo.com/game/-Ofpyf8tcmoFV4FyJARg",
-  "palette": {
-    "a": {
-      "name": "Feather Honey",
-      "bg": "#F0EDE1",
-      "fg": "#D4C7AF",
-      "accent": "#DFD6C3"
-    },
-    "b": {
-      "name": "Silk Amber",
-      "bg": "#DBD3C4",
-      "fg": "#B8AA91",
-      "accent": "#C6BAA5"
-    },
-    "c": {
-      "name": "Dusty Amber",
-      "bg": "#C0A68C",
-      "fg": "#F0EDE1",
-      "accent": "#DDD1BF"
-    },
-    "d": {
-      "name": "Rich Coral",
-      "bg": "#81745C",
-      "fg": "#D4C7AF",
-      "accent": "#B3A68E"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "TO KNIT TOGETHER",
+      "title": "TO KNIT TOGETHER",
+      "colors": {
+        "text": "#D4C7AF",
+        "bg": "#F0EDE1",
+        "border": "#DFD6C3"
+      },
       "words": [
-        "CRISS-CROSS",
-        "INTERTWINE",
-        "LACE",
-        "WEAVE"
+        {
+          "text": "CRISS-CROSS",
+          "definitions": []
+        },
+        {
+          "text": "INTERTWINE",
+          "definitions": []
+        },
+        {
+          "text": "LACE",
+          "definitions": []
+        },
+        {
+          "text": "WEAVE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "TO COME TO KNOW",
+      "title": "TO COME TO KNOW",
+      "colors": {
+        "text": "#B8AA91",
+        "bg": "#DBD3C4",
+        "border": "#C6BAA5"
+      },
       "words": [
-        "COTTON",
-        "GLEAN",
-        "GRASP",
-        "UNDERSTAND"
+        {
+          "text": "COTTON",
+          "definitions": []
+        },
+        {
+          "text": "GLEAN",
+          "definitions": []
+        },
+        {
+          "text": "GRASP",
+          "definitions": []
+        },
+        {
+          "text": "UNDERSTAND",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "FOUR OUT OF FIVE SENSES AGREED",
+      "title": "FOUR OUT OF FIVE SENSES AGREED",
+      "colors": {
+        "text": "#F0EDE1",
+        "bg": "#C0A68C",
+        "border": "#DDD1BF"
+      },
       "words": [
-        "FELT",
-        "HEARD",
-        "SAW",
-        "TASTED ]"
+        {
+          "text": "FELT",
+          "definitions": []
+        },
+        {
+          "text": "HEARD",
+          "definitions": []
+        },
+        {
+          "text": "SAW",
+          "definitions": []
+        },
+        {
+          "text": "TASTED ]",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "THE THINGS WE TELL OURSELVES AND EACH OTHER",
+      "title": "THE THINGS WE TELL OURSELVES AND EACH OTHER",
+      "colors": {
+        "text": "#D4C7AF",
+        "bg": "#81745C",
+        "border": "#B3A68E"
+      },
       "words": [
-        "FABLE",
-        "STORY",
-        "TALE",
-        "YARN"
+        {
+          "text": "FABLE",
+          "definitions": []
+        },
+        {
+          "text": "STORY",
+          "definitions": []
+        },
+        {
+          "text": "TALE",
+          "definitions": []
+        },
+        {
+          "text": "YARN",
+          "definitions": []
+        }
       ]
     }
   ]

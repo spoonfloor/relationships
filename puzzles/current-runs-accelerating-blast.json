@@ -3,71 +3,109 @@
   "title": "A current runs between us",
   "vignette": "A current runs between us , accelerating as you blast past the fireworks stand and bust through the swirling dust cloud dancing over the road; we haven’t slept since we started this trip, determined to guzzle every last drop of it.",
   "url": "https://connections.swellgarfo.com/game/-Ogw_3AFilxjXQVaqq9Q",
-  "palette": {
-    "a": {
-      "name": "Powder Raspberry",
-      "bg": "#FF8C75",
-      "fg": "#85200C",
-      "accent": "#B64B36"
-    },
-    "b": {
-      "name": "Deep Raspberry",
-      "bg": "#CC0000",
-      "fg": "#F5D992",
-      "accent": "#E58258"
-    },
-    "c": {
-      "name": "Dappled Amber",
-      "bg": "#D5AE85",
-      "fg": "#FFFADE",
-      "accent": "#EEDCBA"
-    },
-    "d": {
-      "name": "Pale Cinnamon",
-      "bg": "#FFECBC",
-      "fg": "#AEC0C2",
-      "accent": "#CED2C0"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "THE SHEER VELOCITY OF IT WAS SHOCKING",
+      "title": "THE SHEER VELOCITY OF IT WAS SHOCKING",
+      "colors": {
+        "text": "#85200C",
+        "bg": "#FF8C75",
+        "border": "#B64B36"
+      },
       "words": [
-        "BREAKNECK",
-        "FLEET-FOOTED",
-        "WHIRLWIND",
-        "WHISTLE-STOP"
+        {
+          "text": "BREAKNECK",
+          "definitions": []
+        },
+        {
+          "text": "FLEET-FOOTED",
+          "definitions": []
+        },
+        {
+          "text": "WHIRLWIND",
+          "definitions": []
+        },
+        {
+          "text": "WHISTLE-STOP",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "LIKE THE FOURTH OF JULY",
+      "title": "LIKE THE FOURTH OF JULY",
+      "colors": {
+        "text": "#F5D992",
+        "bg": "#CC0000",
+        "border": "#E58258"
+      },
       "words": [
-        "BOTTLE ROCKET",
-        "CHERRY BOMB",
-        "ROMAN CANDLE",
-        "SPARKLER"
+        {
+          "text": "BOTTLE ROCKET",
+          "definitions": []
+        },
+        {
+          "text": "CHERRY BOMB",
+          "definitions": []
+        },
+        {
+          "text": "ROMAN CANDLE",
+          "definitions": []
+        },
+        {
+          "text": "SPARKLER",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "LIKE A SWIRLING WIND",
+      "title": "LIKE A SWIRLING WIND",
+      "colors": {
+        "text": "#FFFADE",
+        "bg": "#D5AE85",
+        "border": "#EEDCBA"
+      },
       "words": [
-        "DUST DEVIL",
-        "WILLY-WILLY",
-        "TWISTER",
-        "VORTEX"
+        {
+          "text": "DUST DEVIL",
+          "definitions": []
+        },
+        {
+          "text": "WILLY-WILLY",
+          "definitions": []
+        },
+        {
+          "text": "TWISTER",
+          "definitions": []
+        },
+        {
+          "text": "VORTEX",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "AURAL PLEASURES",
+      "title": "AURAL PLEASURES",
+      "colors": {
+        "text": "#AEC0C2",
+        "bg": "#FFECBC",
+        "border": "#CED2C0"
+      },
       "words": [
-        "CHANT",
-        "RHYME",
-        "SONG",
-        "STORY"
+        {
+          "text": "CHANT",
+          "definitions": []
+        },
+        {
+          "text": "RHYME",
+          "definitions": []
+        },
+        {
+          "text": "SONG",
+          "definitions": []
+        },
+        {
+          "text": "STORY",
+          "definitions": []
+        }
       ]
     }
   ]

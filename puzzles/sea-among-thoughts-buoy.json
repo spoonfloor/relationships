@@ -3,71 +3,109 @@
   "title": "At sea among my thoughts",
   "vignette": "At sea among my thoughts , the buoy bell’s clang calling me back to your side - the vivid light of the day, the shrimping boats bobbing, the gulls gliding past the lines slapping in the breeze, your spoon sinking a sugarcube just below the brim.",
   "url": "https://connections.swellgarfo.com/game/-Of-qtQG1wBq3yOV1KLt",
-  "palette": {
-    "a": {
-      "name": "Powder Cinnamon",
-      "bg": "#D1B598",
-      "fg": "#FFFFFF",
-      "accent": "#EDE1D6"
-    },
-    "b": {
-      "name": "Powder Honey",
-      "bg": "#DFD49C",
-      "fg": "#FFFADE",
-      "accent": "#F2EBC4"
-    },
-    "c": {
-      "name": "Powder Amber",
-      "bg": "#FDCFA1",
-      "fg": "#B98149",
-      "accent": "#D4A06C"
-    },
-    "d": {
-      "name": "Silk Mist",
-      "bg": "#C6CFC2",
-      "fg": "#E4EEE0",
-      "accent": "#D8E2D4"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "_____ SUGAR",
+      "title": "_____ SUGAR",
+      "colors": {
+        "text": "#FFFFFF",
+        "bg": "#D1B598",
+        "border": "#EDE1D6"
+      },
       "words": [
-        "BROWN",
-        "ICING",
-        "ROCK",
-        "SPUN"
+        {
+          "text": "BROWN",
+          "definitions": []
+        },
+        {
+          "text": "ICING",
+          "definitions": []
+        },
+        {
+          "text": "ROCK",
+          "definitions": []
+        },
+        {
+          "text": "SPUN",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "WHERE IS MY MIND?",
+      "title": "WHERE IS MY MIND?",
+      "colors": {
+        "text": "#FFFADE",
+        "bg": "#DFD49C",
+        "border": "#F2EBC4"
+      },
       "words": [
-        "DAZE",
-        "HAZE",
-        "REVERIE",
-        "TRANCE"
+        {
+          "text": "DAZE",
+          "definitions": []
+        },
+        {
+          "text": "HAZE",
+          "definitions": []
+        },
+        {
+          "text": "REVERIE",
+          "definitions": []
+        },
+        {
+          "text": "TRANCE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "COFFEE PLEASE",
+      "title": "COFFEE PLEASE",
+      "colors": {
+        "text": "#B98149",
+        "bg": "#FDCFA1",
+        "border": "#D4A06C"
+      },
       "words": [
-        "FLAT WHITE",
-        "IRISH",
-        "TURKISH",
-        "VIETNAMESE"
+        {
+          "text": "FLAT WHITE",
+          "definitions": []
+        },
+        {
+          "text": "IRISH",
+          "definitions": []
+        },
+        {
+          "text": "TURKISH",
+          "definitions": []
+        },
+        {
+          "text": "VIETNAMESE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "SEASIDE PAINT SWATCHES",
+      "title": "SEASIDE PAINT SWATCHES",
+      "colors": {
+        "text": "#E4EEE0",
+        "bg": "#C6CFC2",
+        "border": "#D8E2D4"
+      },
       "words": [
-        "FOG",
-        "PEARL",
-        "SAND",
-        "SEAFOAM"
+        {
+          "text": "FOG",
+          "definitions": []
+        },
+        {
+          "text": "PEARL",
+          "definitions": []
+        },
+        {
+          "text": "SAND",
+          "definitions": []
+        },
+        {
+          "text": "SEAFOAM",
+          "definitions": []
+        }
       ]
     }
   ]

@@ -3,71 +3,109 @@
   "title": "One of you is playing the piano",
   "vignette": "One of you is playing the piano downstairs, and like the birds I can name by song, I know it’s my brown-eyed boy as I roll out of bed, humming along, blinking groggily against the mid-morning light, and wishing last night’s fire was still burning.",
   "url": "https://connections.swellgarfo.com/game/-OgSSDC27PGvmWL9_fIt",
-  "palette": {
-    "a": {
-      "name": "Soft Parchment",
-      "bg": "#BEBAB3",
-      "fg": "#666666",
-      "accent": "#898885"
-    },
-    "b": {
-      "name": "Icy Raspberry",
-      "bg": "#EECCCC",
-      "fg": "#DB8F8F",
-      "accent": "#E3A7A7"
-    },
-    "c": {
-      "name": "Warm Seaglass",
-      "bg": "#7BAAAF",
-      "fg": "#C9E2D7",
-      "accent": "#AACCC7"
-    },
-    "d": {
-      "name": "Midnight Slate",
-      "bg": "#000000",
-      "fg": "#FAF8EF",
-      "accent": "#96958F"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "THE REMAINS OF A FIRE",
+      "title": "THE REMAINS OF A FIRE",
+      "colors": {
+        "text": "#666666",
+        "bg": "#BEBAB3",
+        "border": "#898885"
+      },
       "words": [
-        "CHAR",
-        "CINDER",
-        "EMBER",
-        "SOOT"
+        {
+          "text": "CHAR",
+          "definitions": []
+        },
+        {
+          "text": "CINDER",
+          "definitions": []
+        },
+        {
+          "text": "EMBER",
+          "definitions": []
+        },
+        {
+          "text": "SOOT",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "WAKE UP, SLEEPYHEAD",
+      "title": "WAKE UP, SLEEPYHEAD",
+      "colors": {
+        "text": "#DB8F8F",
+        "bg": "#EECCCC",
+        "border": "#E3A7A7"
+      },
       "words": [
-        "AWOKE",
-        "BESTIRRED",
-        "GOT UP",
-        "ROSE"
+        {
+          "text": "AWOKE",
+          "definitions": []
+        },
+        {
+          "text": "BESTIRRED",
+          "definitions": []
+        },
+        {
+          "text": "GOT UP",
+          "definitions": []
+        },
+        {
+          "text": "ROSE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "UNCOMMON EYE COLORS",
+      "title": "UNCOMMON EYE COLORS",
+      "colors": {
+        "text": "#C9E2D7",
+        "bg": "#7BAAAF",
+        "border": "#AACCC7"
+      },
       "words": [
-        "AMBER",
-        "ASH",
-        "HAZEL",
-        "TEAL"
+        {
+          "text": "AMBER",
+          "definitions": []
+        },
+        {
+          "text": "ASH",
+          "definitions": []
+        },
+        {
+          "text": "HAZEL",
+          "definitions": []
+        },
+        {
+          "text": "TEAL",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "MUSIC TO MY EARS  ]",
+      "title": "MUSIC TO MY EARS  ]",
+      "colors": {
+        "text": "#FAF8EF",
+        "bg": "#000000",
+        "border": "#96958F"
+      },
       "words": [
-        "EBONY",
-        "IVORY",
-        "KEYS",
-        "NOTES"
+        {
+          "text": "EBONY",
+          "definitions": []
+        },
+        {
+          "text": "IVORY",
+          "definitions": []
+        },
+        {
+          "text": "KEYS",
+          "definitions": []
+        },
+        {
+          "text": "NOTES",
+          "definitions": []
+        }
       ]
     }
   ]

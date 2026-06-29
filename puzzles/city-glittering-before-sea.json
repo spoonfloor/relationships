@@ -3,71 +3,109 @@
   "title": "The city glittering before us,",
   "vignette": "The city glittering before us, the sea glittering behind, under our shoes, the hilltop turning to dust, in the dark you didn’t see the slow, hot tear creeping down my cheek, but I could feel your hand holding tight, telling me again how we’re gonna make it.",
   "url": "https://connections.swellgarfo.com/game/-OgNFwSfEQ0sDXwcdnqo",
-  "palette": {
-    "a": {
-      "name": "Powder Lagoon",
-      "bg": "#B5D7E4",
-      "fg": "#EBF7FA",
-      "accent": "#D5EAF1"
-    },
-    "b": {
-      "name": "Dark Azure",
-      "bg": "#12518A",
-      "fg": "#FAEDB8",
-      "accent": "#9DAFA6"
-    },
-    "c": {
-      "name": "Deep Olive",
-      "bg": "#546847",
-      "fg": "#CDD1AF",
-      "accent": "#9DA785"
-    },
-    "d": {
-      "name": "Midnight Coral",
-      "bg": "#6D4E2D",
-      "fg": "#DDDACC",
-      "accent": "#B0A28C"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "TO SEE BUT NOT TO SEE [",
+      "title": "TO SEE BUT NOT TO SEE [",
+      "colors": {
+        "text": "#EBF7FA",
+        "bg": "#B5D7E4",
+        "border": "#D5EAF1"
+      },
       "words": [
-        "FAIL TO NOTICE",
-        "MISS",
-        "OVERLOOK",
-        "PASS OVER"
+        {
+          "text": "FAIL TO NOTICE",
+          "definitions": []
+        },
+        {
+          "text": "MISS",
+          "definitions": []
+        },
+        {
+          "text": "OVERLOOK",
+          "definitions": []
+        },
+        {
+          "text": "PASS OVER",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "A SWEEPING VIEW  ]",
+      "title": "A SWEEPING VIEW  ]",
+      "colors": {
+        "text": "#FAEDB8",
+        "bg": "#12518A",
+        "border": "#9DAFA6"
+      },
       "words": [
-        "LOOKOUT POINT",
-        "SCENIC VIEW",
-        "VANTAGE POINT",
-        "VISTA"
+        {
+          "text": "LOOKOUT POINT",
+          "definitions": []
+        },
+        {
+          "text": "SCENIC VIEW",
+          "definitions": []
+        },
+        {
+          "text": "VANTAGE POINT",
+          "definitions": []
+        },
+        {
+          "text": "VISTA",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "THE WAY THINGS GO",
+      "title": "THE WAY THINGS GO",
+      "colors": {
+        "text": "#CDD1AF",
+        "bg": "#546847",
+        "border": "#9DA785"
+      },
       "words": [
-        "CRUMBLE",
-        "DISINTEGRATE",
-        "DISSOLVE",
-        "ERODE"
+        {
+          "text": "CRUMBLE",
+          "definitions": []
+        },
+        {
+          "text": "DISINTEGRATE",
+          "definitions": []
+        },
+        {
+          "text": "DISSOLVE",
+          "definitions": []
+        },
+        {
+          "text": "ERODE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "THE WAY WE’RE STILL HERE",
+      "title": "THE WAY WE’RE STILL HERE",
+      "colors": {
+        "text": "#DDDACC",
+        "bg": "#6D4E2D",
+        "border": "#B0A28C"
+      },
       "words": [
-        "BRAVE",
-        "PERSEVERE",
-        "PULL THROUGH",
-        "WEATHER"
+        {
+          "text": "BRAVE",
+          "definitions": []
+        },
+        {
+          "text": "PERSEVERE",
+          "definitions": []
+        },
+        {
+          "text": "PULL THROUGH",
+          "definitions": []
+        },
+        {
+          "text": "WEATHER",
+          "definitions": []
+        }
       ]
     }
   ]

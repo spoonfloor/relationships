@@ -3,10 +3,10 @@
  */
 
 import { shuffle } from "./utils.js";
+import { groupWordTexts, findGroupIndex } from "./puzzleSchema.js";
 
 function pickPuzzleWords(puzzle) {
-  const words = puzzle.groups.flatMap(g => g.words);
-  return shuffle(words);
+  return shuffle(puzzle.groups.flatMap(groupWordTexts));
 }
 
 export function initGameState(state) {
@@ -18,13 +18,13 @@ export function initGameState(state) {
   state.wordToGroupMap.clear();
 
   for (const group of state.activePuzzle.groups) {
-    for (const word of group.words) {
+    for (const word of groupWordTexts(group)) {
       state.wordToGroupMap.set(word, group);
     }
   }
 
   state.boardWords = pickPuzzleWords(state.activePuzzle)
-    .map(word => ({ word, lockedPalette: null }));
+    .map((word) => ({ word, lockedGroupIndex: null }));
 }
 
 export function toggleSelect(state, word) {
@@ -46,17 +46,17 @@ export function clearSelection(state) {
 
 function getGroupBySelection(puzzle, wordsArr) {
   const sel = new Set(wordsArr);
-  return puzzle.groups.find(g => g.words.every(w => sel.has(w)));
+  return puzzle.groups.find((g) => groupWordTexts(g).every((w) => sel.has(w)));
 }
 
 function isGroupFound(state, group) {
-  const found = state.foundGroups.find(g => g.category === group.category);
+  const found = state.foundGroups.find((g) => g.title === group.title);
   return found && found.words.length > 0;
 }
 
-function lockWords(state, wordsArr, color) {
+function lockWords(state, wordsArr, groupIndex) {
   for (const item of state.boardWords) {
-    if (wordsArr.includes(item.word)) item.lockedPalette = color;
+    if (wordsArr.includes(item.word)) item.lockedGroupIndex = groupIndex;
   }
 }
 
@@ -66,21 +66,22 @@ export function submitSelection(state, wittyResponses) {
   }
 
   const words = Array.from(state.selected);
-  const canonicalWordStrings = [...words].sort(); // For consistent duplicate checking
-  const shuffledWords = shuffle(words); // For consistent random display
+  const canonicalWordStrings = [...words].sort();
+  const shuffledWords = shuffle(words);
 
   const guess = {
-    canonicalWords: canonicalWordStrings, // Store for comparison
-    words: shuffledWords.map(word => { // Store for rendering
+    canonicalWords: canonicalWordStrings,
+    words: shuffledWords.map((word) => {
       const group = state.wordToGroupMap.get(word);
-      return { word, palette: group.palette };
+      return { word, colors: group.colors };
     }),
     isCorrect: false,
   };
 
-  const isRepeated = state.guesses.some(g =>
-    g.canonicalWords.length === guess.canonicalWords.length &&
-    g.canonicalWords.every((w, i) => w === guess.canonicalWords[i])
+  const isRepeated = state.guesses.some(
+    (g) =>
+      g.canonicalWords.length === guess.canonicalWords.length &&
+      g.canonicalWords.every((w, i) => w === guess.canonicalWords[i])
   );
 
   let group = getGroupBySelection(state.activePuzzle, words);
@@ -91,17 +92,14 @@ export function submitSelection(state, wittyResponses) {
   if (isRepeated && !guess.isCorrect) {
     const randomIndex = Math.floor(Math.random() * wittyResponses.length);
     return { ok: false, message: wittyResponses[randomIndex] };
-  } else {
-    state.guesses.push(guess);
   }
+  state.guesses.push(guess);
 
   if (!group) {
     return { ok: false, message: "Nope — those 4 don't form a group in this puzzle." };
   }
 
-  console.log("submitSelection: state.foundGroups BEFORE:", state.foundGroups);
-
-  const existing = state.foundGroups.find(g => g.category === group.category);
+  const existing = state.foundGroups.find((g) => g.title === group.title);
   if (existing) {
     existing.words = group.words;
     group = existing;
@@ -109,14 +107,12 @@ export function submitSelection(state, wittyResponses) {
     state.foundGroups.push(group);
   }
 
-  console.log("submitSelection: state.foundGroups AFTER:", state.foundGroups);
-
-  lockWords(state, group.words, group.palette);
+  const groupIndex = findGroupIndex(state.activePuzzle, group);
+  lockWords(state, groupWordTexts(group), groupIndex);
   state.selected.clear();
 
-  const solvedGroupsCount = state.foundGroups.filter(g => g.words.length > 0).length;
+  const solvedGroupsCount = state.foundGroups.filter((g) => g.words.length > 0).length;
   const solved = solvedGroupsCount === 4;
-  console.log("submitSelection: solvedGroupsCount:", solvedGroupsCount, "solved:", solved);
   return {
     ok: true,
     group,
@@ -125,17 +121,18 @@ export function submitSelection(state, wittyResponses) {
 }
 
 export function shuffleUnlocked(state) {
-  const locked = state.boardWords.filter(b => b.lockedPalette);
-  const unlocked = shuffle(state.boardWords.filter(b => !b.lockedPalette));
+  const locked = state.boardWords.filter((b) => b.lockedGroupIndex != null);
+  const unlocked = shuffle(state.boardWords.filter((b) => b.lockedGroupIndex == null));
   state.boardWords = shuffle([...unlocked, ...locked]);
 }
 
 export function hintRevealCategory(state) {
   const remaining = state.activePuzzle.groups
     .map((g, idx) => ({ g, idx }))
-    .filter(({ g, idx }) =>
-      !state.foundGroups.some(f => f.category === g.category) &&
-      !state.revealedCategories.has(idx)
+    .filter(
+      ({ g, idx }) =>
+        !state.foundGroups.some((f) => f.title === g.title) &&
+        !state.revealedCategories.has(idx)
     );
 
   if (remaining.length === 0) return { ok: false, message: "No categories left to reveal." };
@@ -145,20 +142,19 @@ export function hintRevealCategory(state) {
 
   const revealedGroup = { ...pick.g, words: [] };
   state.foundGroups.push(revealedGroup);
-  console.log("hintRevealCategory: state.foundGroups AFTER:", state.foundGroups);
-  return { ok: true, group: revealedGroup, message: `Hint: Revealed a group.` };
+  return { ok: true, group: revealedGroup, message: "Hint: Revealed a group." };
 }
 
 export function hintRevealWord(state) {
   if (state.selected.size >= 4) state.selected.clear();
 
-  const remainingGroups = state.activePuzzle.groups.filter(g => !isGroupFound(state, g));
+  const remainingGroups = state.activePuzzle.groups.filter((g) => !isGroupFound(state, g));
   if (remainingGroups.length === 0) return { ok: false, message: "No words left to reveal." };
 
   const g = remainingGroups[Math.floor(Math.random() * remainingGroups.length)];
-  const unlockedWords = g.words.filter(w => {
-    const item = state.boardWords.find(b => b.word === w);
-    return item && !item.lockedPalette;
+  const unlockedWords = groupWordTexts(g).filter((w) => {
+    const item = state.boardWords.find((b) => b.word === w);
+    return item && item.lockedGroupIndex == null;
   });
   if (unlockedWords.length === 0) {
     return { ok: false, message: "No revealable words in remaining groups." };
@@ -168,4 +164,3 @@ export function hintRevealWord(state) {
   state.revealedWords.add(w);
   return { ok: true, message: `Hint: revealed “${w}”.` };
 }
-

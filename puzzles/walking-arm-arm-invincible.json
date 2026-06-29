@@ -3,71 +3,109 @@
   "title": "Walking arm in arm",
   "vignette": "Walking arm in arm , invincible in our merry quest, we sing ‘til our throats are sore and our dogs are barking.",
   "url": "https://connections.swellgarfo.com/game/-OfZlXz9FNGjKfb0aaz1",
-  "palette": {
-    "a": {
-      "name": "Deep Lagoon",
-      "bg": "#649B90",
-      "fg": "#C9E2D7",
-      "accent": "#A1C6BB"
-    },
-    "b": {
-      "name": "Feather Twilight",
-      "bg": "#C5D3EB",
-      "fg": "#8496B4",
-      "accent": "#9EAECA"
-    },
-    "c": {
-      "name": "Light Crimson",
-      "bg": "#ECB5A6",
-      "fg": "#FFEBE9",
-      "accent": "#F7D5CE"
-    },
-    "d": {
-      "name": "Deep Wine",
-      "bg": "#943966",
-      "fg": "#F4CCCC",
-      "accent": "#CE91A3"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "THEY GO TOGETHER (LIKE SHOO-WOP-SHA-WHADA-WHADDA)",
+      "title": "THEY GO TOGETHER (LIKE SHOO-WOP-SHA-WHADA-WHADDA)",
+      "colors": {
+        "text": "#C9E2D7",
+        "bg": "#649B90",
+        "border": "#A1C6BB"
+      },
       "words": [
-        "MEDLEY",
-        "MELANGE",
-        "MINGLING",
-        "MIXTURE"
+        {
+          "text": "MEDLEY",
+          "definitions": []
+        },
+        {
+          "text": "MELANGE",
+          "definitions": []
+        },
+        {
+          "text": "MINGLING",
+          "definitions": []
+        },
+        {
+          "text": "MIXTURE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "SOMETHING ABOUT A LITTLE SONG",
+      "title": "SOMETHING ABOUT A LITTLE SONG",
+      "colors": {
+        "text": "#8496B4",
+        "bg": "#C5D3EB",
+        "border": "#9EAECA"
+      },
       "words": [
-        "DITTY",
-        "JINGLE",
-        "NUMBER",
-        "TUNE"
+        {
+          "text": "DITTY",
+          "definitions": []
+        },
+        {
+          "text": "JINGLE",
+          "definitions": []
+        },
+        {
+          "text": "NUMBER",
+          "definitions": []
+        },
+        {
+          "text": "TUNE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "COME _____",
+      "title": "COME _____",
+      "colors": {
+        "text": "#FFEBE9",
+        "bg": "#ECB5A6",
+        "border": "#F7D5CE"
+      },
       "words": [
-        "ALIVE",
-        "AS YOU ARE",
-        "ROUND",
-        "TRUE"
+        {
+          "text": "ALIVE",
+          "definitions": []
+        },
+        {
+          "text": "AS YOU ARE",
+          "definitions": []
+        },
+        {
+          "text": "ROUND",
+          "definitions": []
+        },
+        {
+          "text": "TRUE",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "HER NAME WAS LIKE MUSIC",
+      "title": "HER NAME WAS LIKE MUSIC",
+      "colors": {
+        "text": "#F4CCCC",
+        "bg": "#943966",
+        "border": "#CE91A3"
+      },
       "words": [
-        "CAROL",
-        "HARMONY",
-        "LYRA",
-        "MELODY"
+        {
+          "text": "CAROL",
+          "definitions": []
+        },
+        {
+          "text": "HARMONY",
+          "definitions": []
+        },
+        {
+          "text": "LYRA",
+          "definitions": []
+        },
+        {
+          "text": "MELODY",
+          "definitions": []
+        }
       ]
     }
   ]

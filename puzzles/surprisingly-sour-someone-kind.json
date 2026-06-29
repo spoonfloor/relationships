@@ -3,71 +3,109 @@
   "title": "Surprisingly sour for someone so kind",
   "vignette": "Surprisingly sour for someone so kind , you've got me dodging the clever barbs and darts you don't seem to know you're throwing, poking back at you to make you laugh, to draw you out, when above the crack and muffled thump-thumps from the next table, poignantly, I hear you say, \"I'll break\".",
   "url": "https://connections.swellgarfo.com/game/-OgCySlzvFfK7waj5a--",
-  "palette": {
-    "a": {
-      "name": "Warm Amber",
-      "bg": "#FCB744",
-      "fg": "#FFFADE",
-      "accent": "#FEDFA0"
-    },
-    "b": {
-      "name": "Dusty Crimson",
-      "bg": "#DD7E6B",
-      "fg": "#FDD8C5",
-      "accent": "#F0B4A1"
-    },
-    "c": {
-      "name": "Stormy Moss",
-      "bg": "#80A04C",
-      "fg": "#3D6622",
-      "accent": "#587D33"
-    },
-    "d": {
-      "name": "Ink Coral",
-      "bg": "#633709",
-      "fg": "#EBE3BE",
-      "accent": "#B59E76"
-    }
-  },
   "groups": [
     {
-      "palette": "a",
-      "category": "REALLY ON THE BALL",
+      "title": "REALLY ON THE BALL",
+      "colors": {
+        "text": "#FFFADE",
+        "bg": "#FCB744",
+        "border": "#FEDFA0"
+      },
       "words": [
-        "ASTUTE",
-        "BRIGHT",
-        "QUICK",
-        "SHARP"
+        {
+          "text": "ASTUTE",
+          "definitions": []
+        },
+        {
+          "text": "BRIGHT",
+          "definitions": []
+        },
+        {
+          "text": "QUICK",
+          "definitions": []
+        },
+        {
+          "text": "SHARP",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "b",
-      "category": "THAT'S GONNA HURT A LITTLE",
+      "title": "THAT'S GONNA HURT A LITTLE",
+      "colors": {
+        "text": "#FDD8C5",
+        "bg": "#DD7E6B",
+        "border": "#F0B4A1"
+      },
       "words": [
-        "CHAFE",
-        "PINCH",
-        "SMART",
-        "STING"
+        {
+          "text": "CHAFE",
+          "definitions": []
+        },
+        {
+          "text": "PINCH",
+          "definitions": []
+        },
+        {
+          "text": "SMART",
+          "definitions": []
+        },
+        {
+          "text": "STING",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "c",
-      "category": "AT THE POOL HALL",
+      "title": "AT THE POOL HALL",
+      "colors": {
+        "text": "#3D6622",
+        "bg": "#80A04C",
+        "border": "#587D33"
+      },
       "words": [
-        "CHALK",
-        "CUE",
-        "POCKETS",
-        "RACK"
+        {
+          "text": "CHALK",
+          "definitions": []
+        },
+        {
+          "text": "CUE",
+          "definitions": []
+        },
+        {
+          "text": "POCKETS",
+          "definitions": []
+        },
+        {
+          "text": "RACK",
+          "definitions": []
+        }
       ]
     },
     {
-      "palette": "d",
-      "category": "LIKE A GOOD BEER",
+      "title": "LIKE A GOOD BEER",
+      "colors": {
+        "text": "#EBE3BE",
+        "bg": "#633709",
+        "border": "#B59E76"
+      },
       "words": [
-        "BITTER",
-        "HOPPY",
-        "MALTY",
-        "TART"
+        {
+          "text": "BITTER",
+          "definitions": []
+        },
+        {
+          "text": "HOPPY",
+          "definitions": []
+        },
+        {
+          "text": "MALTY",
+          "definitions": []
+        },
+        {
+          "text": "TART",
+          "definitions": []
+        }
       ]
     }
   ]

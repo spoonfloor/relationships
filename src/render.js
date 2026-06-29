@@ -2,23 +2,22 @@
  * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
  */
 
-function wordButton({ word, selected, lockedPalette, paletteEntry, revealed, onClick, onMouseOver, onMouseOut }) {
+function wordButton({ word, selected, colors, revealed, onClick, onMouseOver, onMouseOut }) {
   const btn = document.createElement("button");
   btn.className = "word";
   btn.type = "button";
   btn.textContent = word;
 
   if (selected) btn.classList.add("selected");
-  if (revealed) {
-    if (paletteEntry?.bg) btn.style.background = paletteEntry.bg;
-    if (paletteEntry?.fg) btn.style.color = paletteEntry.fg;
+  if (colors && (revealed || colors.locked)) {
+    if (colors.bg) btn.style.background = colors.bg;
+    if (colors.text) btn.style.color = colors.text;
+    if (colors.border) btn.style.borderColor = colors.border;
   }
 
-  if (lockedPalette) {
-    btn.classList.add("locked", `lock-${lockedPalette}`);
+  if (colors?.locked) {
+    btn.classList.add("locked");
     btn.disabled = true;
-    if (paletteEntry?.bg) btn.style.background = paletteEntry.bg;
-    if (paletteEntry?.fg) btn.style.color = paletteEntry.fg;
   } else {
     btn.addEventListener("click", onClick);
     if (onMouseOver) btn.addEventListener("mouseover", (event) => onMouseOver(word, event));
@@ -32,15 +31,17 @@ export function renderBoard({ boardEl }, state, handlers) {
   boardEl.innerHTML = "";
   for (const item of state.boardWords) {
     const isRevealed = state.revealedWords.has(item.word);
-    const paletteKey = item.lockedPalette || (isRevealed ? state.wordToGroupMap.get(item.word)?.palette : null);
-    const pal = paletteKey ? state.activePuzzle?.palette?.[paletteKey] : null;
+    const group = state.wordToGroupMap.get(item.word);
+    const isLocked = item.lockedGroupIndex != null;
+    const colors = group?.colors
+      ? { ...group.colors, locked: isLocked }
+      : null;
 
     boardEl.appendChild(
       wordButton({
         word: item.word,
         selected: state.selected.has(item.word),
-        lockedPalette: item.lockedPalette,
-        paletteEntry: pal,
+        colors: isLocked || isRevealed ? colors : null,
         revealed: isRevealed,
         onClick: () => handlers.onToggleSelect(item.word),
         onMouseOver: state.glossaryEnabled ? handlers.onMouseOverWord : null,
@@ -54,9 +55,12 @@ export function renderStatus({ statusEl }, text) {
   statusEl.textContent = text;
 }
 
-export function appendFoundGroupCard({ foundEl }, group, displayName) {
+export function appendFoundGroupCard({ foundEl }, group, displayName, colors) {
   const card = document.createElement("div");
   card.className = "groupCard";
+
+  if (colors?.bg) card.style.background = colors.bg;
+  if (colors?.text) card.style.color = colors.text;
 
   const title = document.createElement("div");
   title.className = "groupTitle";
@@ -64,10 +68,11 @@ export function appendFoundGroupCard({ foundEl }, group, displayName) {
 
   const words = document.createElement("div");
   words.className = "groupWords";
-  if (group.words.length > 0) {
-    words.textContent = group.words.join(" · ");
+  const wordTexts = group.words.map((w) => (typeof w === "string" ? w : w.text));
+  if (wordTexts.length > 0) {
+    words.textContent = wordTexts.join(" · ");
   } else {
-    words.innerHTML = "&nbsp;"; // Keep height
+    words.innerHTML = "&nbsp;";
   }
 
   card.appendChild(title);
@@ -79,22 +84,21 @@ export function clearFoundGroups({ foundEl }) {
   foundEl.innerHTML = "";
 }
 
-export function renderGuesses({ guessesEl }, guesses, palette) {
+export function renderGuesses({ guessesEl }, guesses) {
   guessesEl.innerHTML = "";
   for (const guess of guesses) {
     const row = document.createElement("div");
     row.className = "guess-row";
-    for (const word of guess.words) {
+    for (const { colors } of guess.words) {
       const box = document.createElement("div");
       box.className = "guess-box";
-      const palEntry = palette[word.palette];
-      if (palEntry?.bg) {
-        box.style.backgroundColor = palEntry.bg;
+      if (colors?.bg) {
+        box.style.backgroundColor = colors.bg;
       }
-      if (palEntry?.fg) {
-        const foregroundBox = document.createElement('div');
-        foregroundBox.className = 'foreground-box';
-        foregroundBox.style.backgroundColor = palEntry.fg;
+      if (colors?.text) {
+        const foregroundBox = document.createElement("div");
+        foregroundBox.className = "foreground-box";
+        foregroundBox.style.backgroundColor = colors.text;
         box.appendChild(foregroundBox);
       }
       row.appendChild(box);
