@@ -11,6 +11,7 @@
   --content-padding-top: 24px;
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
+  --cta-stack-reserved: 148px;
 
   /* Typography */
   --font-family: 'Atkinson Hyperlegible', sans-serif;
@@ -97,10 +98,12 @@ textarea {
   flex-direction: column;
   min-height: 100dvh;
   margin: 0 auto;
-  padding: max(var(--content-padding-top), env(safe-area-inset-top))
-    max(var(--content-padding-x), env(safe-area-inset-right))
-    max(var(--content-padding-bottom), env(safe-area-inset-bottom))
-    max(var(--content-padding-x), env(safe-area-inset-left));
+  padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
+  padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
+  padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
+  padding-bottom: calc(
+    var(--cta-stack-reserved) + max(var(--content-padding-bottom), env(safe-area-inset-bottom))
+  );
 }
 
 .vignette {
@@ -114,10 +117,14 @@ textarea {
 }
 
 .cta-stack {
+  position: fixed;
+  z-index: 10;
+  left: max(var(--content-padding-x), env(safe-area-inset-left));
+  right: max(var(--content-padding-x), env(safe-area-inset-right));
+  bottom: max(var(--content-padding-bottom), env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: auto;
   padding-top: 32px;
 }
 
@@ -485,6 +492,16 @@ textarea {
     margin-right: auto;
     min-height: 100dvh;
     background: #fff;
+  }
+
+  .cta-stack {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(calc(100dvh * var(--frame-w) / var(--frame-h)), 100%);
+    padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
+    padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
+    box-sizing: border-box;
   }
 
   .modal {
