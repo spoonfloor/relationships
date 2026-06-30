@@ -1,8 +1,3 @@
-function isStandalone() {
-  if (window.navigator.standalone === true) return true;
-  return window.matchMedia("(display-mode: standalone)").matches;
-}
-
 function getAppViewportHeight() {
   const viewport = window.visualViewport;
   const candidates = [
@@ -10,10 +5,6 @@ function getAppViewportHeight() {
     document.documentElement.clientHeight,
     viewport?.height ?? 0,
   ];
-
-  if (isStandalone() && window.innerHeight >= window.innerWidth) {
-    candidates.push(window.screen?.height ?? 0);
-  }
 
   return Math.max(...candidates.filter((height) => height > 0));
 }
