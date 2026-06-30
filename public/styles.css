@@ -1,7 +1,4 @@
 :root {
-  --frame-w: 390;
-  --frame-h: 844;
-
   /* Page + surfaces */
   --bg: #121212;
   --panel: #1e1e1e;
@@ -84,7 +81,7 @@ body {
 
 body {
   font-family: inherit;
-  background: var(--bg);
+  background: #fff;
   color: var(--text-color);
   touch-action: manipulation;
 }
@@ -99,6 +96,7 @@ textarea {
 .app-shell {
   position: relative;
   width: 100%;
+  max-width: 100%;
   min-height: var(--app-height);
   margin: 0 auto;
   background: #fff;
@@ -475,40 +473,4 @@ textarea {
 
 .tooltip li:last-child {
   margin-bottom: 0;
-}
-
-@media (max-aspect-ratio: 530/980) {
-  body {
-    background: #fff;
-  }
-
-  .app-shell {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-@media (min-aspect-ratio: 530/980) {
-  body {
-    background: #111;
-  }
-
-  .app-shell {
-    width: calc(var(--app-height) * var(--frame-w) / var(--frame-h));
-    max-width: 100%;
-  }
-
-  #fixed-footer.bottom-sheet {
-    left: 50%;
-    right: auto;
-    width: min(calc(var(--app-height) * var(--frame-w) / var(--frame-h)), 100%);
-    transform: translateX(-50%);
-    box-sizing: border-box;
-  }
-
-  .modal {
-    width: min(calc(var(--app-height) * var(--frame-w) / var(--frame-h)), 100%);
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
