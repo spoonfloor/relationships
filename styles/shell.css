@@ -1,6 +1,7 @@
 /**
- * App shell — flex column: scrollable main + footer pinned by layout (not position:fixed).
- * Do not add page content styles here. See content.css.
+ * App shell — scrollable main + fixed bottom footer.
+ * Layout modes (set on <html data-footer-layout>): "mdn" (default) | "flex"
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/VisualViewport
  */
 
 :root {
@@ -8,6 +9,7 @@
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
   --app-height: 100dvh;
+  --bottom-sheet-reserved: 148px;
   --bottom-sheet-top-padding: 28px;
 }
 
@@ -18,9 +20,8 @@
 html,
 body {
   margin: 0;
-  height: 100%;
-  height: var(--app-height);
-  overflow: hidden;
+  min-height: 100%;
+  min-height: var(--app-height);
 }
 
 body {
@@ -28,34 +29,31 @@ body {
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 #app-shell.app-shell {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   width: 100%;
   max-width: 100%;
-  height: 100%;
-  height: var(--app-height);
+  min-height: var(--app-height);
   margin: 0 auto;
-  overflow: hidden;
   background: #fff;
 }
 
 #scroll-content.app {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
-  padding-bottom: var(--content-padding-bottom);
+  padding-bottom: var(--bottom-sheet-reserved, 148px);
 }
 
 #fixed-footer.bottom-sheet {
-  flex: 0 0 auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
   background: #fff;
   padding-top: var(--bottom-sheet-top-padding);
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
@@ -75,4 +73,37 @@ body {
 
 body.footer-only-debug #scroll-content {
   display: none;
+}
+
+/* A/B: inner-scroll flex shell — use ?layout=flex */
+html[data-footer-layout="flex"],
+html[data-footer-layout="flex"] body {
+  height: 100%;
+  height: var(--app-height);
+  min-height: 0;
+  overflow: hidden;
+}
+
+html[data-footer-layout="flex"] #app-shell.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  height: var(--app-height);
+  min-height: 0;
+  overflow: hidden;
+}
+
+html[data-footer-layout="flex"] #scroll-content.app {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--content-padding-bottom);
+}
+
+html[data-footer-layout="flex"] #fixed-footer.bottom-sheet {
+  position: static;
+  flex: 0 0 auto;
+  transform: none;
 }

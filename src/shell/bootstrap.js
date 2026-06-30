@@ -1,6 +1,10 @@
 import { mountSlots } from "./mountSlots.js";
 import { watchFixedFooter } from "./sheetLayout.js";
 
+const layoutParam = new URLSearchParams(window.location.search).get("layout");
+document.documentElement.dataset.footerLayout =
+  layoutParam === "flex" ? "flex" : "mdn";
+
 async function bootstrapShell() {
   document.body.classList.add("footer-only-debug");
 
