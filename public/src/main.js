@@ -28,8 +28,10 @@ import {
   formatStaticUi,
   setDisplayText,
 } from "./display.js";
+import { initLayoutDebug } from "./layoutDebug.js";
 
 async function bootstrap() {
+  const layoutDebug = initLayoutDebug();
   const dom = getDom();
   formatStaticUi();
   const urlParams = new URLSearchParams(window.location.search);
@@ -107,6 +109,7 @@ async function bootstrap() {
 
   const state = createInitialState(puzzle);
   initializePage(state, wittyResponses, idToEntry, puzzleCache);
+  layoutDebug?.refresh("post-render");
 }
 
 function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
