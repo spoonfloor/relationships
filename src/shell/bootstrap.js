@@ -1,5 +1,5 @@
 import { mountSlots } from "./mountSlots.js";
-import { watchFixedFooter, syncFooterReserve } from "./sheetLayout.js";
+import { watchFixedFooter } from "./sheetLayout.js";
 
 async function bootstrapShell() {
   await mountSlots([
@@ -11,7 +11,6 @@ async function bootstrapShell() {
 
   const { bootstrap } = await import("../main.js");
   await bootstrap();
-  syncFooterReserve();
 }
 
 bootstrapShell().catch((err) => {
