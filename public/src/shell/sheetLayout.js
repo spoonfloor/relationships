@@ -17,7 +17,7 @@ export function syncAppShellHeight() {
 }
 
 /** Reserve in-flow space so scroll content clears the fixed footer. */
-export function syncBottomSheetReserve() {
+export function syncFooterReserve() {
   const footer = document.getElementById("fixed-footer");
   if (!footer) return;
   document.documentElement.style.setProperty(
@@ -26,10 +26,10 @@ export function syncBottomSheetReserve() {
   );
 }
 
-export function watchBottomSheet() {
+export function watchFixedFooter() {
   const update = () => {
     syncAppShellHeight();
-    syncBottomSheetReserve();
+    syncFooterReserve();
   };
 
   update();
