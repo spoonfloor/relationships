@@ -102,6 +102,13 @@ textarea {
   background: #fff;
 }
 
+/* iOS: keep document slightly scrollable so fixed footer pins on first paint. */
+.app-shell::after {
+  content: "";
+  display: block;
+  height: 1px;
+}
+
 #scroll-content.app {
   padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
