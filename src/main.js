@@ -29,9 +29,11 @@ import {
   setDisplayText,
 } from "./display.js";
 import { initLayoutDebug } from "./layoutDebug.js";
+import { syncCtaReserve, watchCtaReserve } from "./ctaLayout.js";
 
 async function bootstrap() {
   const layoutDebug = initLayoutDebug();
+  watchCtaReserve();
   const dom = getDom();
   formatStaticUi();
   const urlParams = new URLSearchParams(window.location.search);
@@ -109,6 +111,7 @@ async function bootstrap() {
 
   const state = createInitialState(puzzle);
   initializePage(state, wittyResponses, idToEntry, puzzleCache);
+  syncCtaReserve();
   layoutDebug?.refresh("post-render");
 }
 

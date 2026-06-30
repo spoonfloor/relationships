@@ -36,6 +36,7 @@ function measure(eventLabel) {
   }
 
   const appStyle = getComputedStyle(app);
+  const ctaStyle = getComputedStyle(cta);
   const appRect = app.getBoundingClientRect();
   const boardRect = board.getBoundingClientRect();
   const ctaRect = cta.getBoundingClientRect();
@@ -43,10 +44,11 @@ function measure(eventLabel) {
   const vvHeight = vv?.height ?? window.innerHeight;
   const vvOffsetTop = vv?.offsetTop ?? 0;
   const safe = readSafeAreaInsets();
-  const appPaddingBottom = parseFloat(appStyle.paddingBottom) || 0;
-  const expectedCtaBottom = appRect.bottom - appPaddingBottom;
+  const vvBottom = vvOffsetTop + vvHeight;
+  const ctaBottomOffset = parseFloat(ctaStyle.bottom) || 0;
+  const targetCtaBottom = vvBottom - ctaBottomOffset;
   const gap = Math.round(ctaRect.top - boardRect.bottom);
-  const pinDelta = Math.round(ctaRect.bottom - expectedCtaBottom);
+  const pinDelta = Math.round(ctaRect.bottom - targetCtaBottom);
 
   return {
     event: eventLabel,
@@ -64,7 +66,7 @@ function measure(eventLabel) {
     ctaTop: Math.round(ctaRect.top),
     gap,
     ctaBottom: Math.round(ctaRect.bottom),
-    expectedCtaBottom: Math.round(expectedCtaBottom),
+    targetCtaBottom: Math.round(targetCtaBottom),
     pinDelta,
     pinOk: Math.abs(pinDelta) <= 8,
   };
@@ -88,7 +90,7 @@ function formatMetrics(m) {
     `cta top: ${m.ctaTop}`,
     `gap: ${m.gap}`,
     `cta bottom: ${m.ctaBottom}`,
-    `expected cta bottom: ${m.expectedCtaBottom}`,
+    `target cta bottom: ${m.targetCtaBottom}`,
     `pin delta: ${m.pinDelta}`,
     `pin ok: ${pin}`,
   ].join("\n");
