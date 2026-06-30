@@ -28,8 +28,10 @@ import {
   formatStaticUi,
   setDisplayText,
 } from "./display.js";
+import { watchBottomSheet, syncBottomSheetReserve } from "./ctaLayout.js";
 
-export async function bootstrap() {
+async function bootstrap() {
+  watchBottomSheet();
   const dom = getDom();
   formatStaticUi();
   const urlParams = new URLSearchParams(window.location.search);
@@ -107,6 +109,7 @@ export async function bootstrap() {
 
   const state = createInitialState(puzzle);
   initializePage(state, wittyResponses, idToEntry, puzzleCache);
+  syncBottomSheetReserve();
 }
 
 function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
@@ -335,3 +338,9 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
 
   startPuzzle(state.activePuzzle);
 }
+
+bootstrap().catch((err) => {
+  const dom = getDom();
+  console.error(err);
+  setDisplayText(dom.statusEl, `Startup error: ${err.message}`);
+});

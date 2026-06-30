@@ -1,28 +1,10 @@
 import { setDisplayText } from "./display.js";
 
-function getScrollRoot() {
-  const root = document.getElementById("scroll-content");
-  if (!root || getComputedStyle(root).display === "none") {
-    return null;
-  }
-  return root;
-}
-
 function lockScroll() {
-  const root = getScrollRoot();
-  if (root) {
-    root.style.overflow = "hidden";
-    return;
-  }
   document.body.style.overflow = "hidden";
 }
 
 function unlockScroll() {
-  const root = getScrollRoot();
-  if (root) {
-    root.style.overflow = "";
-    return;
-  }
   document.body.style.overflow = "";
 }
 
