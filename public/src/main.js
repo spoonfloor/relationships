@@ -24,17 +24,23 @@ import { findWordEntry } from "./puzzleSchema.js";
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
 import { alert as showAlert, closeActiveModal, openModal } from "./modal.js";
+import {
+  formatStaticUi,
+  setDisplayText,
+} from "./display.js";
 
 async function bootstrap() {
   const dom = getDom();
+  formatStaticUi();
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
   const uploaderContainer = document.getElementById("uploader-container");
 
-  const [index, wittyResponses] = await Promise.all([
+  const [index, wittyResponsesRaw] = await Promise.all([
     loadPuzzleIndex("./puzzles/index.json"),
     fetch("./witty_responses.json").then((res) => res.json()),
   ]);
+  const wittyResponses = wittyResponsesRaw.repeated_incorrect_guess;
 
   const puzzleCache = new Map();
   await Promise.all(
@@ -48,7 +54,7 @@ async function bootstrap() {
   for (const p of index.puzzles) {
     const opt = document.createElement("option");
     opt.value = p.id;
-    opt.textContent = puzzleCache.get(p.id)?.title ?? p.id;
+    setDisplayText(opt, puzzleCache.get(p.id)?.title ?? p.id);
     dom.puzzleSelect.appendChild(opt);
   }
   const idToEntry = new Map(index.puzzles.map((p) => [p.id, p]));
@@ -65,7 +71,7 @@ async function bootstrap() {
 
       const option = document.createElement("option");
       option.value = uploadedId;
-      option.textContent = `Uploaded: ${puzzle.title ?? puzzle.id}`;
+      setDisplayText(option, `Uploaded: ${puzzle.title ?? puzzle.id}`);
       dom.puzzleSelect.appendChild(option);
 
       idToEntry.set(uploadedId, puzzle);
@@ -100,7 +106,7 @@ async function bootstrap() {
   }
 
   const state = createInitialState(puzzle);
-  initializePage(state, wittyResponses.repeated_incorrect_guess, idToEntry, puzzleCache);
+  initializePage(state, wittyResponses, idToEntry, puzzleCache);
 }
 
 function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
@@ -110,13 +116,23 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
 
   dom.glossaryBtn.addEventListener("click", () => {
     state.glossaryEnabled = !state.glossaryEnabled;
-    dom.glossaryBtn.textContent = state.glossaryEnabled ? "Glossary: ON" : "Glossary: OFF";
+    setDisplayText(dom.glossaryBtn, state.glossaryEnabled ? "Glossary: ON" : "Glossary: OFF");
     renderBoard(dom, state, handlers);
     hideTooltip();
   });
 
   function showTooltip(word, definitions, event) {
-    dom.glossaryTooltip.innerHTML = `<p>${word}</p><ul>${definitions.map((def) => `<li>${def}</li>`).join("")}</ul>`;
+    dom.glossaryTooltip.replaceChildren();
+    const p = document.createElement("p");
+    setDisplayText(p, word);
+    dom.glossaryTooltip.appendChild(p);
+    const ul = document.createElement("ul");
+    for (const def of definitions) {
+      const li = document.createElement("li");
+      setDisplayText(li, def);
+      ul.appendChild(li);
+    }
+    dom.glossaryTooltip.appendChild(ul);
     dom.glossaryTooltip.style.left = `${event.clientX + 10}px`;
     dom.glossaryTooltip.style.top = `${event.clientY + 10}px`;
     dom.glossaryTooltip.style.display = "block";
@@ -136,7 +152,7 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
       const foundGroup = state.foundGroups.find(
         (g) => g.title === group.title && g.words.length > 0
       );
-      btn.textContent = foundGroup ? group.title : "?";
+      setDisplayText(btn, foundGroup ? group.title : "?");
       if (group.colors?.bg) btn.style.background = group.colors.bg;
       if (group.colors?.text) btn.style.color = group.colors.text;
       dom.paletteChipsEl.appendChild(btn);
@@ -172,8 +188,8 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
   function startPuzzle(puzzle) {
     state.activePuzzle = puzzle;
     state.glossaryEnabled = false;
-    dom.glossaryBtn.textContent = "Glossary: OFF";
-    dom.vignetteEl.textContent = puzzle.vignette ?? "";
+    setDisplayText(dom.glossaryBtn, "Glossary: OFF");
+    setDisplayText(dom.vignetteEl, puzzle.vignette ?? "");
     initGameState(state);
     clearFoundGroups(dom);
     dom.guessesEl.innerHTML = "";
@@ -208,7 +224,7 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
   let optionHeld = false;
 
   function updateSubmitLabel() {
-    dom.submitBtn.textContent = optionHeld ? "Solve" : "Submit";
+    setDisplayText(dom.submitBtn, optionHeld ? "Solve" : "Submit");
   }
 
   window.addEventListener("keydown", (event) => {
@@ -263,7 +279,7 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
       title: "Congratulations!",
       content: (bodyEl) => {
         const summary = document.createElement("p");
-        summary.textContent = `You solved the puzzle in ${guesses.length} guesses.`;
+        setDisplayText(summary, `You solved the puzzle in ${guesses.length} guesses.`);
         bodyEl.appendChild(summary);
 
         const guessesEl = document.createElement("div");
@@ -323,5 +339,5 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
 bootstrap().catch((err) => {
   const dom = getDom();
   console.error(err);
-  dom.statusEl.textContent = `Startup error: ${err.message}`;
+  setDisplayText(dom.statusEl, `Startup error: ${err.message}`);
 });

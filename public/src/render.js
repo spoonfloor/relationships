@@ -1,8 +1,10 @@
+import { setDisplayText } from "./display.js";
+
 function wordButton({ word, selected, colors, revealed, onClick, onMouseOver, onMouseOut }) {
   const btn = document.createElement("button");
   btn.className = "word";
   btn.type = "button";
-  btn.textContent = word;
+  setDisplayText(btn, word);
 
   if (selected) btn.classList.add("selected");
   if (colors && (revealed || colors.locked)) {
@@ -48,7 +50,7 @@ export function renderBoard({ boardEl }, state, handlers) {
 }
 
 export function renderStatus({ statusEl }, text) {
-  statusEl.textContent = text;
+  setDisplayText(statusEl, text);
 }
 
 export function appendFoundGroupCard({ foundEl }, group, displayName, colors) {
@@ -60,13 +62,13 @@ export function appendFoundGroupCard({ foundEl }, group, displayName, colors) {
 
   const title = document.createElement("div");
   title.className = "groupTitle";
-  title.textContent = displayName;
+  setDisplayText(title, displayName);
 
   const words = document.createElement("div");
   words.className = "groupWords";
   const wordTexts = group.words.map((w) => (typeof w === "string" ? w : w.text));
   if (wordTexts.length > 0) {
-    words.textContent = wordTexts.join(" · ");
+    setDisplayText(words, wordTexts.join(" · "));
   } else {
     words.innerHTML = "&nbsp;";
   }
