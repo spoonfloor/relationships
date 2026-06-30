@@ -8,8 +8,8 @@
   --panel-2: #252525;
 
   /* Main content padding */
-  --content-padding-top: 48px;
-  --content-padding-bottom: 48px;
+  --content-padding-top: 24px;
+  --content-padding-bottom: 24px;
   --content-padding-x: 32px;
 
   /* Typography */
@@ -104,7 +104,7 @@ textarea {
 
 .vignette {
   font-size: var(--vignette-font-size);
-  margin: 0 0 32px;
+  margin: 0 0 24px;
   max-width: none;
   color: var(--text-color);
   text-align: left;
@@ -460,6 +460,7 @@ textarea {
   html,
   body {
     overflow-y: auto;
+    background: #fff;
   }
 
   .app {
