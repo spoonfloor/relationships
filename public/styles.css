@@ -12,6 +12,7 @@
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
   --app-height: 100vh;
+  --app-height: 100dvh;
   --bottom-sheet-reserved: 148px;
   --bottom-sheet-top-padding: 28px;
 
@@ -103,10 +104,7 @@ textarea {
   background: #fff;
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: var(--app-height);
+#scroll-content.app {
   padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
@@ -123,7 +121,7 @@ textarea {
   letter-spacing: var(--vignette-letter-spacing);
 }
 
-.bottom-sheet {
+#fixed-footer.bottom-sheet {
   position: fixed;
   left: 0;
   right: 0;
@@ -132,7 +130,7 @@ textarea {
   background: #fff;
   padding-top: var(--bottom-sheet-top-padding);
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
-  padding-bottom: var(--content-padding-bottom);
+  padding-bottom: max(var(--content-padding-bottom), env(safe-area-inset-bottom));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
 }
 
@@ -500,7 +498,7 @@ textarea {
     max-width: 100%;
   }
 
-  .bottom-sheet {
+  #fixed-footer.bottom-sheet {
     left: 50%;
     right: auto;
     width: min(calc(var(--app-height) * var(--frame-w) / var(--frame-h)), 100%);
