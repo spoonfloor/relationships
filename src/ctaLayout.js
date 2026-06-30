@@ -1,12 +1,30 @@
-function getAppViewportHeight() {
-  const viewport = window.visualViewport;
-  const candidates = [
-    window.innerHeight,
-    document.documentElement.clientHeight,
-    viewport?.height ?? 0,
-  ];
+function isStandalone() {
+  if (window.navigator.standalone === true) return true;
+  return window.matchMedia("(display-mode: standalone)").matches;
+}
 
-  return Math.max(...candidates.filter((height) => height > 0));
+/** Full-bleed height in iOS standalone (100dvh/innerHeight lie on cold start). */
+function measureLargeViewportHeight() {
+  const probe = document.createElement("div");
+  probe.style.cssText =
+    "position:fixed;visibility:hidden;pointer-events:none;height:100vh;height:100lvh;";
+  document.documentElement.appendChild(probe);
+  const height = probe.offsetHeight;
+  probe.remove();
+  return height;
+}
+
+function getAppViewportHeight() {
+  if (isStandalone()) {
+    return measureLargeViewportHeight();
+  }
+
+  const viewport = window.visualViewport;
+  if (viewport?.height > 0) {
+    return viewport.height;
+  }
+
+  return window.innerHeight;
 }
 
 export function syncAppShellHeight() {
@@ -35,7 +53,11 @@ export function watchBottomSheet() {
   update();
   requestAnimationFrame(update);
   window.addEventListener("resize", update);
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", update);
+  document.fonts?.ready.then(update);
+
+  const viewport = window.visualViewport;
+  if (viewport) {
+    viewport.addEventListener("resize", update);
+    viewport.addEventListener("scroll", update);
   }
 }
