@@ -71,17 +71,14 @@
 }
 html {
   font-family: var(--font-family);
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
 }
 
 html,
 body {
   margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
+  min-height: var(--app-height);
+  overflow-x: hidden;
 }
 
 body {
@@ -99,23 +96,17 @@ textarea {
 }
 
 .app-shell {
-  position: fixed;
-  top: 0;
-  left: 50%;
+  position: relative;
   width: 100%;
-  height: var(--app-height);
-  overflow: hidden;
+  min-height: var(--app-height);
+  margin: 0 auto;
   background: #fff;
-  transform: translateX(-50%);
 }
 
 .app {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  min-height: var(--app-height);
   padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
@@ -133,7 +124,7 @@ textarea {
 }
 
 .bottom-sheet {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
@@ -507,6 +498,14 @@ textarea {
   .app-shell {
     width: calc(var(--app-height) * var(--frame-w) / var(--frame-h));
     max-width: 100%;
+  }
+
+  .bottom-sheet {
+    left: 50%;
+    right: auto;
+    width: min(calc(var(--app-height) * var(--frame-w) / var(--frame-h)), 100%);
+    transform: translateX(-50%);
+    box-sizing: border-box;
   }
 
   .modal {
