@@ -15,5 +15,7 @@ export function findWordEntry(puzzle, text) {
 }
 
 export function findGroupIndex(puzzle, group) {
-  return puzzle.groups.indexOf(group);
+  const idx = puzzle.groups.indexOf(group);
+  if (idx !== -1) return idx;
+  return puzzle.groups.findIndex((g) => g.title === group.title);
 }

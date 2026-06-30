@@ -6,6 +6,14 @@ function unlockScroll() {
   document.body.style.overflow = "";
 }
 
+/** @type {(() => void) | null} */
+let activeModalClose = null;
+
+export function closeActiveModal() {
+  activeModalClose?.();
+  activeModalClose = null;
+}
+
 /**
  * @param {object} options
  * @param {string} options.title
@@ -75,6 +83,9 @@ export function openModal({ title, content, actions = [], onClose }) {
   document.body.appendChild(dialog);
 
   dialog.addEventListener("close", () => {
+    if (activeModalClose === closeModal) {
+      activeModalClose = null;
+    }
     dialog.remove();
     unlockScroll();
     onClose?.();
@@ -83,6 +94,7 @@ export function openModal({ title, content, actions = [], onClose }) {
     }
   });
 
+  activeModalClose = closeModal;
   lockScroll();
   dialog.showModal();
 

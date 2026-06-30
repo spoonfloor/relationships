@@ -40,6 +40,17 @@ export function clearSelection(state) {
   state.revealedWords.clear();
 }
 
+export function resetGameProgress(state) {
+  state.foundGroups = [];
+  state.revealedCategories.clear();
+  state.revealedWords.clear();
+  state.guesses = [];
+  state.selected.clear();
+  for (const item of state.boardWords) {
+    item.lockedGroupIndex = null;
+  }
+}
+
 function getGroupBySelection(puzzle, wordsArr) {
   const sel = new Set(wordsArr);
   return puzzle.groups.find((g) => groupWordTexts(g).every((w) => sel.has(w)));
@@ -98,7 +109,6 @@ export function submitSelection(state, wittyResponses) {
   const existing = state.foundGroups.find((g) => g.title === group.title);
   if (existing) {
     existing.words = group.words;
-    group = existing;
   } else {
     state.foundGroups.push(group);
   }

@@ -4,7 +4,7 @@ import { loadPuzzle, loadPuzzleIndex } from "./loadPuzzle.js";
 import {
   initGameState,
   toggleSelect,
-  clearSelection,
+  resetGameProgress,
   submitSelection,
   solvePuzzle,
   generateDebugGuessHistory,
@@ -23,7 +23,7 @@ import { findWordEntry } from "./puzzleSchema.js";
 
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
-import { alert as showAlert, openModal } from "./modal.js";
+import { alert as showAlert, closeActiveModal, openModal } from "./modal.js";
 
 async function bootstrap() {
   const dom = getDom();
@@ -133,7 +133,9 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
       const btn = document.createElement("button");
       btn.className = "chip";
       btn.type = "button";
-      const foundGroup = state.foundGroups.find((g) => g.title === group.title);
+      const foundGroup = state.foundGroups.find(
+        (g) => g.title === group.title && g.words.length > 0
+      );
       btn.textContent = foundGroup ? group.title : "?";
       if (group.colors?.bg) btn.style.background = group.colors.bg;
       if (group.colors?.text) btn.style.color = group.colors.text;
@@ -182,17 +184,26 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     updateSubmitLabel();
   }
 
+  function applyClear() {
+    closeActiveModal();
+    hideTooltip();
+    resetGameProgress(state);
+    clearFoundGroups(dom);
+    dom.guessesEl.innerHTML = "";
+    dom.mostRecentGuessEl.innerHTML = "";
+    renderPaletteChips();
+    renderBoard(dom, state, handlers);
+    renderGuesses(dom, state.guesses);
+    renderStatus(dom, "Pick 4 words.");
+  }
+
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
   dom.shuffleBtn.addEventListener("click", () => {
     shuffleUnlocked(state);
     renderBoard(dom, state, handlers);
     renderStatus(dom, "Shuffled.");
   });
-  dom.clearBtn.addEventListener("click", () => {
-    clearSelection(state);
-    renderBoard(dom, state, handlers);
-    renderStatus(dom, "Selection cleared.");
-  });
+  dom.clearBtn.addEventListener("click", applyClear);
 
   let optionHeld = false;
 
