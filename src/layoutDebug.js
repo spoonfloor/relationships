@@ -1,4 +1,4 @@
-/** Temporary layout probe — enable with ?layoutDebug=1 (persists via localStorage). */
+/** Temporary layout probe — always on until CTA pin bug is diagnosed. */
 
 function readSafeAreaInsets() {
   const probe = document.createElement("div");
@@ -94,40 +94,7 @@ function formatMetrics(m) {
   ].join("\n");
 }
 
-const STORAGE_KEY = "relationships.layoutDebug";
-
-function isDebugEnabled() {
-  const params = new URLSearchParams(window.location.search);
-  const param = params.get("layoutDebug");
-  if (param === "1") {
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      /* ignore */
-    }
-    return true;
-  }
-  if (param === "0") {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* ignore */
-    }
-    return false;
-  }
-  if (window.location.hash === "#layoutDebug" || window.location.hash === "#layoutDebug=1") {
-    return true;
-  }
-  try {
-    return localStorage.getItem(STORAGE_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
 export function initLayoutDebug() {
-  if (!isDebugEnabled()) return null;
-
   const overlay = document.createElement("pre");
   overlay.id = "layout-debug-overlay";
   overlay.setAttribute("aria-hidden", "true");
