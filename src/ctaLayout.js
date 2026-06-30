@@ -16,14 +16,13 @@ export function syncAppShellHeight() {
   );
 }
 
-/** Reserve in-flow space so main content clears the bottom sheet. */
+/** Reserve in-flow space so scroll content clears the fixed footer. */
 export function syncBottomSheetReserve() {
-  const sheet = document.querySelector(".bottom-sheet");
-  if (!sheet) return;
-  sheet.style.removeProperty("bottom");
+  const footer = document.getElementById("fixed-footer");
+  if (!footer) return;
   document.documentElement.style.setProperty(
     "--bottom-sheet-reserved",
-    `${sheet.offsetHeight}px`
+    `${footer.offsetHeight}px`
   );
 }
 
