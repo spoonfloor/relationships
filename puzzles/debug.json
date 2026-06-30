@@ -1,7 +1,7 @@
 {
   "id": "debug",
   "title": "Debug puzzle",
-  "vignette": "Dust where a hand once rested. Bread gone hard in the bowl. A bell that has forgotten its own echo, frozen in the shape of what’s now lost.",
+  "vignette": "Dust where a hand once rested. Bread gone stale in the bowl. A bell has forgotten its own echo, suspended in the shape of what’s now lost.",
   "groups": [
     {
       "title": "STARTS WITH A",
@@ -51,9 +51,7 @@
       "words": [
         {
           "text": "BALL",
-          "definitions": [
-            "A round object used in games and sports"
-          ]
+          "definitions": ["A round object used in games and sports"]
         },
         {
           "text": "BELL",
@@ -64,16 +62,11 @@
         },
         {
           "text": "BILL",
-          "definitions": [
-            "A statement of money owed",
-            "The beak of a bird"
-          ]
+          "definitions": ["A statement of money owed", "The beak of a bird"]
         },
         {
           "text": "BOWL",
-          "definitions": [
-            "A round, deep dish used for food or liquid"
-          ]
+          "definitions": ["A round, deep dish used for food or liquid"]
         }
       ]
     },
@@ -138,9 +131,7 @@
         },
         {
           "text": "DUSK",
-          "definitions": [
-            "The darker stage of twilight"
-          ]
+          "definitions": ["The darker stage of twilight"]
         },
         {
           "text": "DUST",
