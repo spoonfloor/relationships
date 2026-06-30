@@ -1,3 +1,5 @@
+import { setDisplayText } from "./display.js";
+
 function lockScroll() {
   document.body.style.overflow = "hidden";
 }
@@ -35,7 +37,7 @@ export function openModal({ title, content, actions = [], onClose }) {
   titleEl.className = "modal__title";
   const titleId = `modal-title-${Date.now()}`;
   titleEl.id = titleId;
-  titleEl.textContent = title;
+  setDisplayText(titleEl, title);
   dialog.setAttribute("aria-labelledby", titleId);
 
   const bodyEl = document.createElement("div");
@@ -47,7 +49,7 @@ export function openModal({ title, content, actions = [], onClose }) {
     bodyEl.appendChild(content);
   } else if (content != null) {
     const paragraph = document.createElement("p");
-    paragraph.textContent = String(content);
+    setDisplayText(paragraph, String(content));
     bodyEl.appendChild(paragraph);
   }
 
@@ -64,7 +66,7 @@ export function openModal({ title, content, actions = [], onClose }) {
     btn.type = "button";
     btn.className =
       action.variant === "primary" ? "btn btn-primary" : "btn btn-secondary";
-    btn.textContent = action.label;
+    setDisplayText(btn, action.label);
     btn.addEventListener("click", () => {
       action.onClick?.();
       if (action.close !== false) {

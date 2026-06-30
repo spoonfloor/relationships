@@ -17,7 +17,8 @@
   --text-color: #1a1a1a;
   --muted: #a0a0a0;
   --vignette-font-size: 32px;
-  --vignette-line-height: 1.2;
+  --vignette-line-height: 1.15;
+  --vignette-letter-spacing: -0.02em;
   --word-font-size: 0.9rem;
   --cta-font-size: 22px;
 
@@ -109,6 +110,7 @@ textarea {
   color: var(--text-color);
   text-align: left;
   line-height: var(--vignette-line-height);
+  letter-spacing: var(--vignette-letter-spacing);
 }
 
 .cta-stack {
