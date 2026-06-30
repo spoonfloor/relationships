@@ -28,7 +28,11 @@ import {
   formatStaticUi,
   setDisplayText,
 } from "./display.js";
-import { watchBottomSheet, syncBottomSheetReserve } from "./ctaLayout.js";
+import {
+  watchBottomSheet,
+  syncAppShellHeight,
+  syncBottomSheetReserve,
+} from "./ctaLayout.js";
 
 async function bootstrap() {
   watchBottomSheet();
@@ -109,6 +113,7 @@ async function bootstrap() {
 
   const state = createInitialState(puzzle);
   initializePage(state, wittyResponses, idToEntry, puzzleCache);
+  syncAppShellHeight();
   syncBottomSheetReserve();
 }
 

@@ -64,6 +64,13 @@
   --purple: #c59bff;
 }
 
+/* iOS standalone: 100dvh under-reports on cold start; 100vh is full bleed. */
+@media (display-mode: standalone) {
+  :root {
+    --app-height: 100vh;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -75,7 +82,8 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  min-height: var(--app-height);
+  /* +1px: document must exceed scrollport so iOS pins fixed footer on first paint. */
+  min-height: calc(var(--app-height) + 1px);
   overflow-x: hidden;
 }
 
@@ -100,13 +108,6 @@ textarea {
   min-height: var(--app-height);
   margin: 0 auto;
   background: #fff;
-}
-
-/* iOS: keep document slightly scrollable so fixed footer pins on first paint. */
-.app-shell::after {
-  content: '';
-  display: block;
-  height: 1000px;
 }
 
 #scroll-content.app {
