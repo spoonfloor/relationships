@@ -5,13 +5,21 @@
   --panel-2: #252525;
 
   /* Main content padding */
-  --content-padding-top: 24px;
+  --content-padding-top: 32px;
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
   --app-height: 100vh;
   --app-height: 100dvh;
   --bottom-sheet-reserved: 148px;
-  --bottom-sheet-top-padding: 28px;
+  --bottom-sheet-top-padding: 12px;
+  --toast-footer-gap: 12px;
+  --toast-bg: #444444;
+  --toast-color: #ffffff;
+  --toast-font-family: "Atkinson Hyperlegible Next", var(--font-family);
+  --toast-font-weight: 200;
+  --toast-close-gap-top: 8px;
+  --toast-close-gap-right: 8px;
+  --toast-close-size: 24px;
 
   /* Typography */
   --font-family: 'Atkinson Hyperlegible', sans-serif;
@@ -484,4 +492,73 @@ textarea {
 
 .tooltip li:last-child {
   margin-bottom: 0;
+}
+
+.toast-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.toast-scrim {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: default;
+  pointer-events: auto;
+}
+
+.toast {
+  position: absolute;
+  left: max(var(--content-padding-x), env(safe-area-inset-left));
+  right: max(var(--content-padding-x), env(safe-area-inset-right));
+  bottom: calc(var(--bottom-sheet-reserved) + var(--toast-footer-gap));
+  padding: 12px 16px;
+  padding-right: calc(
+    var(--toast-close-gap-right) + var(--toast-close-size) + var(--toast-close-gap-right)
+  );
+  background: var(--toast-bg);
+  color: var(--toast-color);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--toast-font-family);
+  font-size: var(--cta-font-size);
+  font-weight: var(--toast-font-weight);
+  line-height: 1.3;
+  pointer-events: auto;
+}
+
+.toast__message {
+  display: block;
+  font-family: inherit;
+  font-weight: inherit;
+}
+
+.toast__close {
+  position: absolute;
+  top: var(--toast-close-gap-top);
+  right: var(--toast-close-gap-right);
+  width: var(--toast-close-size);
+  height: var(--toast-close-size);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  display: grid;
+  place-items: center;
+  font-family: var(--toast-font-family);
+  font-size: 22px;
+  font-weight: var(--toast-font-weight);
+  line-height: 0;
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.toast__close:hover {
+  opacity: 1;
 }

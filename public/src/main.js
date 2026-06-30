@@ -24,6 +24,7 @@ import { findWordEntry } from "./puzzleSchema.js";
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
 import { alert as showAlert, closeActiveModal, openModal } from "./modal.js";
+import { showToast } from "./toast.js";
 import {
   formatStaticUi,
   setDisplayText,
@@ -262,6 +263,9 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
       renderGuesses(dom, state.guesses);
     }
     renderStatus(dom, res.message);
+    if (res.toastMessage) {
+      showToast(res.toastMessage);
+    }
   }
 
   function handleDebugSolve() {
