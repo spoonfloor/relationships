@@ -11,6 +11,7 @@
   --content-padding-top: 24px;
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
+  --app-height: 100vh;
   --bottom-sheet-reserved: 148px;
   --bottom-sheet-top-padding: 28px;
 
@@ -84,11 +85,6 @@ body {
 }
 
 body {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100lvh;
   font-family: inherit;
   background: var(--bg);
   color: var(--text-color);
@@ -102,13 +98,23 @@ textarea {
   font-family: inherit;
 }
 
+.app-shell {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  height: var(--app-height);
+  overflow: hidden;
+  background: #fff;
+  transform: translateX(-50%);
+}
+
 .app {
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin: 0 auto;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
@@ -487,7 +493,7 @@ textarea {
     background: #fff;
   }
 
-  .app {
+  .app-shell {
     width: 100%;
     max-width: 100%;
   }
@@ -498,25 +504,13 @@ textarea {
     background: #111;
   }
 
-  .app {
-    width: calc(100dvh * var(--frame-w) / var(--frame-h));
+  .app-shell {
+    width: calc(var(--app-height) * var(--frame-w) / var(--frame-h));
     max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    height: 100%;
-    background: #fff;
-  }
-
-  .bottom-sheet {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    width: min(calc(100dvh * var(--frame-w) / var(--frame-h)), 100%);
-    box-sizing: border-box;
   }
 
   .modal {
-    width: min(calc(100dvh * var(--frame-w) / var(--frame-h)), 100%);
+    width: min(calc(var(--app-height) * var(--frame-w) / var(--frame-h)), 100%);
     margin-left: auto;
     margin-right: auto;
   }
