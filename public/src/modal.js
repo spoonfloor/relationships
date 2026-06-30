@@ -1,7 +1,11 @@
 import { setDisplayText } from "./display.js";
 
 function getScrollRoot() {
-  return document.getElementById("scroll-content");
+  const root = document.getElementById("scroll-content");
+  if (!root || getComputedStyle(root).display === "none") {
+    return null;
+  }
+  return root;
 }
 
 function lockScroll() {
