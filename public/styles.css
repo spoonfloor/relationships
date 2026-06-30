@@ -120,6 +120,7 @@ textarea {
   left: 0;
   right: 0;
   bottom: 0;
+  bottom: min(0px, calc(100dvh - 100lvh));
   z-index: 10;
   background: #fff;
   padding-top: var(--bottom-sheet-top-padding);
