@@ -67,12 +67,38 @@ function lockWords(state, wordsArr, groupIndex) {
   }
 }
 
+function getGroupOverlapPattern(words, wordToGroupMap) {
+  const groupCounts = new Map();
+  for (const word of words) {
+    const group = wordToGroupMap.get(word);
+    const key = group?.title ?? word;
+    groupCounts.set(key, (groupCounts.get(key) ?? 0) + 1);
+  }
+  const sizes = [...groupCounts.values()].sort((a, b) => b - a);
+  return sizes.map((n, i) => String.fromCharCode(65 + i).repeat(n)).join("");
+}
+
+export function getProximityFeedback(words, wordToGroupMap) {
+  switch (getGroupOverlapPattern(words, wordToGroupMap)) {
+    case "AAAA":
+      return "Correct!";
+    case "AAAB":
+      return "One away…";
+    case "AABB":
+    case "AABC":
+      return "Halfway there.";
+    default:
+      return "Not quite.";
+  }
+}
+
 export function submitSelection(state, wittyResponses) {
   if (state.selected.size !== 4) {
-    return { ok: false, message: "Select exactly 4 words." };
+    return { ok: false, message: "Select exactly 4 words.", toastMessage: "Select exactly 4 words." };
   }
 
   const words = Array.from(state.selected);
+  const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
   const canonicalWordStrings = [...words].sort();
   const shuffledWords = shuffle(words);
 
@@ -98,12 +124,17 @@ export function submitSelection(state, wittyResponses) {
 
   if (isRepeated && !guess.isCorrect) {
     const randomIndex = Math.floor(Math.random() * wittyResponses.length);
-    return { ok: false, message: wittyResponses[randomIndex] };
+    const message = wittyResponses[randomIndex];
+    return { ok: false, message, toastMessage: message };
   }
   state.guesses.push(guess);
 
   if (!group) {
-    return { ok: false, message: "Nope — those 4 don't form a group in this puzzle." };
+    return {
+      ok: false,
+      message: "Nope — those 4 don't form a group in this puzzle.",
+      toastMessage: proximityMessage,
+    };
   }
 
   const existing = state.foundGroups.find((g) => g.title === group.title);
@@ -123,6 +154,7 @@ export function submitSelection(state, wittyResponses) {
     ok: true,
     group,
     message: solved ? "Solved! 🎉" : `Correct! ${4 - solvedGroupsCount} groups left.`,
+    toastMessage: proximityMessage,
   };
 }
 
