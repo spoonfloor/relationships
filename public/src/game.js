@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 import { shuffle } from "./utils.js";
 import { groupWordTexts, findGroupIndex } from "./puzzleSchema.js";
 
@@ -143,6 +139,51 @@ export function hintRevealCategory(state) {
   const revealedGroup = { ...pick.g, words: [] };
   state.foundGroups.push(revealedGroup);
   return { ok: true, group: revealedGroup, message: "Hint: Revealed a group." };
+}
+
+export function solvePuzzle(state) {
+  const remaining = state.activePuzzle.groups.filter((g) => !isGroupFound(state, g));
+
+  for (const group of remaining) {
+    const existing = state.foundGroups.find((g) => g.title === group.title);
+    if (existing) {
+      existing.words = group.words;
+    } else {
+      state.foundGroups.push(group);
+    }
+    const groupIndex = findGroupIndex(state.activePuzzle, group);
+    lockWords(state, groupWordTexts(group), groupIndex);
+  }
+
+  state.selected.clear();
+  state.revealedWords.clear();
+  return { ok: true, solved: true, debugSolve: true, message: "Solved! 🎉" };
+}
+
+export function generateDebugGuessHistory(puzzle) {
+  const groups = puzzle.groups;
+  const total = 4 + Math.floor(Math.random() * 9);
+  const guesses = [];
+
+  for (let i = 0; i < total - 4; i++) {
+    let indices;
+    do {
+      indices = Array.from({ length: 4 }, () => Math.floor(Math.random() * groups.length));
+    } while (indices.every((idx) => idx === indices[0]));
+    guesses.push({
+      words: indices.map((idx) => ({ word: "", colors: groups[idx].colors })),
+      isCorrect: false,
+    });
+  }
+
+  for (const group of shuffle([...groups])) {
+    guesses.push({
+      words: Array.from({ length: 4 }, () => ({ word: "", colors: group.colors })),
+      isCorrect: true,
+    });
+  }
+
+  return guesses;
 }
 
 export function hintRevealWord(state) {

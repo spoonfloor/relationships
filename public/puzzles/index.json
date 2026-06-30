@@ -1,6 +1,11 @@
 {
-  "defaultId": "picking-through-dewy-dawn",
+  "defaultId": "debug",
   "puzzles": [
+    {
+      "num": 0,
+      "id": "debug",
+      "file": "debug.json"
+    },
     {
       "num": 1,
       "id": "picking-through-dewy-dawn",

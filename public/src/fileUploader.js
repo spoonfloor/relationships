@@ -1,6 +1,4 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
+import { alert as showAlert } from "./modal.js";
 
 export function createPuzzleUploader(onPuzzleUploaded) {
   const fileInput = document.createElement('input');
@@ -18,7 +16,7 @@ export function createPuzzleUploader(onPuzzleUploaded) {
         onPuzzleUploaded(puzzle);
       } catch (err) {
         console.error('Error parsing puzzle file:', err);
-        alert(`Error parsing puzzle file: ${err.message}`);
+        showAlert({ title: "Error", message: `Error parsing puzzle file: ${err.message}` });
       }
     };
     reader.readAsText(file);

@@ -1,0 +1,155 @@
+{
+  "id": "debug",
+  "title": "Debug puzzle",
+  "vignette": "It begins with things too plain to notice. Dust on the desk, crust in the bowl, the bell gone silent in the hall, art on the wall above the arch. They outlive the ordinary moments you gave them, and that is their poignancy.",
+  "groups": [
+    {
+      "title": "STARTS WITH A",
+      "colors": {
+        "text": "#916026",
+        "bg": "#E9C478",
+        "border": "#B48847"
+      },
+      "words": [
+        {
+          "text": "ARCH",
+          "definitions": [
+            "A curved structure spanning an opening",
+            "Something shaped like a curve or bow"
+          ]
+        },
+        {
+          "text": "ARK",
+          "definitions": [
+            "A chest or box",
+            "A large boat, especially in biblical tradition"
+          ]
+        },
+        {
+          "text": "ARM",
+          "definitions": [
+            "Either of the two upper limbs of the human body",
+            "A projecting part of an object, such as a chair or record player"
+          ]
+        },
+        {
+          "text": "ART",
+          "definitions": [
+            "Works created for beauty or expression, such as paintings or sculpture",
+            "Skill acquired through practice"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "STARTS WITH B",
+      "colors": {
+        "text": "#FFFADE",
+        "bg": "#C9BBA3",
+        "border": "#E9E1C6"
+      },
+      "words": [
+        {
+          "text": "BALL",
+          "definitions": [
+            "A round object used in games and sports"
+          ]
+        },
+        {
+          "text": "BELL",
+          "definitions": [
+            "A hollow metal object that rings when struck",
+            "The part of a flower that holds the petals"
+          ]
+        },
+        {
+          "text": "BILL",
+          "definitions": [
+            "A statement of money owed",
+            "The beak of a bird"
+          ]
+        },
+        {
+          "text": "BOWL",
+          "definitions": [
+            "A round, deep dish used for food or liquid"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "STARTS WITH C",
+      "colors": {
+        "text": "#783F04",
+        "bg": "#B9C08C",
+        "border": "#92733A"
+      },
+      "words": [
+        {
+          "text": "CAST",
+          "definitions": [
+            "A rigid bandage or shell used to hold a broken bone in place",
+            "A moulded or shaped mass of material"
+          ]
+        },
+        {
+          "text": "CHEST",
+          "definitions": [
+            "A large strong box for storage",
+            "The front part of the body between the neck and abdomen"
+          ]
+        },
+        {
+          "text": "CREST",
+          "definitions": [
+            "The top of a hill or wave",
+            "An emblem or design on a coat of arms"
+          ]
+        },
+        {
+          "text": "CRUST",
+          "definitions": [
+            "The hard outer layer of bread",
+            "A hard outer coating or surface"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "STARTS WITH D",
+      "colors": {
+        "text": "#BDC7AE",
+        "bg": "#688364",
+        "border": "#9BAC90"
+      },
+      "words": [
+        {
+          "text": "DECK",
+          "definitions": [
+            "A flat surface extending from a house or ship",
+            "A set of playing cards"
+          ]
+        },
+        {
+          "text": "DESK",
+          "definitions": [
+            "A piece of furniture with a flat surface for writing or working"
+          ]
+        },
+        {
+          "text": "DUSK",
+          "definitions": [
+            "The darker stage of twilight"
+          ]
+        },
+        {
+          "text": "DUST",
+          "definitions": [
+            "Fine, dry particles of matter",
+            "The remains of something destroyed"
+          ]
+        }
+      ]
+    }
+  ]
+}
