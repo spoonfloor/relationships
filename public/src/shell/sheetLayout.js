@@ -1,12 +1,9 @@
 function getAppViewportHeight() {
   const viewport = window.visualViewport;
-  const candidates = [
-    window.innerHeight,
-    document.documentElement.clientHeight,
-    viewport?.height ?? 0,
-  ];
-
-  return Math.max(...candidates.filter((height) => height > 0));
+  if (viewport?.height > 0) {
+    return viewport.height;
+  }
+  return window.innerHeight || document.documentElement.clientHeight;
 }
 
 export function syncAppShellHeight() {
@@ -26,16 +23,25 @@ export function syncFooterReserve() {
   );
 }
 
-export function watchFixedFooter() {
-  const update = () => {
-    syncAppShellHeight();
-    syncFooterReserve();
-  };
+export function syncFixedFooterLayout() {
+  syncAppShellHeight();
+  syncFooterReserve();
+}
 
-  update();
-  requestAnimationFrame(update);
-  window.addEventListener("resize", update);
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", update);
+export function watchFixedFooter() {
+  syncFixedFooterLayout();
+  requestAnimationFrame(syncFixedFooterLayout);
+
+  window.addEventListener("resize", syncFixedFooterLayout);
+
+  const viewport = window.visualViewport;
+  if (viewport) {
+    viewport.addEventListener("resize", syncFixedFooterLayout);
+    viewport.addEventListener("scroll", syncFixedFooterLayout);
+  }
+
+  const footer = document.getElementById("fixed-footer");
+  if (footer && typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(syncFooterReserve).observe(footer);
   }
 }
