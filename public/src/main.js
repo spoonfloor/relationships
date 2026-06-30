@@ -28,12 +28,10 @@ import {
   formatStaticUi,
   setDisplayText,
 } from "./display.js";
-import { initLayoutDebug } from "./layoutDebug.js";
-import { syncCtaReserve, watchCtaReserve } from "./ctaLayout.js";
+import { watchBottomSheet, syncBottomSheetReserve } from "./ctaLayout.js";
 
 async function bootstrap() {
-  const layoutDebug = initLayoutDebug();
-  watchCtaReserve();
+  watchBottomSheet();
   const dom = getDom();
   formatStaticUi();
   const urlParams = new URLSearchParams(window.location.search);
@@ -111,8 +109,7 @@ async function bootstrap() {
 
   const state = createInitialState(puzzle);
   initializePage(state, wittyResponses, idToEntry, puzzleCache);
-  syncCtaReserve();
-  layoutDebug?.refresh("post-render");
+  syncBottomSheetReserve();
 }
 
 function initializePage(state, wittyResponses, idToEntry, puzzleCache) {

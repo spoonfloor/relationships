@@ -27,14 +27,6 @@
 
     <section class="board" aria-label="Word grid" id="board"></section>
 
-    <div class="cta-stack">
-      <button id="submitBtn" class="btn btn-primary btn-block" type="button">Submit</button>
-      <div class="cta-row">
-        <button id="shuffleBtn" class="btn btn-block-half" type="button">Shuffle</button>
-        <button id="clearBtn" class="btn btn-secondary btn-block-half" type="button">Clear</button>
-      </div>
-    </div>
-
     <div class="debug-ui">
       <div id="paletteChips" class="paletteChips"></div>
       <section class="controls">
@@ -72,6 +64,16 @@
       <div id="uploader-container"></div>
     </section>
   </main>
+
+  <footer class="bottom-sheet" aria-label="Game controls">
+    <div class="cta-stack">
+      <button id="submitBtn" class="btn btn-primary btn-block" type="button">Submit</button>
+      <div class="cta-row">
+        <button id="shuffleBtn" class="btn btn-block-half" type="button">Shuffle</button>
+        <button id="clearBtn" class="btn btn-secondary btn-block-half" type="button">Clear</button>
+      </div>
+    </div>
+  </footer>
 
   <script type="module" src="./src/main.js"></script>
 
