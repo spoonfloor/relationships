@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 import { getDom } from "./dom.js";
 import { createInitialState } from "./state.js";
 import { loadPuzzle, loadPuzzleIndex } from "./loadPuzzle.js";
@@ -10,6 +6,8 @@ import {
   toggleSelect,
   clearSelection,
   submitSelection,
+  solvePuzzle,
+  generateDebugGuessHistory,
   shuffleUnlocked,
   hintRevealCategory,
   hintRevealWord,
@@ -25,6 +23,7 @@ import { findWordEntry } from "./puzzleSchema.js";
 
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
+import { alert as showAlert, openModal } from "./modal.js";
 
 async function bootstrap() {
   const dom = getDom();
@@ -76,7 +75,7 @@ async function bootstrap() {
     } catch (e) {
       console.error(e);
       renderStatus(dom, `Puzzle validation error: ${e.message}`);
-      alert(`Puzzle validation error: ${e.message}`);
+      showAlert({ title: "Error", message: `Puzzle validation error: ${e.message}` });
     }
   };
 
@@ -180,6 +179,7 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     renderPaletteChips();
     renderBoard(dom, state, handlers);
     renderStatus(dom, "Pick 4 words.");
+    updateSubmitLabel();
   }
 
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
@@ -194,9 +194,28 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     renderStatus(dom, "Selection cleared.");
   });
 
-  dom.submitBtn.addEventListener("click", () => {
-    const res = submitSelection(state, wittyResponses);
-    if (res.ok && res.group) {
+  let optionHeld = false;
+
+  function updateSubmitLabel() {
+    dom.submitBtn.textContent = optionHeld ? "Solve" : "Submit";
+  }
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key === "Alt" && !optionHeld) {
+      optionHeld = true;
+      updateSubmitLabel();
+    }
+  });
+
+  window.addEventListener("keyup", (event) => {
+    if (event.key === "Alt") {
+      optionHeld = false;
+      updateSubmitLabel();
+    }
+  });
+
+  function handleGameAction(res) {
+    if (res.ok && (res.group || res.solved)) {
       renderAllFoundGroups();
       renderPaletteChips();
     }
@@ -208,17 +227,42 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
       renderGuesses(dom, state.guesses);
     }
     renderStatus(dom, res.message);
-  });
-
-  function showResultsPopup() {
-    dom.resultsNumGuessesEl.textContent = state.guesses.length;
-    renderGuesses({ guessesEl: dom.resultsGuessesEl }, state.guesses);
-    dom.resultsPopupEl.style.display = "flex";
   }
 
-  dom.resultsCloseBtn.addEventListener("click", () => {
-    dom.resultsPopupEl.style.display = "none";
+  function handleDebugSolve() {
+    const res = solvePuzzle(state);
+    renderAllFoundGroups();
+    renderPaletteChips();
+    renderBoard(dom, state, handlers);
+    showResultsPopup(generateDebugGuessHistory(state.activePuzzle));
+    renderStatus(dom, res.message);
+  }
+
+  dom.submitBtn.addEventListener("click", (event) => {
+    if (optionHeld || event.altKey) {
+      handleDebugSolve();
+      return;
+    }
+    handleGameAction(submitSelection(state, wittyResponses));
   });
+
+  function showResultsPopup(debugGuesses) {
+    const guesses = debugGuesses ?? state.guesses;
+    openModal({
+      title: "Congratulations!",
+      content: (bodyEl) => {
+        const summary = document.createElement("p");
+        summary.textContent = `You solved the puzzle in ${guesses.length} guesses.`;
+        bodyEl.appendChild(summary);
+
+        const guessesEl = document.createElement("div");
+        guessesEl.className = "minigrid";
+        renderGuesses({ guessesEl }, guesses);
+        bodyEl.appendChild(guessesEl);
+      },
+      actions: [{ label: "Okay", variant: "primary" }],
+    });
+  }
 
   function renderMostRecentGuess(dom, guess) {
     if (!guess) return;

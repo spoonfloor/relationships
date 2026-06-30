@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 function validateColors(colors, label, fail) {
   if (!colors || typeof colors !== "object" || Array.isArray(colors)) {
     fail(`${label}.colors must be an object`);

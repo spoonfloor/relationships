@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 export function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result

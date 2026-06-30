@@ -37,6 +37,20 @@
   --cta-secondary-bg: #e0e0e0;
   --cta-secondary-hover: #d4d4d4;
 
+  /* Modals */
+  --modal-padding: 24px;
+  --modal-radius: 14px;
+  --modal-max-width: 500px;
+  --modal-backdrop: rgba(0, 0, 0, 0.7);
+  --modal-bg: #ffffff;
+  --modal-title-font-size: 32px;
+  --modal-body-font-size: var(--cta-font-size);
+  --modal-action-min-width: 160px;
+
+  /* Results minigrid (congratulations modal) */
+  --minigrid-v-gap: 24px;
+  --minigrid-cell-size: 40px;
+
   /* Accent (selection, legacy) */
   --accent: var(--cta-primary-bg);
   --accent-hover: var(--cta-primary-hover);
@@ -78,6 +92,9 @@ textarea {
 }
 
 .app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: max(var(--content-padding-top), env(safe-area-inset-top))
     max(var(--content-padding-x), env(safe-area-inset-right))
@@ -87,7 +104,7 @@ textarea {
 
 .vignette {
   font-size: var(--vignette-font-size);
-  margin: 0 0 24px;
+  margin: 0 0 32px;
   max-width: none;
   color: var(--text-color);
   text-align: left;
@@ -98,7 +115,8 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: auto;
+  padding-top: 32px;
 }
 
 .cta-row {
@@ -149,9 +167,6 @@ textarea {
 }
 .btn:hover {
   background: var(--cta-secondary-hover);
-}
-.btn:active {
-  transform: translateY(1px);
 }
 
 .btn-primary {
@@ -325,27 +340,84 @@ textarea {
   border: 1px solid rgba(0, 0, 0, 0.2); /* Optional: for better visibility */
 }
 
-.popup-container {
+.modal {
+  border: none;
+  padding: 0;
+  background: transparent;
+  margin: 0;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  max-width: 100%;
+  max-height: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
-.popup {
-  background-color: var(--panel);
-  padding: 24px;
-  border-radius: 14px;
+.modal::backdrop {
+  background-color: var(--modal-backdrop);
+}
+
+.modal__panel {
+  background-color: var(--modal-bg);
+  color: var(--text-color);
+  padding: var(--modal-padding);
+  border-radius: var(--modal-radius);
   box-shadow: var(--shadow);
-  max-width: 500px;
-  width: 90%;
-  max-height: 80vh; /* Set a max height relative to viewport height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  width: min(calc(100% - 2 * var(--content-padding-x)), var(--modal-max-width));
+  max-height: min(80vh, calc(100% - 2 * var(--content-padding-top)));
+  overflow-y: auto;
+}
+
+.modal__title {
+  margin: 0 0 12px;
+  font-size: var(--modal-title-font-size);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.modal__body {
+  margin: 0;
+  font-size: var(--modal-body-font-size);
+  line-height: 1.3;
+}
+
+.modal__body > p {
+  margin: 0 0 12px;
+}
+
+.modal__body > p:has(+ .minigrid) {
+  margin-bottom: 0;
+}
+
+.modal__body > .minigrid {
+  margin-top: var(--minigrid-v-gap);
+}
+
+.modal__panel:has(.minigrid) .modal__actions {
+  margin-top: var(--minigrid-v-gap);
+}
+
+.minigrid .guess-box {
+  width: var(--minigrid-cell-size);
+  height: var(--minigrid-cell-size);
+}
+
+.minigrid .foreground-box {
+  display: none;
+}
+
+.modal__actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.modal__actions .btn {
+  min-width: var(--modal-action-min-width);
 }
 
 .tooltip {
@@ -384,18 +456,6 @@ textarea {
   margin-bottom: 0;
 }
 
-footer {
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-  padding: 0 max(16px, env(safe-area-inset-right))
-    max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-}
-
-footer p {
-  margin: 0;
-}
-
 @media (max-aspect-ratio: 530/980) {
   html,
   body {
@@ -415,16 +475,18 @@ footer p {
     background: #111;
   }
 
-  .app,
-  footer {
+  .app {
     width: calc(100dvh * var(--frame-w) / var(--frame-h));
     max-width: 100%;
     margin-left: auto;
     margin-right: auto;
-  }
-
-  .app {
     min-height: 100dvh;
     background: #fff;
+  }
+
+  .modal {
+    width: min(calc(100dvh * var(--frame-w) / var(--frame-h)), 100%);
+    margin-left: auto;
+    margin-right: auto;
   }
 }

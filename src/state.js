@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 export function createInitialState(puzzle) {
   return {
     activePuzzle: puzzle,

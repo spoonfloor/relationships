@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 function wordButton({ word, selected, colors, revealed, onClick, onMouseOver, onMouseOut }) {
   const btn = document.createElement("button");
   btn.className = "word";

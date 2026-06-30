@@ -1,7 +1,3 @@
-/**
- * @fileoverview Copyright 2025 Ed Korthof and Cristie Henry
- */
-
 export function getDom() {
   return {
     boardEl: document.getElementById("board"),
@@ -22,10 +18,6 @@ export function getDom() {
     paletteChipsEl: document.getElementById("paletteChips"),
     puzzleSelect: document.getElementById("puzzleSelect"),
 
-    resultsPopupEl: document.getElementById("results-popup"),
-    resultsNumGuessesEl: document.getElementById("results-num-guesses"),
-    resultsGuessesEl: document.getElementById("results-guesses"),
-    resultsCloseBtn: document.getElementById("results-close-btn"),
     glossaryBtn: document.getElementById("glossaryBtn"),
     glossaryTooltip: document.getElementById("glossary-tooltip"),
   };
