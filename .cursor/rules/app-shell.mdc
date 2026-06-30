@@ -1,0 +1,21 @@
+---
+description: App shell slots and agent integration guide
+alwaysApply: true
+---
+
+# App shell
+
+This app uses a scroll + fixed-footer shell. **Read [AGENTS.md](../../AGENTS.md) at the repo root before changing page layout or slot content.**
+
+## Swappable slots (edit these)
+
+- `public/partials/scroll-content.html` — main scroll area
+- `public/partials/fixed-footer.html` — three-button CTA stack
+
+## Do not modify unless fixing shell bugs
+
+- `public/src/shell/` (bootstrap, mountSlots, ctaLayout)
+- Shell wrappers in `public/index.html` (`#app-shell`, `#scroll-content`, `#fixed-footer`)
+- `public/styles/shell.css`
+
+Game styles and logic: `public/styles/content.css`, `public/src/main.js`, `public/src/dom.js`.

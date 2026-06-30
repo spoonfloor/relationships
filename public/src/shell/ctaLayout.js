@@ -18,7 +18,7 @@ export function syncAppShellHeight() {
 
 /** Reserve in-flow space so main content clears the bottom sheet. */
 export function syncBottomSheetReserve() {
-  const sheet = document.querySelector(".bottom-sheet");
+  const sheet = document.getElementById("fixed-footer");
   if (!sheet) return;
   sheet.style.removeProperty("bottom");
   document.documentElement.style.setProperty(
