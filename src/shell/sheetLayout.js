@@ -6,6 +6,23 @@ function getAppViewportHeight() {
   return window.innerHeight || document.documentElement.clientHeight;
 }
 
+/** Pin fixed footer bottom to the visual viewport bottom (iOS standalone). */
+export function syncFooterPin() {
+  const footer = document.getElementById("fixed-footer");
+  const viewport = window.visualViewport;
+  if (!footer) return;
+
+  if (!viewport) {
+    footer.style.top = "";
+    footer.style.bottom = "";
+    return;
+  }
+
+  const visualBottom = viewport.offsetTop + viewport.height;
+  footer.style.top = `${Math.round(visualBottom - footer.offsetHeight)}px`;
+  footer.style.bottom = "auto";
+}
+
 export function syncAppShellHeight() {
   document.documentElement.style.setProperty(
     "--app-height",
@@ -24,6 +41,7 @@ export function syncFooterReserve() {
 }
 
 export function syncFixedFooterLayout() {
+  syncFooterPin();
   syncAppShellHeight();
   syncFooterReserve();
 }
@@ -31,8 +49,11 @@ export function syncFixedFooterLayout() {
 export function watchFixedFooter() {
   syncFixedFooterLayout();
   requestAnimationFrame(syncFixedFooterLayout);
+  requestAnimationFrame(() => requestAnimationFrame(syncFixedFooterLayout));
 
   window.addEventListener("resize", syncFixedFooterLayout);
+  window.addEventListener("scroll", syncFixedFooterLayout, { passive: true });
+  window.addEventListener("load", syncFixedFooterLayout, { once: true });
 
   const viewport = window.visualViewport;
   if (viewport) {
@@ -42,6 +63,6 @@ export function watchFixedFooter() {
 
   const footer = document.getElementById("fixed-footer");
   if (footer && typeof ResizeObserver !== "undefined") {
-    new ResizeObserver(syncFooterReserve).observe(footer);
+    new ResizeObserver(syncFixedFooterLayout).observe(footer);
   }
 }
