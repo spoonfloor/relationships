@@ -2,6 +2,10 @@ export function getDom() {
   return {
     boardEl: document.getElementById("board"),
     statusEl: document.getElementById("status"),
+    puzzleTitleEl: document.getElementById("puzzle-title"),
+    appBarMoreBtn: document.getElementById("app-bar-more-btn"),
+    appBarMenu: document.getElementById("app-bar-menu"),
+    choosePuzzleBtn: document.getElementById("choose-puzzle-btn"),
     vignetteEl: document.getElementById("vignette"),
     foundEl: document.getElementById("foundGroups"),
     guessesEl: document.getElementById("guesses"),

@@ -34,11 +34,14 @@ import {
   syncAppShellHeight,
   syncBottomSheetReserve,
 } from "./ctaLayout.js";
+import { initAppBarMenu } from "./appBar.js";
+import { openPuzzlePicker } from "./puzzlePicker.js";
 
 async function bootstrap() {
   watchBottomSheet();
   const dom = getDom();
   formatStaticUi();
+  initAppBarMenu({ moreBtn: dom.appBarMoreBtn, menu: dom.appBarMenu });
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
   const uploaderContainer = document.getElementById("uploader-container");
@@ -198,6 +201,7 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     state.activePuzzle = puzzle;
     state.glossaryEnabled = false;
     setDisplayText(dom.glossaryBtn, "Glossary: OFF");
+    setDisplayText(dom.puzzleTitleEl, puzzle.title ?? "");
     setDisplayText(dom.vignetteEl, puzzle.vignette ?? "");
     initGameState(state);
     clearFoundGroups(dom);
@@ -297,6 +301,13 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
         const guessesEl = document.createElement("div");
         guessesEl.className = "minigrid";
         renderGuesses({ guessesEl }, guesses);
+        guessesEl.addEventListener(
+          "scroll",
+          () => {
+            guessesEl.classList.add("has-scrolled");
+          },
+          { once: true }
+        );
         bodyEl.appendChild(guessesEl);
       },
       actions: [{ label: "Okay", variant: "primary" }],
@@ -325,20 +336,44 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     renderStatus(dom, res.message);
   });
 
+  function getPuzzleOptions() {
+    return [...dom.puzzleSelect.options].map((opt) => ({
+      id: opt.value,
+      title: opt.textContent ?? opt.value,
+    }));
+  }
+
+  async function selectPuzzleById(id) {
+    let puzzle;
+    if (id.startsWith("~uploaded~")) {
+      puzzle = idToEntry.get(id);
+    } else if (puzzleCache.has(id)) {
+      puzzle = puzzleCache.get(id);
+    } else {
+      const entry = idToEntry.get(id);
+      puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      puzzleCache.set(id, puzzle);
+    }
+    dom.puzzleSelect.value = id;
+    startPuzzle(puzzle);
+  }
+
+  dom.choosePuzzleBtn?.addEventListener("click", () => {
+    openPuzzlePicker({
+      puzzles: getPuzzleOptions(),
+      currentId: dom.puzzleSelect.value,
+      onSelect: (id) => {
+        selectPuzzleById(id).catch((e) => {
+          console.error(e);
+          renderStatus(dom, `Puzzle load error: ${e.message}`);
+        });
+      },
+    });
+  });
+
   dom.puzzleSelect.addEventListener("change", async () => {
     try {
-      const id = dom.puzzleSelect.value;
-      let puzzle;
-      if (id.startsWith("~uploaded~")) {
-        puzzle = idToEntry.get(id);
-      } else if (puzzleCache.has(id)) {
-        puzzle = puzzleCache.get(id);
-      } else {
-        const entry = idToEntry.get(id);
-        puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
-        puzzleCache.set(id, puzzle);
-      }
-      startPuzzle(puzzle);
+      await selectPuzzleById(dom.puzzleSelect.value);
     } catch (e) {
       console.error(e);
       renderStatus(dom, `Puzzle load error: ${e.message}`);

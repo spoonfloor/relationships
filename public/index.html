@@ -19,11 +19,33 @@
     href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&display=swap"
     rel="stylesheet"
   />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="app-shell" class="app-shell">
     <main id="scroll-content" class="app">
+      <header id="app-bar" class="app-bar">
+        <h1 id="puzzle-title" class="puzzle-title"></h1>
+        <div class="app-bar__menu">
+          <button
+            id="app-bar-more-btn"
+            class="app-bar__more-btn"
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-bar-menu"
+            aria-label="More"
+          >
+            <span class="material-icons" aria-hidden="true">more_vert</span>
+          </button>
+          <div id="app-bar-menu" class="app-bar-menu" role="menu" hidden>
+            <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem">Choose puzzle</button>
+            <button type="button" class="app-bar-menu__item" role="menuitem">Item two</button>
+            <button type="button" class="app-bar-menu__item" role="menuitem">Item three</button>
+          </div>
+        </div>
+      </header>
       <div id="vignette" class="vignette"></div>
 
       <section class="board" aria-label="Word grid" id="board"></section>

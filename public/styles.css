@@ -15,7 +15,7 @@
   --toast-footer-gap: 12px;
   --toast-bg: #444444;
   --toast-color: #ffffff;
-  --toast-font-family: "Atkinson Hyperlegible Next", var(--font-family);
+  --toast-font-family: 'Atkinson Hyperlegible Next', var(--font-family);
   --toast-font-weight: 200;
   --toast-close-gap-top: 8px;
   --toast-close-gap-right: 8px;
@@ -25,16 +25,19 @@
   --font-family: 'Atkinson Hyperlegible', sans-serif;
   --text-color: #1a1a1a;
   --muted: #a0a0a0;
-  --vignette-font-size: 32px;
+  --puzzle-title-font-size: var(--word-font-size);
+  --puzzle-title-font-weight: 400;
+  --puzzle-title-vignette-gap: 16px;
+  --vignette-font-size: 28px;
   --vignette-line-height: 1.15;
   --vignette-letter-spacing: -0.02em;
   --word-font-size: 0.9rem;
-  --cta-font-size: 22px;
+  --cta-font-size: 20px;
 
   /* Lines + shadows */
   --border: #333333;
   --border-strong: #444444;
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 
   /* Word tiles */
   --word-tile-bg: #e0e0e0;
@@ -53,9 +56,12 @@
   --modal-max-width: 500px;
   --modal-backdrop: rgba(0, 0, 0, 0.7);
   --modal-bg: #ffffff;
-  --modal-title-font-size: 32px;
+  --modal-title-font-size: 28px;
   --modal-body-font-size: var(--cta-font-size);
   --modal-action-min-width: 160px;
+  --puzzle-picker-row-gap: 12px;
+  --puzzle-picker-font-size: 22px;
+  --puzzle-picker-font-weight: 400;
 
   /* Results minigrid (congratulations modal) */
   --minigrid-v-gap: 24px;
@@ -123,6 +129,95 @@ textarea {
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
   padding-bottom: var(--bottom-sheet-reserved, 148px);
+}
+
+.puzzle-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--puzzle-title-font-size);
+  font-weight: var(--puzzle-title-font-weight);
+  text-transform: uppercase;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color);
+  text-align: left;
+  line-height: 1.2;
+}
+
+.app-bar {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 var(--puzzle-title-vignette-gap);
+}
+
+.app-bar__menu {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.app-bar__more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.app-bar__more-btn .material-icons {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.app-bar__more-btn:hover {
+  background: var(--word-tile-bg);
+}
+
+.app-bar-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  min-width: 180px;
+  padding: 6px;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.app-bar-menu[hidden] {
+  display: none;
+}
+
+.app-bar-menu__item {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--cta-font-size);
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.app-bar-menu__item:hover {
+  background: var(--word-tile-bg);
 }
 
 .vignette {
@@ -428,14 +523,105 @@ textarea {
 
 .modal__body > p:has(+ .minigrid) {
   margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.modal__panel:has(.minigrid) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal__panel:has(.minigrid) .modal__title {
+  flex-shrink: 0;
+}
+
+.modal__panel:has(.minigrid) .modal__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.puzzle-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--puzzle-picker-row-gap);
+  max-height: min(60vh, 400px);
+  overflow-y: auto;
+  margin: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.puzzle-picker::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.puzzle-picker.has-scrolled {
+  scrollbar-width: thin;
+}
+
+.puzzle-picker.has-scrolled::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.puzzle-picker__item {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-color);
+  font-size: var(--puzzle-picker-font-size);
+  font-weight: var(--puzzle-picker-font-weight);
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.puzzle-picker__item:hover {
+  background: var(--word-tile-bg);
+}
+
+.puzzle-picker__item.is-selected {
+  color: var(--selected);
+}
+
+.modal__panel:has(.puzzle-picker) .modal__actions .btn {
+  min-width: 0;
 }
 
 .modal__body > .minigrid {
   margin-top: var(--minigrid-v-gap);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.modal__body > .minigrid::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.modal__body > .minigrid.has-scrolled {
+  scrollbar-width: thin;
+}
+
+.modal__body > .minigrid.has-scrolled::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
 .modal__panel:has(.minigrid) .modal__actions {
   margin-top: var(--minigrid-v-gap);
+  flex-shrink: 0;
 }
 
 .minigrid .guess-box {
@@ -519,7 +705,8 @@ textarea {
   bottom: calc(var(--bottom-sheet-reserved) + var(--toast-footer-gap));
   padding: 12px 16px;
   padding-right: calc(
-    var(--toast-close-gap-right) + var(--toast-close-size) + var(--toast-close-gap-right)
+    var(--toast-close-gap-right) + var(--toast-close-size) +
+      var(--toast-close-gap-right)
   );
   background: var(--toast-bg);
   color: var(--toast-color);
