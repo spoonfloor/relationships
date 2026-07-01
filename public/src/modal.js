@@ -84,6 +84,12 @@ export function openModal({ title, content, actions = [], onClose }) {
   dialog.appendChild(panel);
   document.body.appendChild(dialog);
 
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) {
+      closeModal();
+    }
+  });
+
   dialog.addEventListener("close", () => {
     if (activeModalClose === closeModal) {
       activeModalClose = null;

@@ -36,6 +36,7 @@ import {
 } from "./ctaLayout.js";
 import { initAppBarMenu } from "./appBar.js";
 import { openPuzzlePicker } from "./puzzlePicker.js";
+import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
 
 async function bootstrap() {
   watchBottomSheet();
@@ -98,22 +99,25 @@ async function bootstrap() {
   const uploader = createPuzzleUploader(onPuzzleUploaded);
   uploaderContainer.appendChild(uploader);
 
-  let puzzle;
+  let initialId;
   if (puzzleId) {
-    if (puzzleCache.has(puzzleId)) {
-      puzzle = puzzleCache.get(puzzleId);
-    } else {
+    if (!puzzleCache.has(puzzleId)) {
       renderStatus(dom, `Puzzle with id "${puzzleId}" not found.`);
       return;
     }
+    initialId = puzzleId;
   } else {
-    const initialId =
-      index.defaultId && idToEntry.has(index.defaultId)
-        ? index.defaultId
-        : index.puzzles[0].id;
-    puzzle = puzzleCache.get(initialId);
-    dom.puzzleSelect.value = initialId;
+    const savedId = getSavedPuzzleId();
+    initialId =
+      savedId && idToEntry.has(savedId)
+        ? savedId
+        : index.defaultId && idToEntry.has(index.defaultId)
+          ? index.defaultId
+          : index.puzzles[0].id;
   }
+
+  const puzzle = puzzleCache.get(initialId);
+  dom.puzzleSelect.value = initialId;
 
   const state = createInitialState(puzzle);
   initializePage(state, wittyResponses, idToEntry, puzzleCache);
@@ -355,6 +359,7 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
       puzzleCache.set(id, puzzle);
     }
     dom.puzzleSelect.value = id;
+    saveSelectedPuzzleId(id);
     startPuzzle(puzzle);
   }
 
