@@ -12,7 +12,8 @@
   --app-height: 100dvh;
   --bottom-sheet-reserved: 148px;
   --bottom-sheet-top-padding: 12px;
-  --toast-footer-gap: 12px;
+  --toast-top-gap: 32px;
+  --toast-board-gap: 24px;
   --toast-bg: #444444;
   --toast-color: #ffffff;
   --toast-font-family: 'Atkinson Hyperlegible Next', var(--font-family);
@@ -59,7 +60,16 @@
   --modal-title-font-size: 28px;
   --modal-body-font-size: var(--cta-font-size);
   --modal-action-min-width: 160px;
-  --puzzle-picker-row-gap: 12px;
+
+  /* Modals with lists (e.g. choose puzzle) */
+  --modal-list-item-padding-y: 6px;
+  --modal-list-item-padding-x: 10px;
+  --modal-list-padding-y: var(--modal-padding);
+  --modal-list-padding-x: calc(
+    var(--modal-padding) - var(--modal-list-item-padding-x)
+  );
+  --modal-list-title-margin: 0 0 12px var(--modal-list-item-padding-x);
+  --puzzle-picker-row-gap: 4px;
   --puzzle-picker-font-size: 22px;
   --puzzle-picker-font-weight: 400;
 
@@ -236,7 +246,7 @@ textarea {
   right: 0;
   bottom: 0;
   z-index: 10;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
   padding-top: var(--bottom-sheet-top-padding);
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-bottom: max(
@@ -349,9 +359,9 @@ textarea {
   border: none;
   border-radius: 14px;
   aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  min-width: 0;
   padding: 8px;
   text-align: center;
   user-select: none;
@@ -364,6 +374,8 @@ textarea {
   line-height: 1.2;
   color: var(--text-color);
   touch-action: manipulation;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .word:hover {
   background: var(--word-tile-hover);
@@ -572,9 +584,9 @@ textarea {
 .puzzle-picker__item {
   display: block;
   width: 100%;
-  padding: 0;
+  padding: var(--modal-list-item-padding-y) var(--modal-list-item-padding-x);
   border: none;
-  border-radius: 0;
+  border-radius: 8px;
   background: transparent;
   color: var(--text-color);
   font-size: var(--puzzle-picker-font-size);
@@ -589,10 +601,22 @@ textarea {
 }
 
 .puzzle-picker__item.is-selected {
-  color: var(--selected);
+  background: color-mix(in srgb, var(--cta-primary-bg) 60%, transparent);
 }
 
-.modal__panel:has(.puzzle-picker) .modal__actions .btn {
+.puzzle-picker__item.is-selected:hover {
+  background: color-mix(in srgb, var(--cta-primary-hover) 60%, transparent);
+}
+
+.modal__panel:has(.modal-list) {
+  padding: var(--modal-list-padding-y) var(--modal-list-padding-x);
+}
+
+.modal__panel:has(.modal-list) .modal__title {
+  margin: var(--modal-list-title-margin);
+}
+
+.modal__panel:has(.modal-list) .modal__actions .btn {
   min-width: 0;
 }
 
@@ -702,7 +726,6 @@ textarea {
   position: absolute;
   left: max(var(--content-padding-x), env(safe-area-inset-left));
   right: max(var(--content-padding-x), env(safe-area-inset-right));
-  bottom: calc(var(--bottom-sheet-reserved) + var(--toast-footer-gap));
   padding: 12px 16px;
   padding-right: calc(
     var(--toast-close-gap-right) + var(--toast-close-size) +
