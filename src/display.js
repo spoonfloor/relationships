@@ -14,6 +14,7 @@ export function formatStaticUi(root = document.body) {
     if (label) el.setAttribute("aria-label", formatDisplayText(label));
   }
   for (const el of root.querySelectorAll("button, label, h1, h2, h3, h4, span.label")) {
+    if (el.querySelector(".material-icons")) continue;
     setDisplayText(el, el.textContent);
   }
 }
