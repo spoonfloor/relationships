@@ -37,6 +37,8 @@ import {
 import { initAppBarMenu } from "./appBar.js";
 import { openPuzzlePicker } from "./puzzlePicker.js";
 import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
+import { initPuzzleEdit } from "./puzzleEdit.js";
+import { applyStoredEdits, savePuzzleTitle } from "./puzzleEdits.js";
 
 async function bootstrap() {
   watchBottomSheet();
@@ -57,6 +59,7 @@ async function bootstrap() {
   await Promise.all(
     index.puzzles.map(async (entry) => {
       const puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      applyStoredEdits(puzzle, entry.id);
       puzzleCache.set(entry.id, puzzle);
     })
   );
@@ -201,7 +204,29 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     },
   };
 
+  const puzzleEdit = initPuzzleEdit({
+    dom,
+    getPuzzle: () => state.activePuzzle,
+    setTitle(title) {
+      state.activePuzzle.title = title;
+      const id = dom.puzzleSelect.value;
+      savePuzzleTitle(id, title);
+      const opt = dom.puzzleSelect.querySelector(`option[value="${CSS.escape(id)}"]`);
+      if (opt) setDisplayText(opt, title);
+      if (puzzleCache.has(id)) {
+        puzzleCache.set(id, state.activePuzzle);
+      }
+      if (idToEntry.has(id)) {
+        idToEntry.set(id, state.activePuzzle);
+      }
+    },
+    onValidationError(message) {
+      showAlert({ title: "Error", message });
+    },
+  });
+
   function startPuzzle(puzzle) {
+    puzzleEdit.exitEditMode();
     state.activePuzzle = puzzle;
     state.glossaryEnabled = false;
     setDisplayText(dom.glossaryBtn, "Glossary: OFF");
@@ -351,11 +376,13 @@ function initializePage(state, wittyResponses, idToEntry, puzzleCache) {
     let puzzle;
     if (id.startsWith("~uploaded~")) {
       puzzle = idToEntry.get(id);
+      applyStoredEdits(puzzle, id);
     } else if (puzzleCache.has(id)) {
       puzzle = puzzleCache.get(id);
     } else {
       const entry = idToEntry.get(id);
       puzzle = await loadPuzzle(`./puzzles/${entry.file}`);
+      applyStoredEdits(puzzle, id);
       puzzleCache.set(id, puzzle);
     }
     dom.puzzleSelect.value = id;

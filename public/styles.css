@@ -1,11 +1,34 @@
 :root {
+  /* UI themes: play (default) and edit (body.edit-mode) */
+  --theme-play-primary: #d65f42;
+  --theme-play-primary-hover: #bf4930;
+  --theme-play-primary-light: color-mix(
+    in srgb,
+    var(--theme-play-primary) 40%,
+    white
+  );
+  --theme-play-primary-extra-light: color-mix(
+    in srgb,
+    var(--theme-play-primary) 40%,
+    white
+  );
+
+  --theme-edit-primary: #89c4f4;
+  --theme-edit-primary-hover: #75b8ef;
+  --theme-caret-color: #008cff;
+  --theme-edit-primary-light: color-mix(
+    in srgb,
+    var(--theme-edit-primary) 15%,
+    white
+  );
+
   /* Page + surfaces */
   --bg: #121212;
   --panel: #1e1e1e;
   --panel-2: #252525;
 
   /* Main content padding */
-  --content-padding-top: 32px;
+  --content-padding-top: 20px;
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
   --app-height: 100vh;
@@ -29,6 +52,9 @@
   --puzzle-title-font-size: var(--word-font-size);
   --puzzle-title-font-weight: 400;
   --puzzle-title-vignette-gap: 16px;
+  --puzzle-title-line-height: 20px;
+  --puzzle-edit-field-bg: var(--theme-edit-primary-light);
+  --puzzle-edit-viewport-border-width: 4px;
   --vignette-font-size: 28px;
   --vignette-line-height: 1.15;
   --vignette-letter-spacing: -0.02em;
@@ -43,11 +69,17 @@
   /* Word tiles */
   --word-tile-bg: #e0e0e0;
   --word-tile-hover: #d4d4d4;
-  --selected: #89c4f4;
+
+  --theme-primary: var(--theme-play-primary);
+  --theme-primary-hover: var(--theme-play-primary-hover);
+
+  --puzzle-edit-viewport-border-color: var(--theme-edit-primary);
+
+  --selected: var(--theme-primary);
 
   /* CTAs */
-  --cta-primary-bg: #89c4f4;
-  --cta-primary-hover: #75b8ef;
+  --cta-primary-bg: var(--theme-primary);
+  --cta-primary-hover: var(--theme-primary-hover);
   --cta-secondary-bg: #e0e0e0;
   --cta-secondary-hover: #d4d4d4;
 
@@ -80,12 +112,6 @@
   /* Accent (selection, legacy) */
   --accent: var(--cta-primary-bg);
   --accent-hover: var(--cta-primary-hover);
-
-  /* Optional legacy vars (harmless if unused) */
-  --yellow: #f0d264;
-  --green: #86d18f;
-  --blue: #79a7ff;
-  --purple: #c59bff;
 }
 
 /* iOS standalone: 100dvh under-reports on cold start; 100vh is full bleed. */
@@ -118,6 +144,15 @@ body {
   touch-action: manipulation;
 }
 
+body.edit-mode {
+  --theme-primary: var(--theme-edit-primary);
+  --theme-primary-hover: var(--theme-edit-primary-hover);
+  --cta-primary-bg: var(--theme-edit-primary);
+  --cta-primary-hover: var(--theme-edit-primary-hover);
+  --selected: var(--theme-primary);
+  --tile-selected-bg: color-mix(in srgb, var(--theme-edit-primary) 40%, white);
+}
+
 button,
 input,
 select,
@@ -141,10 +176,13 @@ textarea {
   padding-bottom: var(--bottom-sheet-reserved, 148px);
 }
 
-.puzzle-title {
+.puzzle-title-wrap {
   flex: 1;
   min-width: 0;
-  font-size: var(--puzzle-title-font-size);
+}
+
+.puzzle-title {
+  font-size: calc(var(--puzzle-title-font-size) + 0.5px);
   font-weight: var(--puzzle-title-font-weight);
   text-transform: uppercase;
   margin: 0;
@@ -153,11 +191,46 @@ textarea {
   white-space: nowrap;
   color: var(--text-color);
   text-align: left;
-  line-height: 1.2;
+  line-height: var(--puzzle-title-line-height);
+  outline: none;
+  touch-action: manipulation;
+}
+
+.puzzle-title--editing {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: pre-wrap;
+  caret-color: var(--theme-caret-color);
+}
+
+.edit-mode .puzzle-title:not(.puzzle-title--editing) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.puzzle-title-wrap--focused {
+  background: var(--puzzle-edit-field-bg);
+}
+
+.edit-mode .puzzle-title {
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+body.edit-mode::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 var(--puzzle-edit-viewport-border-width)
+    var(--puzzle-edit-viewport-border-color);
 }
 
 .app-bar {
-  height: 24px;
+  min-height: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -262,6 +335,10 @@ textarea {
   gap: 12px;
 }
 
+.cta-stack[hidden] {
+  display: none !important;
+}
+
 .cta-row {
   display: flex;
   gap: 12px;
@@ -314,10 +391,19 @@ textarea {
 
 .btn-primary {
   background: var(--cta-primary-bg);
-  color: var(--text-color);
+  color: #fff;
 }
 .btn-primary:hover {
   background: var(--cta-primary-hover);
+}
+
+#saveExitBtn.btn-primary {
+  background: var(--theme-edit-primary);
+  color: var(--text-color);
+}
+
+#saveExitBtn.btn-primary:hover {
+  background: var(--theme-edit-primary-hover);
 }
 
 .btn-secondary {
@@ -382,7 +468,7 @@ textarea {
 }
 
 .word.selected {
-  background: var(--cta-primary-bg);
+  background: var(--theme-play-primary-light);
   color: var(--text-color);
 }
 
@@ -601,7 +687,7 @@ textarea {
 }
 
 .puzzle-picker__item.is-selected {
-  background: color-mix(in srgb, var(--cta-primary-bg) 60%, transparent);
+  background: var(--theme-play-primary-extra-light);
 }
 
 .puzzle-picker__item.is-selected:hover {
