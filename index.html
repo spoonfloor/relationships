@@ -27,7 +27,9 @@
   <div id="app-shell" class="app-shell">
     <main id="scroll-content" class="app">
       <header id="app-bar" class="app-bar">
-        <h1 id="puzzle-title" class="puzzle-title"></h1>
+        <div class="puzzle-title-wrap">
+          <h1 id="puzzle-title" class="puzzle-title"></h1>
+        </div>
         <div class="app-bar__menu">
           <button
             id="app-bar-more-btn"
@@ -42,6 +44,7 @@
           </button>
           <div id="app-bar-menu" class="app-bar-menu" role="menu" hidden>
             <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem">Choose puzzle</button>
+            <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem">Edit</button>
           </div>
         </div>
       </header>
@@ -88,11 +91,18 @@
     </main>
 
     <footer id="fixed-footer" class="bottom-sheet" aria-label="Game controls">
-      <div class="cta-stack">
+      <div id="cta-stack-play" class="cta-stack">
         <button id="submitBtn" class="btn btn-primary btn-block" type="button">Submit</button>
         <div class="cta-row">
           <button id="shuffleBtn" class="btn btn-block-half" type="button">Shuffle</button>
           <button id="clearBtn" class="btn btn-secondary btn-block-half" type="button">Clear</button>
+        </div>
+      </div>
+      <div id="cta-stack-edit" class="cta-stack" hidden>
+        <button id="saveExitBtn" class="btn btn-primary btn-block" type="button">Save &amp; Exit</button>
+        <div class="cta-row">
+          <button id="saveBtn" class="btn btn-block-half" type="button">Save</button>
+          <button id="cancelEditBtn" class="btn btn-secondary btn-block-half" type="button">Cancel</button>
         </div>
       </div>
     </footer>
