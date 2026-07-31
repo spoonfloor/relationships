@@ -1,41 +1,60 @@
 import { setDisplayText } from "./display.js";
-import { closeActiveModal, openModal } from "./modal.js";
+import { openModal } from "./modal.js";
 
 /**
  * @param {object} options
+ * @param {string} [options.title]
+ * @param {string} [options.emptyMessage]
+ * @param {string} [options.listAriaLabel]
  * @param {{ id: string, title: string }[]} options.puzzles
- * @param {string} options.currentId
+ * @param {string} [options.currentId]
+ * @param {string} [options.emptyDismissLabel]
  * @param {(id: string) => void} options.onSelect
  */
-const SELECTION_ACK_MS = 150;
-
-export function openPuzzlePicker({ puzzles, currentId, onSelect }) {
-  /** @type {ReturnType<typeof setTimeout> | null} */
-  let closeTimer = null;
-
-  function clearCloseTimer() {
-    if (closeTimer == null) return;
-    clearTimeout(closeTimer);
-    closeTimer = null;
+export function openPuzzlePicker({
+  title = "Choose puzzle",
+  emptyMessage = "No puzzles.",
+  listAriaLabel = "Puzzles",
+  emptyDismissLabel = "Cancel",
+  puzzles,
+  currentId = "",
+  onSelect,
+}) {
+  if (puzzles.length === 0) {
+    openModal({
+      title,
+      content: (bodyEl) => {
+        const list = document.createElement("div");
+        list.className = "modal-list";
+        const emptyEl = document.createElement("p");
+        emptyEl.className = "puzzle-picker__empty";
+        setDisplayText(emptyEl, emptyMessage);
+        list.appendChild(emptyEl);
+        bodyEl.appendChild(list);
+      },
+      actions: [{ label: emptyDismissLabel, variant: "secondary" }],
+    });
+    return;
   }
 
-  function scheduleClose() {
-    clearCloseTimer();
-    closeTimer = setTimeout(() => {
-      closeTimer = null;
-      closeActiveModal();
-    }, SELECTION_ACK_MS);
+  let selectedId = currentId;
+  /** @type {{ openBtn: HTMLButtonElement | null }} */
+  const ui = { openBtn: null };
+
+  function syncOpenButton() {
+    if (ui.openBtn) {
+      ui.openBtn.disabled = !selectedId;
+    }
   }
 
-  openModal({
-    title: "Choose puzzle",
+  const { dialog } = openModal({
+    title,
     content: (bodyEl) => {
       const list = document.createElement("div");
       list.className = "modal-list puzzle-picker";
       list.setAttribute("role", "listbox");
-      list.setAttribute("aria-label", "Puzzles");
+      list.setAttribute("aria-label", listAriaLabel);
 
-      let selectedId = currentId;
       /** @type {HTMLButtonElement | null} */
       let selectedBtn = null;
 
@@ -46,6 +65,7 @@ export function openPuzzlePicker({ puzzles, currentId, onSelect }) {
         selectedId = id;
         btn.classList.add("is-selected");
         btn.setAttribute("aria-selected", "true");
+        syncOpenButton();
       }
 
       for (const puzzle of puzzles) {
@@ -61,14 +81,7 @@ export function openPuzzlePicker({ puzzles, currentId, onSelect }) {
         }
         setDisplayText(btn, puzzle.title);
         btn.addEventListener("click", () => {
-          if (puzzle.id === selectedId) {
-            clearCloseTimer();
-            closeActiveModal();
-            return;
-          }
           setSelected(btn, puzzle.id);
-          onSelect(puzzle.id);
-          scheduleClose();
         });
         list.appendChild(btn);
       }
@@ -83,7 +96,22 @@ export function openPuzzlePicker({ puzzles, currentId, onSelect }) {
         { once: true }
       );
     },
-    actions: [{ label: "Cancel", variant: "secondary" }],
-    onClose: clearCloseTimer,
+    actions: [
+      { label: "Cancel", variant: "secondary" },
+      {
+        label: "Open",
+        variant: "primary",
+        onClick: () => {
+          if (!selectedId) return;
+          onSelect(selectedId);
+        },
+      },
+    ],
   });
+
+  const openBtn = dialog.querySelector(".modal__actions .btn-primary");
+  if (openBtn instanceof HTMLButtonElement) {
+    ui.openBtn = openBtn;
+    syncOpenButton();
+  }
 }

@@ -1,6 +1,13 @@
 import { formatDisplayText } from "./typography.js";
 
 export { formatDisplayText } from "./typography.js";
+export {
+  formatTileText,
+  fitTileText,
+  resetTileTextFit,
+  setTileText,
+  observeTileBoard,
+} from "./tileText.js";
 
 /** The only way to assign user-visible text in the app. */
 export function setDisplayText(element, text) {
@@ -14,7 +21,7 @@ export function formatStaticUi(root = document.body) {
     if (label) el.setAttribute("aria-label", formatDisplayText(label));
   }
   for (const el of root.querySelectorAll("button, label, h1, h2, h3, h4, span.label")) {
-    if (el.querySelector(".material-icons")) continue;
+    if (el.querySelector(".material-icons, .material-symbols-outlined")) continue;
     setDisplayText(el, el.textContent);
   }
 }
