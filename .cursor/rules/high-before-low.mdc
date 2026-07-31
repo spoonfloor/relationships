@@ -1,0 +1,49 @@
+---
+description: Prioritize structural fixes over patches; self-check for blind spots and local maxima before finishing
+alwaysApply: true
+---
+
+# High-before-low fix ethic
+
+When fixing or extending this project, **always address higher-order problems before lower-order ones**.
+
+## Priority order (high → low)
+
+1. **Architecture & single source of truth** — unify duplicated state, APIs, and lifecycle/state machines before adding bridges or per-flow one-offs.
+2. **Agreed product behavior** — consistent structure, CTAs, copy, and user-visible states across related flows (e.g. play vs edit, save vs publish).
+3. **Production parity** — wire real flows to the same APIs and patterns that work in dev or debug; don't leave special-case paths as the only correct implementation.
+4. **Correctness & regressions** — broken toggles, silent failures, wrong counts, stale caches, reset bugs.
+5. **Polish & deferrables** — CSS tweaks, cache-bust params, copy nits, nice-to-have refactors.
+
+## How to apply it
+
+- Before implementing a fix, ask: *Is there a higher-level fix that would make this patch unnecessary?*
+- Do not stack tactical patches on top of known architectural debt unless the user explicitly asks for a quick stopgap.
+- When multiple issues exist, propose or execute **high items first**; mention deferred low items only if relevant.
+- Prefer one canonical module over a third parallel code path.
+- Minimize scope for the current task, but **do not** choose a minimal diff that perpetuates duplication when unification is the agreed next step.
+
+## Self-check (required)
+
+Agents **must** review their own work for blind spots and local maxima before treating a task as complete.
+
+**Blind spots** — unverified assumptions: sibling flows still broken, dev/prod or client/server divergence, silent no-ops, or patterns not searched for across the codebase.
+
+**Local maxima** — solutions that optimize the immediate diff at the cost of the system: symptom fixes, a third parallel helper, or a minimal change that perpetuates known debt.
+
+When you find either:
+
+1. **Revise** toward the higher-order fix when scope and user intent allow.
+2. If you must ship narrower, **state what you checked**, what you deferred, and why — do not present a local optimum as full resolution.
+
+Self-check targets **system-level** mistakes (wrong layer, missed unification), not endless polish or unrelated refactors.
+
+## Red flags (stop and go higher)
+
+- New parallel copies of the same data (in-memory cache + DB + DOM) without a defined owner
+- A new helper that duplicates an existing reset, sync, or persistence pattern
+- Two code paths for the same user action (e.g. debug vs production, or play vs edit) that diverge in behavior
+- Fixing a symptom in one flow while siblings still use the old pattern
+- Declaring done without checking whether related flows or shared modules still use the old pattern
+- Success feedback (toast, label, UI state) when the underlying operation may have no-op'd silently
+- Shipping a patch you know unification would supersede, without calling that out

@@ -9,11 +9,13 @@ function validateColors(colors, label, fail) {
   }
 }
 
-export function validatePuzzle(p, fileLabel = "puzzle.json") {
+export function validatePuzzle(p, fileLabel = "puzzle.json", { requireId = true } = {}) {
   const fail = (msg) => { throw new Error(`[${fileLabel}] ${msg}`); };
 
   if (!p || typeof p !== "object") fail("Puzzle must be an object");
-  if (typeof p.id !== "string" || !p.id.trim()) fail("Puzzle must have a non-empty string id");
+  if (requireId && (typeof p.id !== "string" || !p.id.trim())) {
+    fail("Puzzle must have a non-empty string id");
+  }
   if (typeof p.title !== "string" || !p.title.trim()) fail("Puzzle must have a non-empty string title");
   if (typeof p.vignette !== "string") fail("Puzzle must have a vignette string");
 
@@ -26,11 +28,14 @@ export function validatePuzzle(p, fileLabel = "puzzle.json") {
   p.groups.forEach((g, gi) => {
     if (!g || typeof g !== "object") fail(`groups[${gi}] must be an object`);
 
-    if (typeof g.title !== "string" || !g.title.trim()) {
-      fail(`groups[${gi}].title must be a non-empty string`);
+    if (typeof g.title !== "string") {
+      fail(`groups[${gi}].title must be a string`);
     }
-    if (seenTitles.has(g.title)) fail(`Duplicate group title: "${g.title}"`);
-    seenTitles.add(g.title);
+    const groupTitle = g.title.trim();
+    if (groupTitle) {
+      if (seenTitles.has(groupTitle)) fail(`Duplicate group title: "${groupTitle}"`);
+      seenTitles.add(groupTitle);
+    }
 
     validateColors(g.colors, `groups[${gi}]`, fail);
 

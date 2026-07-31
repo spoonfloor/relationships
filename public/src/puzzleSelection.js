@@ -1,3 +1,5 @@
+import { DEBUG_PUZZLE_ID } from "./puzzleRepository.js";
+
 const STORAGE_KEY = "relationships.selectedPuzzleId";
 
 export function getSavedPuzzleId() {
@@ -9,7 +11,7 @@ export function getSavedPuzzleId() {
 }
 
 export function saveSelectedPuzzleId(id) {
-  if (id.startsWith("~uploaded~")) return;
+  if (id.startsWith("~uploaded~") || id === DEBUG_PUZZLE_ID) return;
   try {
     localStorage.setItem(STORAGE_KEY, id);
   } catch {

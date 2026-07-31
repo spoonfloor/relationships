@@ -10,7 +10,137 @@ export function hexToRgb(hex) {
 }
 
 export function rgbToHex(r, g, b) {
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).padStart(6, '0');
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).padStart(6, "0");
+}
+
+/** @param {number} r @param {number} g @param {number} b @returns {{ h: number, s: number, v: number }} */
+export function rgbToHsv(r, g, b) {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const delta = max - min;
+
+  let h = 0;
+  if (delta !== 0) {
+    if (max === rn) {
+      h = ((gn - bn) / delta + (gn < bn ? 6 : 0)) * 60;
+    } else if (max === gn) {
+      h = ((bn - rn) / delta + 2) * 60;
+    } else {
+      h = ((rn - gn) / delta + 4) * 60;
+    }
+  }
+
+  const s = max === 0 ? 0 : delta / max;
+  return { h, s, v: max };
+}
+
+/** @param {number} h @param {number} s @param {number} v @returns {{ r: number, g: number, b: number }} */
+export function hsvToRgb(h, s, v) {
+  const hue = ((h % 360) + 360) % 360;
+  const chroma = v * s;
+  const x = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
+  const m = v - chroma;
+  let rp = 0;
+  let gp = 0;
+  let bp = 0;
+
+  if (hue < 60) {
+    rp = chroma;
+    gp = x;
+  } else if (hue < 120) {
+    rp = x;
+    gp = chroma;
+  } else if (hue < 180) {
+    gp = chroma;
+    bp = x;
+  } else if (hue < 240) {
+    gp = x;
+    bp = chroma;
+  } else if (hue < 300) {
+    rp = x;
+    bp = chroma;
+  } else {
+    rp = chroma;
+    bp = x;
+  }
+
+  return {
+    r: Math.round((rp + m) * 255),
+    g: Math.round((gp + m) * 255),
+    b: Math.round((bp + m) * 255),
+  };
+}
+
+/** @param {string} hex @returns {{ h: number, s: number, v: number }} */
+export function hexToHsv(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return { h: 0, s: 0, v: 0 };
+  return rgbToHsv(rgb.r, rgb.g, rgb.b);
+}
+
+/** @param {number} h @param {number} s @param {number} v */
+export function hsvToHex(h, s, v) {
+  const rgb = hsvToRgb(h, s, v);
+  return normalizeHex(rgbToHex(rgb.r, rgb.g, rgb.b));
+}
+
+/** Full-saturation color at hue h (for SV field gradient). @param {number} h */
+export function hueToHex(h) {
+  return hsvToHex(h, 1, 1);
+}
+
+/** @param {string} hex */
+export function normalizeHex(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return "#000000";
+  return rgbToHex(rgb.r, rgb.g, rgb.b).toUpperCase();
+}
+
+/** @param {string} raw */
+export function sanitizeHexDigits(raw) {
+  return raw.replace(/[^0-9a-f]/gi, "").slice(0, 6).toUpperCase();
+}
+
+/** @param {string} raw @returns {string | null} normalized #RRGGBB, or null if not parseable */
+export function parseHexInput(raw) {
+  const digits = raw.replace(/[^0-9a-f]/gi, "");
+  let six = digits;
+  if (digits.length === 3) {
+    six = digits
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+  if (six.length !== 6) return null;
+  const hex = `#${six}`;
+  return hexToRgb(hex) ? normalizeHex(hex) : null;
+}
+
+/** @param {string} hex #RRGGBB */
+export function hexDisplayDigits(hex) {
+  return normalizeHex(hex).slice(1);
+}
+
+/** @param {string} hex */
+function relativeLuminance(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return 0;
+  const channel = (value) => {
+    const c = value / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  const r = channel(rgb.r);
+  const g = channel(rgb.g);
+  const b = channel(rgb.b);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** Black or white hex for readable text on a solid background. @param {string} hex */
+export function contrastTextColor(hex) {
+  return relativeLuminance(hex) > 0.179 ? "#000000" : "#FFFFFF";
 }
 
 export function rgbToLab(rgb) {
@@ -59,4 +189,20 @@ export function deltaE(labA, labB) {
     deltaCkcsc * deltaCkcsc +
     deltaHkhsh * deltaHkhsh;
   return i < 0 ? 0 : Math.sqrt(i);
+}
+
+/** Perceptual distance below which a sample needs an edge against its surface. */
+export const COLOR_SEPARATION_DELTA_E = 10;
+
+/**
+ * True when sample and surface are too similar to distinguish without a hairline edge.
+ * @param {string} sampleHex
+ * @param {string} surfaceHex
+ * @param {number} [threshold]
+ */
+export function colorsNeedSeparation(sampleHex, surfaceHex, threshold = COLOR_SEPARATION_DELTA_E) {
+  const sampleRgb = hexToRgb(normalizeHex(sampleHex));
+  const surfaceRgb = hexToRgb(normalizeHex(surfaceHex));
+  if (!sampleRgb || !surfaceRgb) return false;
+  return deltaE(rgbToLab(sampleRgb), rgbToLab(surfaceRgb)) < threshold;
 }

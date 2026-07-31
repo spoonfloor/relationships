@@ -1,3 +1,4 @@
+/** See docs/ios-footer-pin.md for the iOS standalone viewport + scroll-slack story. */
 function isStandalone() {
   if (window.navigator.standalone === true) return true;
   return window.matchMedia("(display-mode: standalone)").matches;

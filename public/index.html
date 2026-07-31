@@ -43,14 +43,22 @@
             <span class="material-icons" aria-hidden="true">more_vert</span>
           </button>
           <div id="app-bar-menu" class="app-bar-menu" role="menu" hidden>
-            <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem">Choose puzzle</button>
-            <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem">Edit</button>
+            <!-- Every menuitem requires data-menu-tier="public" or "secret". -->
+            <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public">Choose puzzle</button>
+            <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Edit</button>
+            <button id="add-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Add new</button>
+            <button id="delete-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Delete</button>
+            <button id="view-drafts-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Open draft</button>
+            <button id="open-debug-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" hidden>Debug puzzle</button>
           </div>
         </div>
       </header>
-      <div id="vignette" class="vignette"></div>
-
-      <section class="board" aria-label="Word grid" id="board"></section>
+      <div class="puzzle-stack">
+        <div class="vignette-wrap">
+          <div id="vignette" class="vignette"></div>
+        </div>
+        <section class="board" aria-label="Word grid" id="board"></section>
+      </div>
 
       <div class="debug-ui">
         <div id="paletteChips" class="paletteChips"></div>
@@ -99,10 +107,10 @@
         </div>
       </div>
       <div id="cta-stack-edit" class="cta-stack" hidden>
-        <button id="saveExitBtn" class="btn btn-primary btn-block" type="button">Save &amp; Exit</button>
+        <button id="publishBtn" class="btn btn-primary btn-block" type="button">Publish</button>
         <div class="cta-row">
-          <button id="saveBtn" class="btn btn-block-half" type="button">Save</button>
-          <button id="cancelEditBtn" class="btn btn-secondary btn-block-half" type="button">Cancel</button>
+          <button id="saveBtn" class="btn btn-block-half" type="button">Save draft</button>
+          <button id="cancelEditBtn" class="btn btn-secondary btn-block-half" type="button">Close/Cancel</button>
         </div>
       </div>
     </footer>

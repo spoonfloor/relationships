@@ -21,15 +21,23 @@ async function applyTheme(puzzle, puzzleUrl) {
   });
 }
 
+export async function hydratePuzzle(puzzle, fileLabel) {
+  if (typeof puzzle.theme === "string" && puzzle.theme.trim()) {
+    const themeBase =
+      typeof fileLabel === "string" && fileLabel.includes("/")
+        ? fileLabel.replace(/[^/]+$/, "")
+        : "./puzzles/";
+    await applyTheme(puzzle, `${themeBase}${puzzle.id}.json`);
+  }
+  validatePuzzle(puzzle, fileLabel);
+  return puzzle;
+}
+
 export async function loadPuzzle(url) {
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status} ${res.statusText}`);
   const puzzle = await res.json();
-  if (typeof puzzle.theme === "string" && puzzle.theme.trim()) {
-    await applyTheme(puzzle, url);
-  }
-  validatePuzzle(puzzle, url);
-  return puzzle;
+  return hydratePuzzle(puzzle, url);
 }
 
 export async function loadPuzzleIndex(url) {
