@@ -11,6 +11,38 @@ export function initPageLogo() {
   return initPromise;
 }
 
+/** @param {SVGSVGElement} svg */
+function readSvgPixelSize(svg) {
+  const widthAttr = svg.getAttribute("width");
+  const heightAttr = svg.getAttribute("height");
+  if (widthAttr && heightAttr) {
+    const width = parseFloat(widthAttr);
+    const height = parseFloat(heightAttr);
+    if (Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0) {
+      return { width, height };
+    }
+  }
+
+  const { width, height } = svg.viewBox.baseVal;
+  if (width > 0 && height > 0) {
+    return { width, height };
+  }
+
+  return null;
+}
+
+/** @param {SVGSVGElement} svg */
+function lockSvgToFileSize(svg) {
+  const size = readSvgPixelSize(svg);
+  if (!size) return;
+
+  svg.setAttribute("width", String(size.width));
+  svg.setAttribute("height", String(size.height));
+  svg.style.width = `${size.width}px`;
+  svg.style.height = `${size.height}px`;
+  svg.style.maxWidth = "none";
+}
+
 async function loadPageLogo() {
   const container = document.querySelector(".page-logo");
   if (!container) return;
@@ -22,9 +54,10 @@ async function loadPageLogo() {
 
   container.innerHTML = await res.text();
   const svg = container.querySelector("svg");
-  if (svg) {
+  if (svg instanceof SVGSVGElement) {
     svg.classList.add("page-logo__img");
     svg.setAttribute("aria-hidden", "true");
+    lockSvgToFileSize(svg);
   }
 }
 
