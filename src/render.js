@@ -24,56 +24,21 @@ function wordButton({ word, selected, colors, revealed, onClick, onMouseOver, on
   setTileText(btn, word);
 
   if (selected) btn.classList.add("selected");
-  if (colors && (revealed || colors.locked)) {
+  if (colors && revealed) {
     applyGroupColorsToElement(btn, colors);
   }
 
-  if (colors?.locked) {
-    btn.classList.add("locked");
-    btn.disabled = true;
-  } else {
-    btn.addEventListener("click", onClick);
-    if (onMouseOver) btn.addEventListener("mouseover", (event) => onMouseOver(word, event));
-    if (onMouseOut) btn.addEventListener("mouseout", onMouseOut);
-  }
+  btn.addEventListener("click", onClick);
+  if (onMouseOver) btn.addEventListener("mouseover", (event) => onMouseOver(word, event));
+  if (onMouseOut) btn.addEventListener("mouseout", onMouseOut);
 
   return btn;
 }
 
-export function renderBoard({ boardEl }, state, handlers) {
-  boardEl.innerHTML = "";
-  observeTileBoard(boardEl);
-  for (const item of state.boardWords) {
-    const isRevealed = state.revealedWords.has(item.word);
-    const group = state.wordToGroupMap.get(item.word);
-    const isLocked = item.lockedGroupIndex != null;
-    const colors =
-      group && isGroupColorsAssigned(group)
-        ? { ...resolveGroupColors(group), locked: isLocked }
-        : null;
-
-    boardEl.appendChild(
-      wordButton({
-        word: item.word,
-        selected: state.selected.has(item.word),
-        colors: isLocked || isRevealed ? colors : null,
-        revealed: isRevealed,
-        onClick: () => handlers.onToggleSelect(item.word),
-        onMouseOver: state.glossaryEnabled ? handlers.onMouseOverWord : null,
-        onMouseOut: state.glossaryEnabled ? handlers.onMouseOutWord : null,
-      }),
-    );
-  }
-}
-
-export function renderStatus({ statusEl }, text) {
-  setDisplayText(statusEl, text);
-}
-
-export function appendFoundGroupCard({ foundEl }, group, displayName, colors) {
+function createFoundGroupCard(group, displayName, colors) {
   const resolved = colors ? resolveGroupColors({ colors }) : null;
   const card = document.createElement("div");
-  card.className = resolved ? `groupCard ${COLOR_SAMPLE_CLASS}` : "groupCard";
+  card.className = "groupCard";
 
   if (resolved) {
     applyGroupColorsToElement(card, resolved, { surface: "canvas" });
@@ -86,15 +51,66 @@ export function appendFoundGroupCard({ foundEl }, group, displayName, colors) {
   const words = document.createElement("div");
   words.className = "groupWords";
   const wordTexts = group.words.map((w) => (typeof w === "string" ? w : w.text));
-  if (wordTexts.length > 0) {
-    setDisplayText(words, wordTexts.join(" · "));
-  } else {
-    words.innerHTML = "&nbsp;";
-  }
+  setDisplayText(words, wordTexts.join(", "));
 
   card.appendChild(title);
   card.appendChild(words);
-  foundEl.appendChild(card);
+  return card;
+}
+
+export function renderSolvedSets({ solvedSetsEl }, foundGroups) {
+  if (!solvedSetsEl) return;
+  solvedSetsEl.replaceChildren();
+  for (const group of foundGroups) {
+    if (group.words.length === 0) continue;
+    solvedSetsEl.appendChild(createFoundGroupCard(group, group.title, group.colors));
+  }
+}
+
+export function renderBoard({ boardEl }, state, handlers) {
+  const unlocked = state.boardWords.filter((item) => item.lockedGroupIndex == null);
+  boardEl.replaceChildren();
+
+  if (unlocked.length === 0) {
+    boardEl.hidden = true;
+    return;
+  }
+
+  boardEl.hidden = false;
+  observeTileBoard(boardEl);
+
+  for (const item of unlocked) {
+    const isRevealed = state.revealedWords.has(item.word);
+    const group = state.wordToGroupMap.get(item.word);
+    const colors =
+      group && isGroupColorsAssigned(group) ? resolveGroupColors(group) : null;
+
+    boardEl.appendChild(
+      wordButton({
+        word: item.word,
+        selected: state.selected.has(item.word),
+        colors: isRevealed ? colors : null,
+        revealed: isRevealed,
+        onClick: () => handlers.onToggleSelect(item.word),
+        onMouseOver: state.glossaryEnabled ? handlers.onMouseOverWord : null,
+        onMouseOut: state.glossaryEnabled ? handlers.onMouseOutWord : null,
+      }),
+    );
+  }
+}
+
+/** Canonical play-area renderer: solved banners above the unsolved tile grid. */
+export function renderPlayArea(dom, state, handlers) {
+  renderSolvedSets(dom, state.foundGroups);
+  renderBoard(dom, state, handlers);
+}
+
+export function renderStatus({ statusEl }, text) {
+  setDisplayText(statusEl, text);
+}
+
+export function appendFoundGroupCard({ foundEl }, group, displayName, colors) {
+  foundEl.appendChild(createFoundGroupCard(group, displayName, colors));
 }
 
 export function clearFoundGroups({ foundEl }) {
@@ -111,7 +127,7 @@ export function renderGuesses({ guessesEl }, guesses) {
     for (const { colors } of guess.words) {
       const resolved = colors ? resolveGroupColors({ colors }) : null;
       const box = document.createElement("div");
-      box.className = resolved ? `guess-box ${COLOR_SAMPLE_CLASS}` : "guess-box";
+      box.className = "guess-box";
 
       if (resolved?.bg) {
         applyGroupColorsToElement(box, resolved, {

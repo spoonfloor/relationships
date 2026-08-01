@@ -11,6 +11,7 @@ export {
 
 /** The only way to assign user-visible text in the app. */
 export function setDisplayText(element, text) {
+  if (!element) return;
   element.textContent = formatDisplayText(text);
 }
 

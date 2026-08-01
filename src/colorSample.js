@@ -2,7 +2,9 @@ import {
   colorsNeedSeparation,
   contrastTextColor,
   cssColorToHex,
+  mixHex,
   normalizeHex,
+  relativeLuminance,
 } from "./color.js";
 
 export const COLOR_SAMPLE_CLASS = "color-sample";
@@ -55,6 +57,25 @@ export function sampleNeedsSeparation(hex, surface = "modal", surfaceElement) {
 /** @param {string} sampleHex @param {string} surfaceHex */
 export function sampleNeedsSeparationAgainst(sampleHex, surfaceHex) {
   return colorsNeedSeparation(normalizeHex(sampleHex), normalizeHex(surfaceHex));
+}
+
+/** Overlay strength when a logo swatch blends into the page surface. */
+export const LOGO_SWATCH_OVERLAY_PERCENT = 5;
+
+/**
+ * Logo swatch fill: poem bg, with a light overlay when it blends into the page surface.
+ * Light surfaces → 5% black; dark surfaces → 5% white (for future dark mode).
+ * @param {string} hex
+ * @param {{ surface?: ColorSampleSurface, surfaceElement?: Element }} [options]
+ */
+export function resolveLogoSwatchFill(hex, { surface = "canvas", surfaceElement } = {}) {
+  const normalized = normalizeHex(hex);
+  if (!sampleNeedsSeparation(normalized, surface, surfaceElement)) {
+    return normalized;
+  }
+  const surfaceHex = readSurfaceHex(surface, surfaceElement);
+  const overlay = relativeLuminance(surfaceHex) < 0.5 ? "#FFFFFF" : "#000000";
+  return mixHex(normalized, overlay, LOGO_SWATCH_OVERLAY_PERCENT);
 }
 
 /** @param {HTMLElement} el @param {string} hex */

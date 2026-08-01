@@ -13,6 +13,27 @@ export function rgbToHex(r, g, b) {
   return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).padStart(6, "0");
 }
 
+/**
+ * Blend base toward overlay by overlayPercent (0–100).
+ * @param {string} baseHex
+ * @param {string} overlayHex
+ * @param {number} overlayPercent
+ */
+export function mixHex(baseHex, overlayHex, overlayPercent) {
+  const base = hexToRgb(normalizeHex(baseHex));
+  const overlay = hexToRgb(normalizeHex(overlayHex));
+  if (!base || !overlay) return normalizeHex(baseHex);
+  const t = overlayPercent / 100;
+  const w = 1 - t;
+  return normalizeHex(
+    rgbToHex(
+      Math.round(base.r * w + overlay.r * t),
+      Math.round(base.g * w + overlay.g * t),
+      Math.round(base.b * w + overlay.b * t),
+    ),
+  );
+}
+
 /** @param {number} r @param {number} g @param {number} b @returns {{ h: number, s: number, v: number }} */
 export function rgbToHsv(r, g, b) {
   const rn = r / 255;
@@ -160,7 +181,7 @@ export function hexDisplayDigits(hex) {
 }
 
 /** @param {string} hex */
-function relativeLuminance(hex) {
+export function relativeLuminance(hex) {
   const rgb = hexToRgb(hex);
   if (!rgb) return 0;
   const channel = (value) => {

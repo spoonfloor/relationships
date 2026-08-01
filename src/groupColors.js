@@ -1,4 +1,8 @@
-import { COLOR_SAMPLE_SEPARATED_CLASS, sampleNeedsSeparation } from "./colorSample.js";
+import {
+  COLOR_SAMPLE_CLASS,
+  COLOR_SAMPLE_SEPARATED_CLASS,
+  sampleNeedsSeparation,
+} from "./colorSample.js";
 
 /** @typedef {import("./colorSample.js").ColorSampleSurface} ColorSampleSurface */
 
@@ -54,9 +58,11 @@ export function applyGroupColorsToElement(
   if (!colors) {
     el.style.background = "";
     if (applyText) el.style.color = "";
-    el.classList.remove(COLOR_SAMPLE_SEPARATED_CLASS);
+    el.classList.remove(COLOR_SAMPLE_CLASS, COLOR_SAMPLE_SEPARATED_CLASS);
     return;
   }
+
+  el.classList.add(COLOR_SAMPLE_CLASS);
 
   const needsEdge =
     typeof colors.bg === "string" &&
