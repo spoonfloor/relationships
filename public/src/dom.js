@@ -17,6 +17,7 @@ export function getDom() {
     cancelEditBtn: document.getElementById("cancelEditBtn"),
     publishBtn: document.getElementById("publishBtn"),
     vignetteEl: document.getElementById("vignette"),
+    solvedSetsEl: document.getElementById("solvedSets"),
     foundEl: document.getElementById("foundGroups"),
     guessesEl: document.getElementById("guesses"),
     mostRecentGuessEl: document.getElementById("most-recent-guess"),

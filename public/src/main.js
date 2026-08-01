@@ -22,15 +22,13 @@ import {
   hintRevealWord,
 } from "./game.js";
 import {
-  renderBoard,
+  renderPlayArea,
   renderStatus,
-  appendFoundGroupCard,
   clearFoundGroups,
   renderGuesses,
 } from "./render.js";
 import { findWordEntry } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
-import { COLOR_SAMPLE_CLASS } from "./colorSample.js";
 
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
@@ -49,11 +47,13 @@ import { openPuzzlePicker } from "./puzzlePicker.js";
 import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
 import { initPuzzleCompose } from "./puzzleCompose.js";
 import { promptEditPassword } from "./auth.js";
+import { initPageLogo, applyLogoSwatches } from "./logoSwatches.js";
 
 async function bootstrap() {
   watchBottomSheet();
   const dom = getDom();
   formatStaticUi();
+  await initPageLogo();
 
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
@@ -174,7 +174,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
   dom.glossaryBtn.addEventListener("click", () => {
     state.glossaryEnabled = !state.glossaryEnabled;
     setDisplayText(dom.glossaryBtn, state.glossaryEnabled ? "Glossary: ON" : "Glossary: OFF");
-    renderBoard(dom, state, handlers);
+    renderPlayArea(dom, state, handlers);
     hideTooltip();
   });
 
@@ -235,7 +235,8 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     dom.guessesEl.innerHTML = "";
     dom.mostRecentGuessEl.innerHTML = "";
     renderPaletteChips();
-    renderBoard(dom, state, handlers);
+    applyLogoSwatches(puzzle.groups);
+    renderPlayArea(dom, state, handlers);
   }
 
   function renderPaletteChips() {
@@ -250,17 +251,9 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
       );
       setDisplayText(btn, foundGroup ? group.title : "?");
       if (isGroupColorsAssigned(group)) {
-        btn.classList.add(COLOR_SAMPLE_CLASS);
         applyGroupColorsToElement(btn, resolveGroupColors(group), { surface: "canvas" });
       }
       dom.paletteChipsEl.appendChild(btn);
-    }
-  }
-
-  function renderAllFoundGroups() {
-    clearFoundGroups(dom);
-    for (const group of state.foundGroups) {
-      appendFoundGroupCard(dom, group, group.title, group.colors);
     }
   }
 
@@ -268,7 +261,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     onToggleSelect(word) {
       const res = toggleSelect(state, word);
       renderStatus(dom, res.ok ? `${state.selected.size} selected.` : res.message);
-      renderBoard(dom, state, handlers);
+      renderPlayArea(dom, state, handlers);
     },
     onMouseOverWord(word, event) {
       if (!state.glossaryEnabled) return;
@@ -330,6 +323,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
       state.activePuzzle = working;
       setDisplayText(dom.puzzleTitleEl, working.title ?? "");
       setDisplayText(dom.vignetteEl, working.vignette ?? "");
+      applyLogoSwatches(working.groups);
       renderStatus(dom, "Editing draft.");
     },
     onEnterCreate: () => {
@@ -346,10 +340,12 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
       state.activePuzzle = puzzleCompose.createEmptyPuzzle();
       setDisplayText(dom.puzzleTitleEl, "");
       setDisplayText(dom.vignetteEl, "");
+      applyLogoSwatches(state.activePuzzle.groups);
       renderStatus(dom, "New puzzle.");
     },
     onComposeChange: () => {
       renderPaletteChips();
+      applyLogoSwatches(state.activePuzzle.groups);
     },
     onCancelCompose: (variant) => {
       const restore = composeReturnTo?.puzzle;
@@ -400,7 +396,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     dom.guessesEl.innerHTML = "";
     dom.mostRecentGuessEl.innerHTML = "";
     renderPaletteChips();
-    renderBoard(dom, state, handlers);
+    renderPlayArea(dom, state, handlers);
     renderGuesses(dom, state.guesses);
     renderStatus(dom, "Pick 4 words.");
   }
@@ -408,7 +404,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
   dom.shuffleBtn.addEventListener("click", () => {
     shuffleUnlocked(state);
-    renderBoard(dom, state, handlers);
+    renderPlayArea(dom, state, handlers);
     renderStatus(dom, "Shuffled.");
   });
   dom.clearBtn.addEventListener("click", applyClear);
@@ -435,10 +431,9 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
 
   function handleGameAction(res) {
     if (res.ok && (res.group || res.solved)) {
-      renderAllFoundGroups();
       renderPaletteChips();
     }
-    renderBoard(dom, state, handlers);
+    renderPlayArea(dom, state, handlers);
     renderMostRecentGuess(dom, state.guesses.at(-1));
     if (state.boardWords.filter((wordItem) => wordItem.lockedGroupIndex != null).length === 16) {
       showResultsPopup();
@@ -453,9 +448,8 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
 
   function handleDebugSolve() {
     const res = solvePuzzle(state);
-    renderAllFoundGroups();
     renderPaletteChips();
-    renderBoard(dom, state, handlers);
+    renderPlayArea(dom, state, handlers);
     showResultsPopup(generateDebugGuessHistory(state.activePuzzle));
     renderStatus(dom, res.message);
   }
@@ -501,7 +495,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
   dom.hintCategoryBtn.addEventListener("click", () => {
     const res = hintRevealCategory(state);
     if (res.ok && res.group) {
-      appendFoundGroupCard(dom, res.group, res.group.title, res.group.colors);
+      renderPlayArea(dom, state, handlers);
       renderPaletteChips();
       renderStatus(dom, `Hint: One category is “${res.group.title}”.`);
     } else {
@@ -511,7 +505,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
 
   dom.hintWordBtn.addEventListener("click", () => {
     const res = hintRevealWord(state);
-    renderBoard(dom, state, handlers);
+    renderPlayArea(dom, state, handlers);
     renderStatus(dom, res.message);
   });
 

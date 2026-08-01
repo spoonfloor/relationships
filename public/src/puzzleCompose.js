@@ -40,7 +40,7 @@ export function validateComposePublish(puzzle, fileLabel = "puzzle", { requireId
 /**
  * @param {{
  *   dom: {
- *     puzzleTitleEl: HTMLElement,
+ *     puzzleTitleEl: HTMLElement | null,
  *     vignetteEl: HTMLElement,
  *     boardEl: HTMLElement,
  *     ctaStackPlay: HTMLElement,
@@ -72,8 +72,11 @@ export function initPuzzleCompose({
   onComposeChange,
 }) {
   const { puzzleTitleEl, vignetteEl, boardEl, ctaStackPlay, ctaStackEdit } = dom;
-  const titleWrap = puzzleTitleEl.closest(".puzzle-title-wrap");
-  if (!(titleWrap instanceof HTMLElement)) {
+  const titleWrap =
+    puzzleTitleEl instanceof HTMLElement
+      ? puzzleTitleEl.closest(".puzzle-title-wrap")
+      : null;
+  if (puzzleTitleEl && !(titleWrap instanceof HTMLElement)) {
     throw new Error("puzzle-title must be wrapped in .puzzle-title-wrap");
   }
   const vignetteWrap = vignetteEl.closest(".vignette-wrap");
@@ -268,16 +271,18 @@ export function initPuzzleCompose({
 
     clearFieldControllers();
 
-    bindField({
-      element: puzzleTitleEl,
-      wrap: titleWrap,
-      placeholder: COMPOSE_PLACEHOLDERS.PUZZLE_TITLE,
-      getValue: () => getPuzzle().title ?? "",
-      setValue: (value) => {
-        getPuzzle().title = value;
-        notifyChange();
-      },
-    });
+    if (puzzleTitleEl instanceof HTMLElement && titleWrap instanceof HTMLElement) {
+      bindField({
+        element: puzzleTitleEl,
+        wrap: titleWrap,
+        placeholder: COMPOSE_PLACEHOLDERS.PUZZLE_TITLE,
+        getValue: () => getPuzzle().title ?? "",
+        setValue: (value) => {
+          getPuzzle().title = value;
+          notifyChange();
+        },
+      });
+    }
 
     bindField({
       element: vignetteEl,

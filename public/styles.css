@@ -45,14 +45,16 @@
   --panel-2: #252525;
   --surface-canvas: #ffffff;
   --surface-modal: var(--modal-bg);
-  --color-separation-edge: color-mix(in srgb, var(--text-color) 14%, transparent);
+  --color-separation-edge: color-mix(
+    in srgb,
+    var(--text-color) 14%,
+    transparent
+  );
 
   /* Main content padding */
   --content-padding-top: 20px;
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
-  --logo-width: 430px;
-  --logo-height: 86px;
   --app-height: 100vh;
   --app-height: 100dvh;
   --bottom-sheet-reserved: 148px;
@@ -60,7 +62,7 @@
   --toast-top-gap: 32px;
   --toast-bg: #444444;
   --toast-color: #ffffff;
-  --toast-font-family: 'Atkinson Hyperlegible Next', var(--font-family);
+  --toast-font-family: var(--font-family);
   --toast-font-weight: 200;
   --toast-close-gap-top: 8px;
   --toast-close-gap-right: 8px;
@@ -73,7 +75,7 @@
     var(--theme-light-mode-text) 60%,
     white
   );
-  --font-family: 'Atkinson Hyperlegible', sans-serif;
+  --font-family: 'Inter', sans-serif;
   --text-color: var(--theme-light-mode-text);
   --muted: #a0a0a0;
   --puzzle-title-font-size: var(--word-font-size);
@@ -81,12 +83,15 @@
   --puzzle-title-vignette-gap: 16px;
   --puzzle-title-line-height: 20px;
   --puzzle-stack-gap: 24px;
+  --play-gap: 10px;
   --puzzle-edit-field-bg: var(--theme-edit-field-bg-focused);
   --puzzle-edit-viewport-border-width: 4px;
   --vignette-font-size: 28px;
   --vignette-line-height: 1.15;
   --vignette-letter-spacing: -0.02em;
   --word-font-size: 0.9rem;
+  --word-font-family: 'Cabin Condensed', var(--font-family);
+  --word-line-height: 1.2;
   --cta-font-size: 20px;
 
   /* Lines + shadows */
@@ -187,7 +192,7 @@ body {
 
 body {
   font-family: inherit;
-  background: #fff;
+  background: var(--surface-canvas);
   color: var(--text-color);
   touch-action: manipulation;
 }
@@ -229,19 +234,24 @@ textarea {
 .page-logo {
   display: flex;
   justify-content: center;
-  margin-top: calc(-1 * max(var(--content-padding-top), env(safe-area-inset-top)));
-  margin-left: calc(-1 * max(var(--content-padding-x), env(safe-area-inset-left)));
-  margin-right: calc(-1 * max(var(--content-padding-x), env(safe-area-inset-right)));
-  height: var(--logo-height);
-  overflow: visible;
+  margin: 24px
+    calc(-1 * max(var(--content-padding-x), env(safe-area-inset-right))) 10px
+    calc(-1 * max(var(--content-padding-x), env(safe-area-inset-left)));
 }
 
 .page-logo__img {
-  width: var(--logo-width);
-  height: var(--logo-height);
+  width: auto;
+  height: auto;
   max-width: none;
   flex-shrink: 0;
   display: block;
+}
+
+.page-tagline {
+  margin: 0 0 24px 0;
+  font-size: calc(var(--puzzle-title-font-size) + 0.5px);
+  text-align: center;
+  color: var(--text-color);
 }
 
 .puzzle-title-wrap {
@@ -443,9 +453,9 @@ body.edit-mode::before {
   color: var(--theme-edit-placeholder);
 }
 
-.word.compose-word.editable-field--placeholder:not(.editable-field--focused):not(
-    .compose-word--has-colors
-  ) {
+.word.compose-word.editable-field--placeholder:not(
+    .editable-field--focused
+  ):not(.compose-word--has-colors) {
   opacity: 0.72;
 }
 
@@ -654,10 +664,49 @@ body.edit-mode::before {
   border-color: var(--border-strong);
 }
 
+.solvedSets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--play-gap);
+}
+
+.solvedSets:empty {
+  display: none;
+}
+
+.play-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--play-gap);
+}
+
+.solvedSets .groupCard {
+  border-radius: 14px;
+  box-shadow: none;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.solvedSets .groupTitle {
+  font-family: var(--font-family);
+  font-weight: 300;
+  margin-bottom: 6px;
+  margin-top: 8px;
+  font-size: 24px;
+}
+
+.solvedSets .groupWords {
+  color: inherit;
+  font-family: var(--word-font-family);
+  font-weight: 650;
+  opacity: 0.92;
+  text-transform: uppercase;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--play-gap);
 }
 
 .board[hidden] {
@@ -677,11 +726,12 @@ body.edit-mode::before {
   text-align: center;
   user-select: none;
   cursor: pointer;
+  font-family: var(--word-font-family);
   font-weight: 750;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   font-size: var(--word-font-size);
-  line-height: 1.2;
+  line-height: var(--word-line-height);
   color: var(--text-color);
   touch-action: manipulation;
   overflow-wrap: break-word;
@@ -691,11 +741,24 @@ body.edit-mode::before {
   hyphenate-limit-chars: 6 3 3;
   overflow: hidden;
 }
-.word.compose-word--has-colors:hover {
+.word .tile-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: var(--word-line-height);
+  min-width: 0;
+  max-width: 100%;
+}
+.word .tile-line {
+  display: block;
+  white-space: nowrap;
+}
+.word.color-sample:hover:not(.color-sample--separated),
+.word.selected:hover:not(.color-sample) {
   filter: brightness(0.96);
 }
 
-.word:hover:not(.compose-word--has-colors) {
+.word:hover:not(.color-sample):not(.selected) {
   background: var(--word-tile-hover);
 }
 
@@ -780,7 +843,8 @@ body.edit-mode::before {
 
 .groupCard.color-sample .groupWords {
   color: inherit;
-  opacity: 0.72;
+  opacity: 0.9;
+  margin: 0 0 10px 0;
 }
 .groupTitle {
   font-weight: 900;
@@ -1096,7 +1160,7 @@ body.edit-mode::before {
   border: 1px solid transparent;
 }
 
-.color-sample--separated {
+.color-sample.color-sample--separated {
   border-color: var(--color-separation-edge);
 }
 
