@@ -116,7 +116,7 @@ export function renderGuesses({ guessesEl }, guesses) {
       if (resolved?.bg) {
         applyGroupColorsToElement(box, resolved, {
           surface,
-          surfaceElement: guessesEl,
+          surfaceElement: guessesEl.closest(".modal__panel") ?? undefined,
           applyText: false,
         });
       }

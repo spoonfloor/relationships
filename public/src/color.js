@@ -92,11 +92,53 @@ export function hueToHex(h) {
   return hsvToHex(h, 1, 1);
 }
 
+/** @param {string} digits @returns {string | null} six hex digits */
+function expandHexDigits(digits) {
+  const clean = digits.replace(/[^0-9a-f]/gi, "");
+  if (clean.length === 3) {
+    return clean
+      .split("")
+      .map((char) => char + char)
+      .join("")
+      .toUpperCase();
+  }
+  if (clean.length === 6) return clean.toUpperCase();
+  return null;
+}
+
 /** @param {string} hex */
 export function normalizeHex(hex) {
-  const rgb = hexToRgb(hex);
+  const trimmed = hex.trim();
+  if (trimmed.startsWith("#")) {
+    const six = expandHexDigits(trimmed.slice(1));
+    if (six) {
+      const rgb = hexToRgb(`#${six}`);
+      if (rgb) return rgbToHex(rgb.r, rgb.g, rgb.b).toUpperCase();
+    }
+  }
+  const rgb = hexToRgb(trimmed);
   if (!rgb) return "#000000";
   return rgbToHex(rgb.r, rgb.g, rgb.b).toUpperCase();
+}
+
+/**
+ * Parse a CSS color value (token, hex, or rgb) to normalized #RRGGBB.
+ * @param {string} value
+ * @returns {string | null}
+ */
+export function cssColorToHex(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("#")) return normalizeHex(trimmed);
+
+  const rgbMatch = trimmed.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (rgbMatch) {
+    return normalizeHex(
+      rgbToHex(Number(rgbMatch[1]), Number(rgbMatch[2]), Number(rgbMatch[3])),
+    );
+  }
+
+  return null;
 }
 
 /** @param {string} raw */
@@ -106,15 +148,8 @@ export function sanitizeHexDigits(raw) {
 
 /** @param {string} raw @returns {string | null} normalized #RRGGBB, or null if not parseable */
 export function parseHexInput(raw) {
-  const digits = raw.replace(/[^0-9a-f]/gi, "");
-  let six = digits;
-  if (digits.length === 3) {
-    six = digits
-      .split("")
-      .map((char) => char + char)
-      .join("");
-  }
-  if (six.length !== 6) return null;
+  const six = expandHexDigits(raw.replace(/[^0-9a-f]/gi, ""));
+  if (!six) return null;
   const hex = `#${six}`;
   return hexToRgb(hex) ? normalizeHex(hex) : null;
 }

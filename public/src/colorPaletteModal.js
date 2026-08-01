@@ -34,13 +34,17 @@ export function openColorPaletteModal({ groupIndex, getGroup, onSelect }) {
 
   /** @type {ReturnType<typeof mountInlineColorPicker> | null} */
   let picker = null;
-  /** @type {HTMLButtonElement | null} */
+  /** @type {HTMLElement | null} */
   let previewBgLeftEl = null;
-  /** @type {HTMLButtonElement | null} */
+  /** @type {HTMLElement | null} */
   let previewBgRightEl = null;
   /** @type {HTMLButtonElement | null} */
-  let previewTextLeftEl = null;
+  let previewBgButtonEl = null;
   /** @type {HTMLButtonElement | null} */
+  let previewTextButtonEl = null;
+  /** @type {HTMLElement | null} */
+  let previewTextLeftEl = null;
+  /** @type {HTMLElement | null} */
   let previewTextRightEl = null;
   /** @type {HTMLInputElement | null} */
   let bgSwatchInputEl = null;
@@ -50,8 +54,6 @@ export function openColorPaletteModal({ groupIndex, getGroup, onSelect }) {
   let bgRadio = null;
   /** @type {HTMLInputElement | null} */
   let textRadio = null;
-  /** @type {HTMLElement | null} */
-  let surfaceContextEl = null;
   /** @type {HTMLElement | null} */
   let previewWrapEl = null;
 
@@ -79,7 +81,6 @@ export function openColorPaletteModal({ groupIndex, getGroup, onSelect }) {
     if (wrap instanceof HTMLElement) {
       applyColorSampleWithText(wrap, hex, {
         surface: "modal",
-        surfaceElement: surfaceContextEl ?? wrap,
       });
     }
     if (document.activeElement !== inputEl) {
@@ -97,7 +98,6 @@ export function openColorPaletteModal({ groupIndex, getGroup, onSelect }) {
         leftEl: previewBgLeftEl,
         rightEl: previewBgRightEl,
         surface: "modal",
-        surfaceElement: surfaceContextEl ?? previewWrapEl,
       },
     );
     if (previewTextLeftEl) previewTextLeftEl.style.color = draft.text;
@@ -304,40 +304,45 @@ export function openColorPaletteModal({ groupIndex, getGroup, onSelect }) {
       previewWrap.className = "color-sample color-palette-modal__preview";
       previewWrapEl = previewWrap;
 
-      previewBgLeftEl = document.createElement("button");
-      previewBgLeftEl.type = "button";
+      previewBgLeftEl = document.createElement("span");
       previewBgLeftEl.className =
         "color-palette-modal__preview-bg color-palette-modal__preview-bg--left";
-      previewBgLeftEl.setAttribute("aria-label", "Edit background color");
+      previewBgLeftEl.setAttribute("aria-hidden", "true");
 
-      previewBgRightEl = document.createElement("button");
-      previewBgRightEl.type = "button";
+      previewBgRightEl = document.createElement("span");
       previewBgRightEl.className =
         "color-palette-modal__preview-bg color-palette-modal__preview-bg--right";
       previewBgRightEl.setAttribute("aria-hidden", "true");
-      previewBgRightEl.tabIndex = -1;
 
-      previewTextLeftEl = document.createElement("button");
-      previewTextLeftEl.type = "button";
+      previewBgButtonEl = document.createElement("button");
+      previewBgButtonEl.type = "button";
+      previewBgButtonEl.className = "color-palette-modal__preview-bg-hit";
+      previewBgButtonEl.setAttribute("aria-label", "Edit background color");
+
+      previewTextButtonEl = document.createElement("button");
+      previewTextButtonEl.type = "button";
+      previewTextButtonEl.className = "color-palette-modal__preview-text";
+      previewTextButtonEl.setAttribute("aria-label", "Edit text color");
+
+      previewTextLeftEl = document.createElement("span");
       previewTextLeftEl.className =
-        "color-palette-modal__preview-text color-palette-modal__preview-text--left";
+        "color-palette-modal__preview-text-half color-palette-modal__preview-text-half--left";
       previewTextLeftEl.textContent = "Preview";
-      previewTextLeftEl.setAttribute("aria-label", "Edit text color");
+      previewTextLeftEl.setAttribute("aria-hidden", "true");
 
-      previewTextRightEl = document.createElement("button");
-      previewTextRightEl.type = "button";
+      previewTextRightEl = document.createElement("span");
       previewTextRightEl.className =
-        "color-palette-modal__preview-text color-palette-modal__preview-text--right";
+        "color-palette-modal__preview-text-half color-palette-modal__preview-text-half--right";
       previewTextRightEl.textContent = "Preview";
       previewTextRightEl.setAttribute("aria-hidden", "true");
-      previewTextRightEl.tabIndex = -1;
+
+      previewTextButtonEl.appendChild(previewTextLeftEl);
+      previewTextButtonEl.appendChild(previewTextRightEl);
 
       previewWrap.appendChild(previewBgLeftEl);
       previewWrap.appendChild(previewBgRightEl);
-      previewWrap.appendChild(previewTextLeftEl);
-      previewWrap.appendChild(previewTextRightEl);
-
-      surfaceContextEl = previewWrap;
+      previewWrap.appendChild(previewBgButtonEl);
+      previewWrap.appendChild(previewTextButtonEl);
 
       targetRow.appendChild(fieldset);
       targetRow.appendChild(previewWrap);
@@ -381,16 +386,14 @@ export function openColorPaletteModal({ groupIndex, getGroup, onSelect }) {
         setTarget("bg");
       }
 
-      previewBgLeftEl.addEventListener("click", focusBackgroundTarget);
-      previewBgRightEl.addEventListener("click", focusBackgroundTarget);
+      previewBgButtonEl.addEventListener("click", focusBackgroundTarget);
 
       function focusTextTarget() {
         if (textRadio) textRadio.checked = true;
         setTarget("text");
       }
 
-      previewTextLeftEl.addEventListener("click", focusTextTarget);
-      previewTextRightEl.addEventListener("click", focusTextTarget);
+      previewTextButtonEl.addEventListener("click", focusTextTarget);
 
       syncAll();
     },

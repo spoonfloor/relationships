@@ -9,6 +9,7 @@ export const DEFAULT_GROUP_COLORS = [
 export const COMPOSE_PLACEHOLDERS = {
   PUZZLE_TITLE: "Add a puzzle title",
   VIGNETTE: "Add a vignette",
+  WORD: "?",
 };
 
 /** @param {number} groupIndex 0-based */
@@ -16,11 +17,27 @@ export function groupTitlePlaceholder(groupIndex) {
   return `Add title for set ${groupIndex + 1}`;
 }
 
+/** @param {number} _groupIndex 0-based @param {number} _wordIndex 0-based */
+export function wordPlaceholder(_groupIndex, _wordIndex) {
+  return COMPOSE_PLACEHOLDERS.WORD;
+}
+
 /** @param {number} groupIndex 0-based @param {number} wordIndex 0-based */
-export function wordPlaceholder(groupIndex, wordIndex) {
+export function wordFieldLabel(groupIndex, wordIndex) {
+  return `Word ${wordIndex + 1} in set ${groupIndex + 1}`;
+}
+
+/** Legacy grid coordinate shown before compose placeholders used "?". */
+function legacyWordPlaceholder(groupIndex, wordIndex) {
   const row = groupIndex + 1;
   const col = String.fromCharCode(97 + wordIndex);
   return `${row}${col}`;
+}
+
+/** @param {string} value @param {number} groupIndex 0-based @param {number} wordIndex 0-based */
+export function isWordPlaceholderValue(value, groupIndex, wordIndex) {
+  if (isPlaceholderValue(value, COMPOSE_PLACEHOLDERS.WORD)) return true;
+  return isPlaceholderValue(value, legacyWordPlaceholder(groupIndex, wordIndex));
 }
 
 /**
@@ -66,10 +83,9 @@ export function normalizeComposePuzzle(puzzle) {
     }
 
     for (let wi = 0; wi < 4; wi += 1) {
-      const wordPh = wordPlaceholder(gi, wi);
       const text = group.words?.[wi]?.text ?? "";
-      if (isPlaceholderValue(text, wordPh)) {
-        group.words[wi].text = wordPh;
+      if (isWordPlaceholderValue(text, gi, wi)) {
+        group.words[wi].text = "";
       }
     }
   }

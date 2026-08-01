@@ -65,6 +65,7 @@ function focusAndPlaceCaret(element, clientX, clientY) {
  *   allowMultiline?: boolean,
  *   isActive?: () => boolean,
  *   tileText?: boolean,
+ *   onFocusChange?: (focused: boolean) => void,
  * }} options
  */
 export function bindEditableField({
@@ -76,6 +77,7 @@ export function bindEditableField({
   allowMultiline = false,
   isActive = () => true,
   tileText = false,
+  onFocusChange,
 }) {
   const abort = new AbortController();
   const { signal } = abort;
@@ -113,13 +115,17 @@ export function bindEditableField({
   }
 
   function clearFocusClasses() {
+    const wasFocused = element.classList.contains("editable-field--focused");
     element.classList.remove("editable-field--focused");
     wrap?.classList.remove("editable-field-wrap--focused");
+    if (wasFocused) onFocusChange?.(false);
   }
 
   function ensureFocusClasses() {
+    const wasFocused = element.classList.contains("editable-field--focused");
     element.classList.add("editable-field--focused");
     wrap?.classList.add("editable-field-wrap--focused");
+    if (!wasFocused) onFocusChange?.(true);
   }
 
   function isShowingPlaceholder() {
