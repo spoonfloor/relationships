@@ -44,26 +44,37 @@ export function resolveGroupColors(group) {
  * Pass `null` to clear inline overrides and fall back to CSS defaults.
  * @param {HTMLElement} el
  * @param {{ text?: string, bg?: string } | null | undefined} colors
- * @param {{ surface?: ColorSampleSurface, surfaceElement?: Element, applyText?: boolean }} [options]
+ * @param {{ surface?: ColorSampleSurface, surfaceElement?: Element, applyText?: boolean, paintFill?: boolean }} [options]
  */
-export function applyGroupColorsToElement(el, colors, { surface = "canvas", surfaceElement, applyText = true } = {}) {
+export function applyGroupColorsToElement(
+  el,
+  colors,
+  { surface = "canvas", surfaceElement, applyText = true, paintFill = true } = {},
+) {
   if (!colors) {
     el.style.background = "";
     if (applyText) el.style.color = "";
     el.classList.remove(COLOR_SAMPLE_SEPARATED_CLASS);
     return;
   }
-  if (colors.bg) el.style.background = colors.bg;
-  else el.style.background = "";
-  if (applyText) {
-    if (colors.text) el.style.color = colors.text;
-    else el.style.color = "";
-  }
 
   const needsEdge =
     typeof colors.bg === "string" &&
     colors.bg.trim() !== "" &&
-    sampleNeedsSeparation(colors.bg, surface, surfaceElement ?? el);
+    sampleNeedsSeparation(colors.bg, surface, surfaceElement);
+
+  if (paintFill) {
+    if (colors.bg) el.style.background = colors.bg;
+    else el.style.background = "";
+    if (applyText) {
+      if (colors.text) el.style.color = colors.text;
+      else el.style.color = "";
+    }
+  } else {
+    el.style.background = "";
+    if (applyText) el.style.color = "";
+  }
+
   el.classList.toggle(COLOR_SAMPLE_SEPARATED_CLASS, needsEdge);
 }
 

@@ -3,12 +3,19 @@ import { observeTileBoard } from "./display.js";
 import { syncBottomSheetReserve } from "./ctaLayout.js";
 import { promptEditPassword } from "./auth.js";
 import { openColorPaletteModal } from "./colorPaletteModal.js";
-import { applyGroupColorsToElement, resolveGroupColors, setGroupColors } from "./groupColors.js";
+import {
+  applyGroupColorsToElement,
+  isGroupColorsAssigned,
+  resolveGroupColors,
+  setGroupColors,
+} from "./groupColors.js";
 import {
   COMPOSE_PLACEHOLDERS,
   createEmptyPuzzle,
   groupTitlePlaceholder,
+  isWordPlaceholderValue,
   normalizeComposePuzzle,
+  wordFieldLabel,
   wordPlaceholder,
 } from "./puzzleComposeTemplate.js";
 import { validatePuzzle } from "./validation.js";
@@ -100,11 +107,14 @@ export function initPuzzleCompose({
     if (!composeVariant) return;
     const groupBlocks = puzzleStack.querySelectorAll(":scope > .compose-group");
     groupBlocks.forEach((block, gi) => {
-      const colors = resolveGroupColors(getPuzzle().groups[gi]);
+      const group = getPuzzle().groups[gi];
+      const colors = isGroupColorsAssigned(group) ? resolveGroupColors(group) : null;
+      const hasColors = colors != null;
       for (const wordEl of block.querySelectorAll(".word.compose-word")) {
-        if (wordEl instanceof HTMLElement) {
-          applyGroupColorsToElement(wordEl, colors);
-        }
+        if (!(wordEl instanceof HTMLElement)) continue;
+        const isFocused = wordEl.classList.contains("editable-field--focused");
+        wordEl.classList.toggle("compose-word--has-colors", hasColors);
+        applyGroupColorsToElement(wordEl, colors, { paintFill: !isFocused });
       }
     });
   }
@@ -209,7 +219,7 @@ export function initPuzzleCompose({
         const wordEl = document.createElement("div");
         wordEl.className = "word compose-word";
         wordEl.setAttribute("role", "textbox");
-        wordEl.setAttribute("aria-label", wordPlaceholder(gi, wi));
+        wordEl.setAttribute("aria-label", wordFieldLabel(gi, wi));
         wordWrap.appendChild(wordEl);
 
         bindField({
@@ -217,7 +227,11 @@ export function initPuzzleCompose({
           wrap: wordWrap,
           placeholder: wordPlaceholder(gi, wi),
           tileText: true,
-          getValue: () => getPuzzle().groups[gi].words[wi].text ?? "",
+          onFocusChange: () => syncComposeWordColors(),
+          getValue: () => {
+            const text = getPuzzle().groups[gi].words[wi].text ?? "";
+            return isWordPlaceholderValue(text, gi, wi) ? "" : text;
+          },
           setValue: (value) => {
             getPuzzle().groups[gi].words[wi].text = value;
             notifyChange();

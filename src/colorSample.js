@@ -1,4 +1,9 @@
-import { colorsNeedSeparation, contrastTextColor, normalizeHex, rgbToHex } from "./color.js";
+import {
+  colorsNeedSeparation,
+  contrastTextColor,
+  cssColorToHex,
+  normalizeHex,
+} from "./color.js";
 
 export const COLOR_SAMPLE_CLASS = "color-sample";
 export const COLOR_SAMPLE_SEPARATED_CLASS = "color-sample--separated";
@@ -11,40 +16,39 @@ const SURFACE_TOKENS = {
   canvas: "--surface-canvas",
 };
 
-/** @param {string} value */
-function cssColorToHex(value) {
-  const trimmed = value.trim();
-  if (!trimmed) return "#FFFFFF";
-  if (trimmed.startsWith("#")) return normalizeHex(trimmed);
-
-  const rgbMatch = trimmed.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
-  if (rgbMatch) {
-    return normalizeHex(
-      rgbToHex(Number(rgbMatch[1]), Number(rgbMatch[2]), Number(rgbMatch[3])),
-    );
-  }
-
-  return "#FFFFFF";
+/**
+ * Element that owns the surface token for separation checks.
+ * @param {ColorSampleSurface} surface
+ * @param {Element | null | undefined} surfaceElement modal panel when surface is "modal"
+ */
+function surfaceAnchor(surface, surfaceElement) {
+  if (surface === "canvas") return document.body;
+  if (surfaceElement instanceof Element) return surfaceElement;
+  return document.querySelector(".modal__panel") ?? document.body;
 }
 
 /**
  * Resolved surface color for separation checks.
  * @param {ColorSampleSurface} [surface]
- * @param {Element} [element]
+ * @param {Element | null | undefined} [surfaceElement] modal panel for "modal" surface
  */
-export function readSurfaceHex(surface = "modal", element = document.documentElement) {
+export function readSurfaceHex(surface = "modal", surfaceElement) {
   const token = SURFACE_TOKENS[surface] ?? SURFACE_TOKENS.modal;
-  return cssColorToHex(getComputedStyle(element).getPropertyValue(token));
+  const anchor = surfaceAnchor(surface, surfaceElement);
+  const styles = getComputedStyle(anchor);
+  const fromToken = cssColorToHex(styles.getPropertyValue(token));
+  if (fromToken) return fromToken;
+  return cssColorToHex(styles.backgroundColor) ?? "#FFFFFF";
 }
 
 /**
  * @param {string} hex
  * @param {ColorSampleSurface} [surface]
- * @param {Element} [surfaceElement]
+ * @param {Element | null | undefined} [surfaceElement]
  */
 export function sampleNeedsSeparation(hex, surface = "modal", surfaceElement) {
   const normalized = normalizeHex(hex);
-  const surfaceHex = readSurfaceHex(surface, surfaceElement ?? document.documentElement);
+  const surfaceHex = readSurfaceHex(surface, surfaceElement);
   return colorsNeedSeparation(normalized, surfaceHex);
 }
 
@@ -65,9 +69,14 @@ export function paintColorFill(el, hex) {
  * @param {string[]} sampleHexes
  * @param {{ surface?: ColorSampleSurface, surfaceElement?: Element }} [options]
  */
-export function syncColorSampleEdge(silhouetteEl, sampleHexes, { surface = "modal", surfaceElement } = {}) {
-  const context = surfaceElement ?? silhouetteEl;
-  const needsEdge = sampleHexes.some((hex) => sampleNeedsSeparation(hex, surface, context));
+export function syncColorSampleEdge(
+  silhouetteEl,
+  sampleHexes,
+  { surface = "modal", surfaceElement } = {},
+) {
+  const needsEdge = sampleHexes.some((hex) =>
+    sampleNeedsSeparation(hex, surface, surfaceElement),
+  );
   silhouetteEl.classList.toggle(COLOR_SAMPLE_SEPARATED_CLASS, needsEdge);
 }
 

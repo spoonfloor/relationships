@@ -81,7 +81,9 @@ export function mountInlineColorPicker(container, { value, onChange, ariaLabel =
   }
 
   function setHex(hex) {
-    state = hexToHsv(normalizeHex(hex));
+    const normalized = normalizeHex(hex);
+    if (normalized === currentHex()) return;
+    state = hexToHsv(normalized);
     render();
   }
 
@@ -102,6 +104,8 @@ export function mountInlineColorPicker(container, { value, onChange, ariaLabel =
   function hueFromPointer(event) {
     const rect = hue.getBoundingClientRect();
     state.h = clamp((event.clientY - rect.top) / rect.height, 0, 1) * 360;
+    // Achromatic colors (s=0) ignore hue in HSV; bump saturation so hue picks a color.
+    if (state.s === 0 && state.v > 0) state.s = 1;
     emitChange();
   }
 
