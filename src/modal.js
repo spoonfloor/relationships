@@ -1,20 +1,5 @@
 import { setDisplayText } from "./display.js";
-
-function lockScroll() {
-  document.body.style.overflow = "hidden";
-}
-
-function unlockScroll() {
-  document.body.style.overflow = "";
-}
-
-/** @type {(() => void) | null} */
-let activeModalClose = null;
-
-export function closeActiveModal() {
-  activeModalClose?.();
-  activeModalClose = null;
-}
+import { activateOverlay, deactivateOverlay } from "./overlay.js";
 
 /**
  * @param {object} options
@@ -91,24 +76,20 @@ export function openModal({ title, content, actions = [], onClose }) {
   });
 
   dialog.addEventListener("close", () => {
-    if (activeModalClose === closeModal) {
-      activeModalClose = null;
-    }
+    deactivateOverlay(closeModal);
     dialog.remove();
-    unlockScroll();
     onClose?.();
     if (previousFocus instanceof HTMLElement) {
-      previousFocus.focus();
+      previousFocus.focus({ preventScroll: true });
     }
   });
 
-  activeModalClose = closeModal;
-  lockScroll();
+  activateOverlay(closeModal);
   dialog.showModal();
 
   const firstButton = actionsEl.querySelector("button");
   if (firstButton instanceof HTMLButtonElement) {
-    firstButton.focus();
+    firstButton.focus({ preventScroll: true });
   }
 
   return { close: closeModal, dialog };

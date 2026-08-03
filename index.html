@@ -1,7 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-color-scheme="dark">
 <head>
   <meta charset="utf-8" />
+  <script>
+    (function () {
+      var key = "relationships.colorScheme";
+      var scheme = "dark";
+      try {
+        var stored = localStorage.getItem(key);
+        if (stored === "light" || stored === "dark") scheme = stored;
+      } catch (e) {}
+      document.documentElement.dataset.colorScheme = scheme;
+    })();
+  </script>
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"
@@ -45,6 +56,19 @@
         <span class="material-icons" aria-hidden="true">more_vert</span>
       </button>
       <div id="app-bar-menu" class="app-bar-menu" role="menu" hidden>
+        <div class="app-bar-menu__row" data-menu-tier="always">
+          <label class="app-bar-menu__switch" for="dark-mode-switch">
+            <span class="app-bar-menu__switch-label">Dark mode</span>
+            <input
+              id="dark-mode-switch"
+              type="checkbox"
+              role="switch"
+              aria-checked="true"
+              aria-label="Dark mode"
+            />
+          </label>
+        </div>
+        <hr class="app-bar-menu__divider" data-menu-tier="always" />
         <!-- Every menuitem requires data-menu-tier="public" or "secret". -->
         <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public">Choose puzzle</button>
         <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Edit</button>
@@ -57,13 +81,11 @@
     <main id="scroll-content" class="app">
       <div class="page-logo" aria-hidden="true"></div>
       <p class="page-tagline">find four sets of four</p>
-      <!--
       <header id="app-bar" class="app-bar">
         <div class="puzzle-title-wrap">
           <h1 id="puzzle-title" class="puzzle-title"></h1>
         </div>
       </header>
-      -->
       <div class="puzzle-stack">
         <div class="vignette-wrap">
           <div id="vignette" class="vignette"></div>
@@ -118,6 +140,7 @@
         <div class="cta-row">
           <button id="shuffleBtn" class="btn btn-block-half" type="button">Shuffle</button>
           <button id="clearBtn" class="btn btn-secondary btn-block-half" type="button">Clear</button>
+          <button id="glossaryCtaBtn" class="btn btn-secondary btn-block-half" type="button" hidden>Glossary</button>
         </div>
       </div>
       <div id="cta-stack-edit" class="cta-stack" hidden>
@@ -125,6 +148,7 @@
         <div class="cta-row">
           <button id="saveBtn" class="btn btn-block-half" type="button">Save draft</button>
           <button id="cancelEditBtn" class="btn btn-secondary btn-block-half" type="button">Close/Cancel</button>
+          <button id="glossaryEditBtn" class="btn btn-secondary btn-block-half" type="button">Glossary</button>
         </div>
       </div>
     </footer>

@@ -159,7 +159,12 @@ export function bindEditableField({
   function commit() {
     if (destroyed) return;
     replacePlaceholderOnPaste = false;
-    setValue(readCommittedText());
+    const wasFocused = element.classList.contains("editable-field--focused");
+    // Fitted tile DOM (multi-line display hyphens) is not authoritative — only
+    // flush edited plain text when the user actually focused this field.
+    if (!tileText || wasFocused) {
+      setValue(readCommittedText());
+    }
     clearFocusClasses();
     syncDisplay();
   }
