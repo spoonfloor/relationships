@@ -318,6 +318,11 @@ export function initPuzzleCompose({
     composeVariant = null;
     document.body.classList.remove("edit-mode");
     setCtaMode(false);
+
+    if (dom.editPuzzleBtn) {
+      dom.editPuzzleBtn.disabled = false;
+      dom.editPuzzleBtn.removeAttribute("aria-disabled");
+    }
   }
 
   function cancelCompose() {
@@ -368,6 +373,7 @@ export function initPuzzleCompose({
 
   dom.editPuzzleBtn?.addEventListener("click", async (event) => {
     event.stopPropagation();
+    if (isComposeMode()) return;
     await beginEdit();
   });
 
