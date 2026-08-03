@@ -1,3 +1,5 @@
+import { normalizeGlossary } from "./puzzleSchema.js";
+
 /** Default group colors for published static puzzles (not compose unset state). */
 export const DEFAULT_GROUP_COLORS = [
   { text: "#916026", bg: "#E9C478", border: "#B48847" },
@@ -90,6 +92,7 @@ export function normalizeComposePuzzle(puzzle) {
     }
   }
 
+  normalizeGlossary(puzzle);
   return puzzle;
 }
 
@@ -99,6 +102,7 @@ export function createEmptyPuzzle() {
     id: "",
     title: "",
     vignette: "",
+    glossary: [],
     groups: Array.from({ length: 4 }, () => ({
       title: "",
       colors: {},

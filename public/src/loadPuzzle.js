@@ -1,4 +1,5 @@
 import { validatePuzzle, validatePuzzleIndex } from "./validation.js";
+import { ensureGlossary } from "./puzzleSchema.js";
 
 export { validatePuzzle, validatePuzzleIndex };
 
@@ -29,6 +30,7 @@ export async function hydratePuzzle(puzzle, fileLabel) {
         : "./puzzles/";
     await applyTheme(puzzle, `${themeBase}${puzzle.id}.json`);
   }
+  ensureGlossary(puzzle);
   validatePuzzle(puzzle, fileLabel);
   return puzzle;
 }

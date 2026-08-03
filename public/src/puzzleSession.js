@@ -174,6 +174,7 @@ export function createPuzzleSession({ catalog }) {
       return { ok: false, error: `Puzzle "${id}" not found.` };
     }
 
+    normalizeComposePuzzle(working);
     const payload = { ...working, id, num: rec.num };
     try {
       const row = await savePuzzleDraft(payload);

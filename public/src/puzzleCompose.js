@@ -19,6 +19,7 @@ import {
   wordPlaceholder,
 } from "./puzzleComposeTemplate.js";
 import { validatePuzzle } from "./validation.js";
+import { commitActiveGlossaryEditor } from "./glossarySheet.js";
 
 /** @typedef {'create' | 'edit'} ComposeVariant */
 
@@ -329,6 +330,11 @@ export function initPuzzleCompose({
 
   async function saveDraft() {
     commitAllFields();
+    const glossaryCommit = commitActiveGlossaryEditor();
+    if (!glossaryCommit.ok) {
+      onValidationError(glossaryCommit.error);
+      return false;
+    }
     const puzzle = getPuzzle();
     normalizeComposePuzzle(puzzle);
     syncAllDisplays();
