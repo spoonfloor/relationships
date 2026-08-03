@@ -34,8 +34,16 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
     for (const item of tieredElements) {
       const itemTier = /** @type {MenuTier} */ (item.getAttribute("data-menu-tier"));
       const matchesTier = itemTier === "always" || itemTier === tier;
-      const hideInCompose = item.hasAttribute("data-hide-in-compose") && inCompose;
+      const hideInCompose =
+        inCompose && tier !== "secret" && item.hasAttribute("data-hide-in-compose");
       item.hidden = !matchesTier || hideInCompose;
+    }
+
+    for (const item of menuItems) {
+      if (!item.hasAttribute("data-unavailable-in-compose")) continue;
+      const unavailable = inCompose;
+      item.disabled = unavailable;
+      item.toggleAttribute("aria-disabled", unavailable);
     }
   }
 

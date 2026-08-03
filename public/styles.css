@@ -610,6 +610,17 @@ body.edit-mode .app-bar {
   background: var(--word-tile-bg);
 }
 
+.app-bar-menu__item:disabled,
+.app-bar-menu__item[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.app-bar-menu__item:disabled:hover,
+.app-bar-menu__item[aria-disabled="true"]:hover {
+  background: transparent;
+}
+
 .puzzle-stack {
   display: flex;
   flex-direction: column;
