@@ -28,11 +28,12 @@ export function getBreakCandidates(word) {
   const fragments = hyphenFragments(word);
   for (let i = 0; i < fragments.length - 1; i += 1) {
     pos += fragments[i].length;
-    candidates.add(pos);
+    if (word[pos] !== "-") candidates.add(pos);
   }
 
   for (let i = LEFT_MIN; i <= word.length - RIGHT_MIN; i += 1) {
-    candidates.add(i);
+    // Never break immediately before an existing hyphen (e.g. NOT-DEER → NOT- / -DEER).
+    if (word[i] !== "-") candidates.add(i);
   }
 
   return [...candidates].sort((a, b) => a - b);
@@ -50,7 +51,8 @@ export function linesFromBreaks(word, breaks) {
   const lines = [];
   let start = 0;
   for (const breakAt of sorted) {
-    lines.push(`${word.slice(start, breakAt)}-`);
+    const segment = word.slice(start, breakAt);
+    lines.push(segment.endsWith("-") ? segment : `${segment}-`);
     start = breakAt;
   }
   lines.push(word.slice(start));

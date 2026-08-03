@@ -27,12 +27,14 @@ import {
   clearFoundGroups,
   renderGuesses,
 } from "./render.js";
-import { findWordEntry } from "./puzzleSchema.js";
+import { findWordEntry, puzzleHasGlossary } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
 
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
-import { alert as showAlert, closeActiveModal, openModal } from "./modal.js";
+import { alert as showAlert, openModal } from "./modal.js";
+import { closeActiveOverlay } from "./overlay.js";
+import { openGlossarySheet } from "./glossarySheet.js";
 import { showToast } from "./toast.js";
 import {
   formatStaticUi,
@@ -48,11 +50,17 @@ import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
 import { initPuzzleCompose } from "./puzzleCompose.js";
 import { promptEditPassword } from "./auth.js";
 import { initPageLogo, applyLogoSwatches } from "./logoSwatches.js";
+import { bindDarkModeSwitch, initColorScheme, onColorSchemeChange } from "./colorScheme.js";
 
 async function bootstrap() {
+  initColorScheme();
   watchBottomSheet();
   const dom = getDom();
   formatStaticUi();
+
+  if (dom.darkModeSwitch instanceof HTMLInputElement) {
+    bindDarkModeSwitch(dom.darkModeSwitch);
+  }
   await initPageLogo();
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -199,6 +207,11 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     dom.glossaryTooltip.style.display = "none";
   }
 
+  function syncGlossaryCta(puzzle) {
+    if (!dom.glossaryCtaBtn) return;
+    dom.glossaryCtaBtn.hidden = !puzzleHasGlossary(puzzle);
+  }
+
   function syncPickerOption(id) {
     const opt = dom.puzzleSelect.querySelector(`option[value="${CSS.escape(id)}"]`);
     if (opt) setDisplayText(opt, session.getPickerLabel(id));
@@ -236,6 +249,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     dom.mostRecentGuessEl.innerHTML = "";
     renderPaletteChips();
     applyLogoSwatches(puzzle.groups);
+    syncGlossaryCta(puzzle);
     renderPlayArea(dom, state, handlers);
   }
 
@@ -374,6 +388,17 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     isComposeMode: () => puzzleCompose.isComposeMode(),
   });
 
+  onColorSchemeChange(() => {
+    if (state.activePuzzle?.groups) {
+      applyLogoSwatches(state.activePuzzle.groups);
+    }
+    if (puzzleCompose.isComposeMode()) {
+      puzzleCompose.refreshSurfaceColors();
+    } else {
+      renderPlayArea(dom, state, handlers);
+    }
+  });
+
   function getCurrentPuzzleId() {
     return state.activePuzzle.id;
   }
@@ -389,7 +414,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
   }
 
   function applyClear() {
-    closeActiveModal();
+    closeActiveOverlay();
     hideTooltip();
     resetGameProgress(state);
     clearFoundGroups(dom);
@@ -408,6 +433,16 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     renderStatus(dom, "Shuffled.");
   });
   dom.clearBtn.addEventListener("click", applyClear);
+  dom.glossaryCtaBtn?.addEventListener("click", () => {
+    openGlossarySheet(state.activePuzzle);
+  });
+  dom.glossaryEditBtn?.addEventListener("click", () => {
+    if (!puzzleCompose.isComposeMode()) return;
+    openGlossarySheet(state.activePuzzle, {
+      editable: true,
+      onChange: () => syncGlossaryCta(state.activePuzzle),
+    });
+  });
 
   let optionHeld = false;
 

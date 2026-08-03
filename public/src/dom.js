@@ -5,6 +5,7 @@ export function getDom() {
     puzzleTitleEl: document.getElementById("puzzle-title"),
     appBarMoreBtn: document.getElementById("app-bar-more-btn"),
     appBarMenu: document.getElementById("app-bar-menu"),
+    darkModeSwitch: document.getElementById("dark-mode-switch"),
     choosePuzzleBtn: document.getElementById("choose-puzzle-btn"),
     openDebugPuzzleBtn: document.getElementById("open-debug-puzzle-btn"),
     editPuzzleBtn: document.getElementById("edit-puzzle-btn"),
@@ -15,6 +16,7 @@ export function getDom() {
     ctaStackEdit: document.getElementById("cta-stack-edit"),
     saveBtn: document.getElementById("saveBtn"),
     cancelEditBtn: document.getElementById("cancelEditBtn"),
+    glossaryEditBtn: document.getElementById("glossaryEditBtn"),
     publishBtn: document.getElementById("publishBtn"),
     vignetteEl: document.getElementById("vignette"),
     solvedSetsEl: document.getElementById("solvedSets"),
@@ -25,6 +27,7 @@ export function getDom() {
     newGameBtn: document.getElementById("newGameBtn"),
     shuffleBtn: document.getElementById("shuffleBtn"),
     clearBtn: document.getElementById("clearBtn"),
+    glossaryCtaBtn: document.getElementById("glossaryCtaBtn"),
     submitBtn: document.getElementById("submitBtn"),
 
     hintCategoryBtn: document.getElementById("hintCategoryBtn"),

@@ -6,11 +6,16 @@ import {
 
 /** @typedef {import("./colorSample.js").ColorSampleSurface} ColorSampleSurface */
 
-/** Default unsolved tile colors — mirrors --text-color and --word-tile-bg. */
-export const POEM_DEFAULT_COLORS = {
-  text: "#1A1A1A",
-  bg: "#E0E0E0",
-};
+/**
+ * Default unsolved tile colors — mirrors --text-color and --word-tile-bg.
+ * @returns {{ text: string, bg: string }}
+ */
+export function readPoemDefaultColors() {
+  const styles = getComputedStyle(document.documentElement);
+  const text = styles.getPropertyValue("--text-color").trim() || "#1a1a1a";
+  const bg = styles.getPropertyValue("--word-tile-bg").trim() || "#e0e0e0";
+  return { text, bg };
+}
 
 /**
  * @param {{ colors?: { text?: string, bg?: string, border?: string } } | null | undefined} group
@@ -40,7 +45,7 @@ export function resolveGroupColors(group) {
     const { text, bg } = group.colors;
     return { text, bg };
   }
-  return { ...POEM_DEFAULT_COLORS };
+  return readPoemDefaultColors();
 }
 
 /**

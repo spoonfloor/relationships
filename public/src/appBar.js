@@ -1,4 +1,4 @@
-/** @typedef {"public" | "secret"} MenuTier */
+/** @typedef {"public" | "secret" | "always"} MenuTier */
 
 /**
  * @param {{
@@ -16,6 +16,7 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
   let longPressActive = false;
 
   const menuItems = [...menu.querySelectorAll('[role="menuitem"]')];
+  const tieredElements = [...menu.querySelectorAll("[data-menu-tier]")];
 
   for (const item of menuItems) {
     const tier = item.getAttribute("data-menu-tier");
@@ -26,13 +27,13 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
     }
   }
 
-  /** @param {MenuTier} tier */
+  /** @param {Exclude<MenuTier, "always">} tier */
   function setMenuTier(tier) {
     const inCompose = isComposeMode?.() ?? false;
 
-    for (const item of menuItems) {
+    for (const item of tieredElements) {
       const itemTier = /** @type {MenuTier} */ (item.getAttribute("data-menu-tier"));
-      const matchesTier = itemTier === tier;
+      const matchesTier = itemTier === "always" || itemTier === tier;
       const hideInCompose = item.hasAttribute("data-hide-in-compose") && inCompose;
       item.hidden = !matchesTier || hideInCompose;
     }
@@ -50,7 +51,7 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
     endLongPressTracking();
   }
 
-  /** @param {MenuTier} tier */
+  /** @param {Exclude<MenuTier, "always">} tier */
   function openMenu(tier) {
     setMenuTier(tier);
     menu.hidden = false;
@@ -113,7 +114,7 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
       return;
     }
     if (menu.hidden) {
-      if (event.altKey) openSecretMenu();
+      if ((isComposeMode?.() ?? false) || event.altKey) openSecretMenu();
       else openMenu("public");
     } else {
       closeMenu();

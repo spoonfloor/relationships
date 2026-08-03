@@ -23,6 +23,8 @@ export function formatStaticUi(root = document.body) {
   }
   for (const el of root.querySelectorAll("button, label, h1, h2, h3, h4, span.label")) {
     if (el.querySelector(".material-icons, .material-symbols-outlined")) continue;
+    // Preserve compound controls (e.g. dark-mode switch label + checkbox).
+    if (el.querySelector("input, select, textarea")) continue;
     setDisplayText(el, el.textContent);
   }
 }

@@ -87,6 +87,10 @@ export function initPuzzleCompose({
   if (!(puzzleStack instanceof HTMLElement)) {
     throw new Error("board must be wrapped in .puzzle-stack");
   }
+  const playAreaEl = boardEl.closest(".play-area");
+  if (!(playAreaEl instanceof HTMLElement)) {
+    throw new Error("board must be wrapped in .play-area");
+  }
 
   /** @type {ComposeVariant | null} */
   let composeVariant = null;
@@ -108,7 +112,7 @@ export function initPuzzleCompose({
 
   function syncComposeWordColors() {
     if (!composeVariant) return;
-    const groupBlocks = puzzleStack.querySelectorAll(":scope > .compose-group");
+    const groupBlocks = playAreaEl.querySelectorAll(":scope > .compose-group");
     groupBlocks.forEach((block, gi) => {
       const group = getPuzzle().groups[gi];
       const colors = isGroupColorsAssigned(group) ? resolveGroupColors(group) : null;
@@ -151,7 +155,7 @@ export function initPuzzleCompose({
   }
 
   function clearComposeGroups() {
-    for (const el of [...puzzleStack.querySelectorAll(":scope > .compose-group")]) {
+    for (const el of [...playAreaEl.querySelectorAll(":scope > .compose-group")]) {
       el.remove();
     }
   }
@@ -248,7 +252,7 @@ export function initPuzzleCompose({
       titleRowEl.appendChild(colorsWrapEl);
       block.appendChild(titleRowEl);
       block.appendChild(wordsRow);
-      puzzleStack.appendChild(block);
+      playAreaEl.appendChild(block);
     }
 
     observeTileBoard(puzzleStack);
@@ -402,5 +406,6 @@ export function initPuzzleCompose({
       return err;
     },
     createEmptyPuzzle,
+    refreshSurfaceColors: () => syncComposeWordColors(),
   };
 }
