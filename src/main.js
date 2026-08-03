@@ -27,14 +27,14 @@ import {
   clearFoundGroups,
   renderGuesses,
 } from "./render.js";
-import { findWordEntry, puzzleHasGlossary } from "./puzzleSchema.js";
+import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
 
 import { createPuzzleUploader } from "./fileUploader.js";
 import { validatePuzzle } from "./validation.js";
 import { alert as showAlert, openModal } from "./modal.js";
 import { closeActiveOverlay } from "./overlay.js";
-import { openGlossarySheet } from "./glossarySheet.js";
+import { openGlossarySheet, commitActiveGlossaryEditor } from "./glossarySheet.js";
 import { showToast } from "./toast.js";
 import {
   formatStaticUi,
@@ -279,8 +279,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     },
     onMouseOverWord(word, event) {
       if (!state.glossaryEnabled) return;
-      const entry = findWordEntry(state.activePuzzle, word);
-      const definitions = entry?.definitions ?? [];
+      const definitions = findGlossaryDefinitions(state.activePuzzle, word);
       if (definitions.length > 0) {
         showTooltip(word, definitions, event);
       }
@@ -558,6 +557,12 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     try {
       if (puzzleCompose.isComposeMode()) {
         puzzleCompose.commitAllFields();
+
+        const glossaryCommit = commitActiveGlossaryEditor();
+        if (!glossaryCommit.ok) {
+          showAlert({ title: "Error", message: glossaryCommit.error });
+          return;
+        }
 
         const isNew = !state.activePuzzle.id?.trim();
         const publishError = puzzleCompose.validateComposePublish({ requireId: !isNew });

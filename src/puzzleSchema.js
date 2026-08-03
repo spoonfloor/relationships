@@ -20,73 +20,160 @@ export function findGroupIndex(puzzle, group) {
   return puzzle.groups.findIndex((g) => g.title === group.title);
 }
 
-export function puzzleHasGlossary(puzzle) {
-  return puzzle.groups.some((group) =>
-    group.words.some((word) => (word.definitions?.length ?? 0) > 0)
-  );
-}
-
-export function collectGlossaryEntries(puzzle) {
-  return puzzle.groups
+/**
+ * Build glossary entries from legacy per-word definitions.
+ * @param {object} puzzle
+ * @returns {{ term: string | null, definitions: string[] }[]}
+ */
+function migrateGlossaryFromWords(puzzle) {
+  const entries = puzzle.groups
     .flatMap((group) => group.words)
     .filter((word) => (word.definitions?.length ?? 0) > 0)
-    .map((word) => ({ word: word.text, definitions: word.definitions }))
-    .sort((a, b) => a.word.localeCompare(b.word));
+    .map((word) => ({ term: word.text, definitions: [...word.definitions] }));
+  sortGlossaryEntries(entries);
+  return entries;
 }
 
 /**
- * Serialize the canonical per-word definitions into the glossary editor format.
+ * Ensure puzzle.glossary exists, migrating from word.definitions when needed.
+ * Mutates `puzzle` in place.
+ * @param {object} puzzle
+ */
+export function ensureGlossary(puzzle) {
+  if (!Array.isArray(puzzle.glossary)) {
+    puzzle.glossary = migrateGlossaryFromWords(puzzle);
+  }
+  return puzzle;
+}
+
+/** @param {{ term: string | null, definitions: string[] }} a @param {{ term: string | null, definitions: string[] }} b */
+function compareGlossaryEntries(a, b) {
+  const aNull = a.term == null || a.term === "";
+  const bNull = b.term == null || b.term === "";
+  if (aNull && bNull) return 0;
+  if (aNull) return 1;
+  if (bNull) return -1;
+  return a.term.localeCompare(b.term, undefined, { sensitivity: "base" });
+}
+
+/** @param {{ term: string | null, definitions: string[] }[]} glossary */
+export function sortGlossaryEntries(glossary) {
+  glossary.sort(compareGlossaryEntries);
+}
+
+export function puzzleHasGlossary(puzzle) {
+  ensureGlossary(puzzle);
+  return puzzle.glossary.some(
+    (entry) =>
+      (entry.definitions?.length ?? 0) > 0 ||
+      (entry.term != null && entry.term !== "")
+  );
+}
+
+/**
+ * @param {object} puzzle
+ * @returns {{ term: string | null, definitions: string[] }[]}
+ */
+export function collectGlossaryEntries(puzzle) {
+  ensureGlossary(puzzle);
+  return puzzle.glossary.filter(
+    (entry) =>
+      (entry.definitions?.length ?? 0) > 0 ||
+      (entry.term != null && entry.term !== "")
+  );
+}
+
+/**
+ * @param {object} puzzle
+ * @param {string} wordText
+ * @returns {string[]}
+ */
+export function findGlossaryDefinitions(puzzle, wordText) {
+  ensureGlossary(puzzle);
+  const key = String(wordText ?? "").trim().toLocaleLowerCase();
+  const entry = puzzle.glossary.find(
+    (item) => String(item.term ?? "").trim().toLocaleLowerCase() === key
+  );
+  return entry?.definitions ?? [];
+}
+
+/**
+ * @param {{ term: string | null, definitions: string[] }} entry
+ */
+function serializeGlossaryEntry(entry) {
+  const lines = [];
+  if (entry.term != null && entry.term !== "") {
+    lines.push(entry.term);
+  }
+  for (const definition of entry.definitions ?? []) {
+    lines.push(`- ${definition}`);
+  }
+  return lines.join("\n");
+}
+
+/**
+ * Serialize glossary entries into editor text.
  * @param {object} puzzle
  */
 export function serializeGlossaryText(puzzle) {
-  return collectGlossaryEntries(puzzle)
-    .map(({ word, definitions }) =>
-      [word, ...definitions.map((definition) => `- ${definition}`)].join("\n")
-    )
-    .join("\n");
+  return collectGlossaryEntries(puzzle).map(serializeGlossaryEntry).join("\n");
 }
 
 /**
- * Apply glossary editor text to the canonical per-word definitions.
- * Lines without a leading hyphen name puzzle words; following hyphenated lines
- * are their definitions. The update is rejected when a term does not match a
- * puzzle word because glossary data is owned by puzzle words.
- *
- * @param {object} puzzle
+ * Parse glossary editor text into entries. Permissive: any term, orphan definitions allowed.
  * @param {string} text
- * @returns {{ unknownTerms: string[] }}
+ * @returns {{ term: string | null, definitions: string[] }[]}
  */
-export function applyGlossaryText(puzzle, text) {
-  const words = puzzle.groups.flatMap((group) => group.words);
-  const wordsByText = new Map(
-    words.map((word) => [String(word.text ?? "").trim().toLocaleLowerCase(), word])
-  );
-  const definitionsByWord = new Map();
-  const unknownTerms = [];
-  let currentWord = null;
+export function parseGlossaryText(text) {
+  /** @type {{ term: string | null, definitions: string[] }[]} */
+  const entries = [];
+  /** @type {{ term: string | null, definitions: string[] } | null} */
+  let current = null;
+
+  function pushCurrent() {
+    if (!current) return;
+    entries.push(current);
+    current = null;
+  }
 
   for (const line of String(text ?? "").split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    if (!trimmed.startsWith("-")) {
-      currentWord = wordsByText.get(trimmed.toLocaleLowerCase()) ?? null;
-      if (!currentWord) unknownTerms.push(trimmed);
+    if (trimmed.startsWith("-")) {
+      const definition = trimmed.slice(1).trim();
+      if (!definition) continue;
+      if (!current) current = { term: null, definitions: [] };
+      current.definitions.push(definition);
       continue;
     }
 
-    const definition = trimmed.slice(1).trim();
-    if (!currentWord || !definition) continue;
-    const definitions = definitionsByWord.get(currentWord) ?? [];
-    definitions.push(definition);
-    definitionsByWord.set(currentWord, definitions);
+    pushCurrent();
+    current = { term: trimmed, definitions: [] };
   }
 
-  if (unknownTerms.length) return { unknownTerms };
+  pushCurrent();
+  return entries;
+}
 
-  for (const word of words) {
-    word.definitions = definitionsByWord.get(word) ?? [];
-  }
+/**
+ * Apply glossary editor text to puzzle.glossary (A–Z sort only).
+ * @param {object} puzzle
+ * @param {string} text
+ */
+export function applyGlossaryText(puzzle, text) {
+  ensureGlossary(puzzle);
+  puzzle.glossary = parseGlossaryText(text);
+  sortGlossaryEntries(puzzle.glossary);
+  return puzzle;
+}
 
-  return { unknownTerms };
+/**
+ * Sort glossary entries A–Z. Mutates `puzzle` in place.
+ * @param {object} puzzle
+ */
+export function normalizeGlossary(puzzle) {
+  ensureGlossary(puzzle);
+  sortGlossaryEntries(puzzle.glossary);
+  return puzzle;
 }

@@ -63,6 +63,26 @@ export function validatePuzzle(p, fileLabel = "puzzle.json", { requireId = true 
 
   if (allWords.length !== 16) fail(`Puzzle must contain 16 words total, got ${allWords.length}`);
 
+  if (p.glossary != null) {
+    if (!Array.isArray(p.glossary)) fail("glossary must be an array if present");
+    p.glossary.forEach((entry, ei) => {
+      if (!entry || typeof entry !== "object") {
+        fail(`glossary[${ei}] must be an object`);
+      }
+      if (entry.term != null && typeof entry.term !== "string") {
+        fail(`glossary[${ei}].term must be a string or null if present`);
+      }
+      if (!Array.isArray(entry.definitions)) {
+        fail(`glossary[${ei}].definitions must be an array`);
+      }
+      entry.definitions.forEach((def, di) => {
+        if (typeof def !== "string") {
+          fail(`glossary[${ei}].definitions[${di}] must be a string`);
+        }
+      });
+    });
+  }
+
   const counts = new Map();
   for (const w of allWords) counts.set(w, (counts.get(w) ?? 0) + 1);
   const dups = Array.from(counts.entries()).filter(([, c]) => c > 1);
