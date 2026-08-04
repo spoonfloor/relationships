@@ -18,6 +18,7 @@
   --bottom-sheet-reserved: 148px;
   --bottom-sheet-top-padding: 12px;
   --toast-top-gap: 32px;
+  --toast-bottom-gap: 12px;
   --toast-font-family: var(--font-family);
   --toast-font-weight: 200;
   --toast-close-gap-top: 20px;
@@ -46,6 +47,7 @@
   --modal-max-width: 500px;
   --modal-title-font-size: 28px;
   --modal-body-font-size: var(--cta-font-size);
+  --cta-comfort-min-width: 120px;
 
   /* Glossary */
   --glossary-content-margin-h: 36px;
@@ -138,11 +140,25 @@
   --border-strong: #aaaaaa;
   --shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 
-  --word-tile-bg: #e0e0e0;
-  --word-tile-hover: #d4d4d4;
+  /* Tile grayscale (HSL) — one hue/sat; tune lightness per role */
+  --tile-gray-h: 0;
+  --tile-gray-s: 0%;
+  --tile-idle-l: 89%;
+  --tile-idle-hover-l: 85%;
+  --tile-idle-text-l: 15%;
+  --tile-set-1-bg-l: 0%;
+  --tile-set-1-text-l: 100%;
+  --tile-set-2-bg-l: 30%;
+  --tile-set-2-text-l: 100%;
+  --tile-set-3-bg-l: 64%;
+  --tile-set-3-text-l: 0%;
+  --tile-set-4-bg-l: 80%;
+  --tile-set-4-text-l: 0%;
 
   --toast-bg: #444444;
   --toast-color: #ffffff;
+
+  --surface-overlay-hover: rgba(0, 0, 0, 0.06);
 
   --cta-secondary-bg: #e0e0e0;
   --cta-secondary-hover: #d4d4d4;
@@ -226,11 +242,25 @@
   --border-strong: #4a4a4a;
   --shadow: 0 8px 16px rgba(0, 0, 0, 0.45);
 
-  --word-tile-bg: #2a2a2a;
-  --word-tile-hover: #333333;
+  /* Tile grayscale (HSL) — one hue/sat; tune lightness per role */
+  --tile-gray-h: 0;
+  --tile-gray-s: 0%;
+  --tile-idle-l: 11%;
+  --tile-idle-hover-l: 15%;
+  --tile-idle-text-l: 85%;
+  --tile-set-1-bg-l: 100%;
+  --tile-set-1-text-l: 0%;
+  --tile-set-2-bg-l: 70%;
+  --tile-set-2-text-l: 0%;
+  --tile-set-3-bg-l: 36%;
+  --tile-set-3-text-l: 100%;
+  --tile-set-4-bg-l: 20%;
+  --tile-set-4-text-l: 100%;
 
   --toast-bg: #333333;
   --toast-color: #f0f0f0;
+
+  --surface-overlay-hover: rgba(255, 255, 255, 0.12);
 
   --cta-secondary-bg: #2a2a2a;
   --cta-secondary-hover: #333333;
@@ -291,6 +321,42 @@
   --switch-track-on: var(--theme-play-primary);
   --switch-knob-off: color-mix(in srgb, var(--text-color) 14%, #f0f0f0);
   --switch-knob-on: color-mix(in srgb, var(--theme-play-primary) 32%, white);
+}
+
+/* Tile grayscale → surface colors */
+[data-color-scheme='light'],
+[data-color-scheme='dark'] {
+  --word-tile-bg: hsl(var(--tile-gray-h) var(--tile-gray-s) var(--tile-idle-l));
+  --word-tile-hover: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-idle-hover-l)
+  );
+  --word-tile-text: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-idle-text-l)
+  );
+  --selection-band-1-bg: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-1-bg-l)
+  );
+  --selection-band-1-text: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-1-text-l)
+  );
+  --selection-band-2-bg: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-2-bg-l)
+  );
+  --selection-band-2-text: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-2-text-l)
+  );
+  --selection-band-3-bg: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-3-bg-l)
+  );
+  --selection-band-3-text: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-3-text-l)
+  );
+  --selection-band-4-bg: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-4-bg-l)
+  );
+  --selection-band-4-text: hsl(
+    var(--tile-gray-h) var(--tile-gray-s) var(--tile-set-4-text-l)
+  );
 }
 
 /* iOS standalone: 100dvh under-reports on cold start; 100vh is full bleed. */
@@ -459,7 +525,7 @@ body.edit-mode .app-bar {
 
 .app-bar__menu {
   position: fixed;
-  top: 4px;
+  top: 10px;
   right: 0px;
   z-index: 20;
   flex-shrink: 0;
@@ -486,7 +552,7 @@ body.edit-mode .app-bar {
 }
 
 .app-bar__more-btn:hover {
-  background: var(--word-tile-bg);
+  background: var(--surface-overlay-hover);
 }
 
 .app-bar-menu {
@@ -810,8 +876,9 @@ body.edit-mode .app-bar {
 }
 
 .cta-row > .btn {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
 }
 
 .btn-block {
@@ -819,8 +886,9 @@ body.edit-mode .app-bar {
 }
 
 .btn-block-half {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
 }
 
 .debug-ui {
@@ -970,7 +1038,7 @@ body.edit-mode .play-area {
   text-transform: uppercase;
   font-size: var(--word-font-size);
   line-height: var(--word-line-height);
-  color: var(--text-color);
+  color: var(--word-tile-text);
   touch-action: manipulation;
   overflow-wrap: break-word;
   word-break: normal;
@@ -1000,6 +1068,26 @@ body.edit-mode .play-area {
 .word.selected {
   background: var(--theme-play-primary-light);
   color: var(--text-color);
+}
+
+.word.selected--band-1 {
+  background: var(--selection-band-1-bg);
+  color: var(--selection-band-1-text);
+}
+
+.word.selected--band-2 {
+  background: var(--selection-band-2-bg);
+  color: var(--selection-band-2-text);
+}
+
+.word.selected--band-3 {
+  background: var(--selection-band-3-bg);
+  color: var(--selection-band-3-text);
+}
+
+.word.selected--band-4 {
+  background: var(--selection-band-4-bg);
+  color: var(--selection-band-4-text);
 }
 
 .word.locked {
@@ -1353,6 +1441,15 @@ body.edit-mode .play-area {
 
 .modal__actions {
   margin-top: 16px;
+  --cta-comfort-min-width: 140px;
+}
+
+.modal__actions.cta-row {
+  justify-content: flex-end;
+}
+
+.glossary-editor__actions.cta-row {
+  --cta-comfort-min-width: 140px;
 }
 
 .sheet {
@@ -1615,6 +1712,10 @@ body.edit-mode .play-area {
 .glossary-editor__actions {
   flex-shrink: 0;
   margin-top: 12px;
+}
+
+.glossary-editor__actions.cta-row {
+  justify-content: flex-end;
 }
 
 .glossary-editor__actions[hidden] {
@@ -2037,7 +2138,7 @@ body.edit-mode .play-area {
 
 .toast {
   position: absolute;
-  top: calc(var(--toast-top-gap) + env(safe-area-inset-top, 0px));
+  bottom: calc(var(--bottom-sheet-reserved) + var(--toast-bottom-gap));
   left: max(
     calc(var(--page-column-inset) + var(--content-padding-x)),
     env(safe-area-inset-left)

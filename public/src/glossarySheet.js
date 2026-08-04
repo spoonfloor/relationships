@@ -1,4 +1,5 @@
 import { placeCaretFromPoint, selectionIsInside } from "./caret.js";
+import { syncCtaRow, watchCtaRow } from "./ctaLayout.js";
 import { setDisplayText } from "./display.js";
 import {
   applyGlossaryText,
@@ -348,8 +349,9 @@ function appendHintGlossary(parent, puzzle, { collapsible = true } = {}) {
  * @param {HTMLElement} parent
  * @param {object} puzzle
  * @param {() => void} [onChange]
+ * @param {() => void} [onApplyClose]
  */
-function appendGlossaryEditor(parent, puzzle, onChange) {
+function appendGlossaryEditor(parent, puzzle, onChange, onApplyClose) {
   const wrap = document.createElement("div");
   wrap.className = "glossary-editor-wrap";
 
@@ -365,7 +367,7 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
   editor.setAttribute("aria-multiline", "true");
 
   const actions = document.createElement("div");
-  actions.className = "glossary-editor__actions cta-row";
+  actions.className = "glossary-editor__actions cta-row cta-row--comfort";
   actions.hidden = true;
 
   const cancelBtn = document.createElement("button");
@@ -380,6 +382,7 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
 
   actions.appendChild(cancelBtn);
   actions.appendChild(applyBtn);
+  watchCtaRow(actions);
 
   wrap.appendChild(view);
   wrap.appendChild(editor);
@@ -420,6 +423,7 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
     appendGlossaryEditorLines(editor, serializeGlossaryText(puzzle));
     activeGlossaryCommit = applyEditorText;
     requestAnimationFrame(() => {
+      syncCtaRow(actions);
       activateGlossaryEditor(editor, clientX, clientY);
     });
   }
@@ -445,6 +449,7 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
     if (document.activeElement === editor) {
       editor.blur();
     }
+    onApplyClose?.();
   }
 
   function keepEditorFocused(event) {
@@ -506,16 +511,20 @@ export function openGlossarySheet(puzzle, { editable = false, onChange } = {}) {
   const entries = collectGlossaryEntries(puzzle);
   if (!editable && !entries.length) return null;
 
-  return openSheet({
+  /** @type {(() => void) | null} */
+  let closeSheet = null;
+  const result = openSheet({
     title: "Glossary",
     className: "sheet--glossary",
     onClose: clearActiveGlossaryEditor,
     content(body) {
       if (editable) {
-        appendGlossaryEditor(body, puzzle, onChange);
+        appendGlossaryEditor(body, puzzle, onChange, () => closeSheet?.());
       } else {
         appendHintGlossary(body, puzzle);
       }
     },
   });
+  closeSheet = result.close;
+  return result;
 }

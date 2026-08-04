@@ -11,7 +11,6 @@ import { createPuzzleSession } from "./puzzleSession.js";
 import { initAppBarMenu } from "./appBar.js";
 import {
   initGameState,
-  toggleSelect,
   resetGameProgress,
   submitSelection,
   solvePuzzle,
@@ -20,6 +19,7 @@ import {
   hintRevealCategory,
   hintRevealWord,
 } from "./game.js";
+import { toggleSelection, getSelectionCount } from "./selection.js";
 import {
   renderPlayArea,
   renderStatus,
@@ -38,6 +38,8 @@ import {
 } from "./display.js";
 import {
   watchBottomSheet,
+  watchCtaRows,
+  syncCtaRow,
   syncAppShellHeight,
   syncBottomSheetReserve,
 } from "./ctaLayout.js";
@@ -52,6 +54,7 @@ import { bindDarkModeSwitch, initColorScheme, onColorSchemeChange } from "./colo
 async function bootstrap() {
   initColorScheme();
   watchBottomSheet();
+  watchCtaRows();
   const dom = getDom();
   formatStaticUi();
 
@@ -188,6 +191,10 @@ function initializePage(state, wittyResponses, session, catalog) {
   function syncGlossaryCta(puzzle) {
     if (!dom.glossaryCtaBtn) return;
     dom.glossaryCtaBtn.hidden = !puzzleHasGlossary(puzzle);
+    const row = dom.glossaryCtaBtn.parentElement;
+    if (row instanceof HTMLElement) {
+      syncCtaRow(row);
+    }
   }
 
   function syncPickerOption(id) {
@@ -251,8 +258,11 @@ function initializePage(state, wittyResponses, session, catalog) {
 
   const handlers = {
     onToggleSelect(word) {
-      const res = toggleSelect(state, word);
-      renderStatus(dom, res.ok ? `${state.selected.size} selected.` : res.message);
+      const res = toggleSelection(state, word);
+      renderStatus(
+        dom,
+        res.ok ? `${getSelectionCount(state)} selected.` : res.message,
+      );
       renderPlayArea(dom, state, handlers);
     },
     onMouseOverWord(word, event) {
@@ -341,11 +351,11 @@ function initializePage(state, wittyResponses, session, catalog) {
       if (restore) {
         state.activePuzzle = restore;
         applyPuzzleToUi(restore);
-        renderStatus(dom, "Pick 4 words.");
+        renderStatus(dom, "Pick 4–16 words.");
         return;
       }
 
-      renderStatus(dom, "Pick 4 words.");
+      renderStatus(dom, "Pick 4–16 words.");
     },
   });
 
@@ -376,7 +386,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     state.glossaryEnabled = false;
     setDisplayText(dom.glossaryBtn, "Glossary: OFF");
     applyPuzzleToUi(puzzle);
-    renderStatus(dom, "Pick 4 words.");
+    renderStatus(dom, "Pick 4–16 words.");
     updateSubmitLabel();
   }
 
@@ -390,7 +400,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     renderPaletteChips();
     renderPlayArea(dom, state, handlers);
     renderGuesses(dom, state.guesses);
-    renderStatus(dom, "Pick 4 words.");
+    renderStatus(dom, "Pick 4–16 words.");
   }
 
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
@@ -432,7 +442,8 @@ function initializePage(state, wittyResponses, session, catalog) {
   });
 
   function handleGameAction(res) {
-    if (res.ok && (res.group || res.solved)) {
+    const foundGroup = res.group || res.results?.some((chunk) => chunk.group);
+    if (res.ok && (foundGroup || res.solved)) {
       renderPaletteChips();
     }
     renderPlayArea(dom, state, handlers);
@@ -443,8 +454,9 @@ function initializePage(state, wittyResponses, session, catalog) {
       renderGuesses(dom, state.guesses);
     }
     renderStatus(dom, res.message);
-    if (res.toastMessage) {
-      showToast(res.toastMessage);
+    const toasts = res.toasts ?? (res.toastMessage ? [res.toastMessage] : []);
+    for (const toastMessage of toasts) {
+      showToast(toastMessage);
     }
   }
 
@@ -570,7 +582,7 @@ function initializePage(state, wittyResponses, session, catalog) {
       puzzleCompose.exitComposeMode();
       composeReturnTo = null;
       applyPuzzleToUi(result.published);
-      renderStatus(dom, "Pick 4 words.");
+      renderStatus(dom, "Pick 4–16 words.");
       showToast("Puzzle published.");
     } catch (err) {
       console.error(err);

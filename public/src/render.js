@@ -9,6 +9,7 @@ import {
   COLOR_SAMPLE_SEPARATED_CLASS,
   sampleNeedsSeparationAgainst,
 } from "./colorSample.js";
+import { getSelectionBand, isSelected } from "./selection.js";
 
 /** @typedef {import("./colorSample.js").ColorSampleSurface} ColorSampleSurface */
 
@@ -17,13 +18,18 @@ function guessSwatchSurface(guessesEl) {
   return guessesEl.closest(".modal__panel") ? "modal" : "canvas";
 }
 
-function wordButton({ word, selected, colors, revealed, onClick, onMouseOver, onMouseOut }) {
+function wordButton({ word, selected, selectionBand, colors, revealed, onClick, onMouseOver, onMouseOut }) {
   const btn = document.createElement("button");
   btn.className = "word";
   btn.type = "button";
   setTileText(btn, word);
 
-  if (selected) btn.classList.add("selected");
+  if (selected) {
+    btn.classList.add("selected");
+    if (selectionBand != null) {
+      btn.classList.add(`selected--band-${selectionBand + 1}`);
+    }
+  }
   if (colors && revealed) {
     applyGroupColorsToElement(btn, colors);
   }
@@ -88,7 +94,8 @@ export function renderBoard({ boardEl }, state, handlers) {
     boardEl.appendChild(
       wordButton({
         word: item.word,
-        selected: state.selected.has(item.word),
+        selected: isSelected(state, item.word),
+        selectionBand: getSelectionBand(state, item.word),
         colors: isRevealed ? colors : null,
         revealed: isRevealed,
         onClick: () => handlers.onToggleSelect(item.word),
