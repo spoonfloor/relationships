@@ -1,3 +1,4 @@
+import { syncCtaRow, watchCtaRow } from "./ctaLayout.js";
 import { setDisplayText } from "./display.js";
 import { activateOverlay, deactivateOverlay } from "./overlay.js";
 
@@ -39,7 +40,7 @@ export function openModal({ title, content, actions = [], onClose }) {
   }
 
   const actionsEl = document.createElement("div");
-  actionsEl.className = "modal__actions cta-row";
+  actionsEl.className = "modal__actions cta-row cta-row--comfort";
 
   function closeModal() {
     if (!dialog.open) return;
@@ -86,6 +87,11 @@ export function openModal({ title, content, actions = [], onClose }) {
 
   activateOverlay(closeModal);
   dialog.showModal();
+
+  if (actions.length > 0) {
+    watchCtaRow(actionsEl);
+    requestAnimationFrame(() => syncCtaRow(actionsEl));
+  }
 
   const firstButton = actionsEl.querySelector("button");
   if (firstButton instanceof HTMLButtonElement) {

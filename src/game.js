@@ -1,5 +1,13 @@
 import { shuffle } from "./utils.js";
 import { groupWordTexts, findGroupIndex } from "./puzzleSchema.js";
+import {
+  CHUNK_SIZE,
+  clearSelection,
+  chunkSelection,
+  getSelectionCount,
+  purgeLockedFromSelection,
+  removeEvaluatedChunks,
+} from "./selection.js";
 
 function pickPuzzleWords(puzzle) {
   return shuffle(puzzle.groups.flatMap(groupWordTexts));
@@ -10,7 +18,7 @@ export function initGameState(state) {
   state.revealedCategories.clear();
   state.revealedWords.clear();
   state.guesses = [];
-  state.selected.clear();
+  clearSelection(state);
   state.wordToGroupMap.clear();
 
   for (const group of state.activePuzzle.groups) {
@@ -23,20 +31,8 @@ export function initGameState(state) {
     .map((word) => ({ word, lockedGroupIndex: null }));
 }
 
-export function toggleSelect(state, word) {
-  if (state.selected.has(word)) {
-    state.selected.delete(word);
-    return { ok: true };
-  }
-  if (state.selected.size >= 4) {
-    return { ok: false, message: "You can only select 4 at a time." };
-  }
-  state.selected.add(word);
-  return { ok: true };
-}
-
-export function clearSelection(state) {
-  state.selected.clear();
+export function clearSelectionAndReveals(state) {
+  clearSelection(state);
   state.revealedWords.clear();
 }
 
@@ -45,7 +41,7 @@ export function resetGameProgress(state) {
   state.revealedCategories.clear();
   state.revealedWords.clear();
   state.guesses = [];
-  state.selected.clear();
+  clearSelection(state);
   for (const item of state.boardWords) {
     item.lockedGroupIndex = null;
   }
@@ -92,12 +88,7 @@ export function getProximityFeedback(words, wordToGroupMap) {
   }
 }
 
-export function submitSelection(state, wittyResponses) {
-  if (state.selected.size !== 4) {
-    return { ok: false, message: "Select exactly 4 words.", toastMessage: "Select exactly 4 words." };
-  }
-
-  const words = Array.from(state.selected);
+export function evaluateGuess(state, words, wittyResponses) {
   const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
   const canonicalWordStrings = [...words].sort();
   const shuffledWords = shuffle(words);
@@ -117,7 +108,7 @@ export function submitSelection(state, wittyResponses) {
       g.canonicalWords.every((w, i) => w === guess.canonicalWords[i])
   );
 
-  let group = getGroupBySelection(state.activePuzzle, words);
+  const group = getGroupBySelection(state.activePuzzle, words);
   if (group) {
     guess.isCorrect = true;
   }
@@ -127,6 +118,7 @@ export function submitSelection(state, wittyResponses) {
     const message = wittyResponses[randomIndex];
     return { ok: false, message, toastMessage: message };
   }
+
   state.guesses.push(guess);
 
   if (!group) {
@@ -146,15 +138,72 @@ export function submitSelection(state, wittyResponses) {
 
   const groupIndex = findGroupIndex(state.activePuzzle, group);
   lockWords(state, groupWordTexts(group), groupIndex);
-  state.selected.clear();
 
   const solvedGroupsCount = state.foundGroups.filter((g) => g.words.length > 0).length;
   const solved = solvedGroupsCount === 4;
   return {
     ok: true,
     group,
+    solved,
     message: solved ? "Solved! 🎉" : `Correct! ${4 - solvedGroupsCount} groups left.`,
     toastMessage: proximityMessage,
+  };
+}
+
+export function submitSelection(state, wittyResponses) {
+  if (getSelectionCount(state) < CHUNK_SIZE) {
+    return {
+      ok: false,
+      message: "Select at least 4 words.",
+      toasts: ["Select at least 4 words."],
+      results: [],
+      solved: false,
+    };
+  }
+
+  const chunks = chunkSelection(state);
+  const results = [];
+  const toasts = [];
+  let anySuccess = false;
+  let lastSuccessMessage = null;
+  let lastFailureMessage = null;
+  let solved = false;
+
+  for (const words of chunks) {
+    const result = evaluateGuess(state, words, wittyResponses);
+    results.push(result);
+    if (result.toastMessage) {
+      toasts.push(result.toastMessage);
+    }
+    if (result.ok && result.group) {
+      anySuccess = true;
+      lastSuccessMessage = result.message;
+      if (result.solved) {
+        solved = true;
+      }
+    } else if (!result.ok) {
+      lastFailureMessage = result.message;
+    }
+  }
+
+  removeEvaluatedChunks(state);
+  purgeLockedFromSelection(state);
+
+  let message;
+  if (solved) {
+    message = "Solved! 🎉";
+  } else if (anySuccess) {
+    message = lastSuccessMessage ?? "Correct!";
+  } else {
+    message = lastFailureMessage ?? "Nope — those 4 don't form a group in this puzzle.";
+  }
+
+  return {
+    ok: anySuccess || solved,
+    results,
+    solved,
+    message,
+    toasts,
   };
 }
 
@@ -197,7 +246,7 @@ export function solvePuzzle(state) {
     lockWords(state, groupWordTexts(group), groupIndex);
   }
 
-  state.selected.clear();
+  clearSelection(state);
   state.revealedWords.clear();
   return { ok: true, solved: true, debugSolve: true, message: "Solved! 🎉" };
 }
@@ -229,7 +278,7 @@ export function generateDebugGuessHistory(puzzle) {
 }
 
 export function hintRevealWord(state) {
-  if (state.selected.size >= 4) state.selected.clear();
+  if (getSelectionCount(state) > 0) clearSelection(state);
 
   const remainingGroups = state.activePuzzle.groups.filter((g) => !isGroupFound(state, g));
   if (remainingGroups.length === 0) return { ok: false, message: "No words left to reveal." };

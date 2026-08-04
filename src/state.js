@@ -5,8 +5,8 @@ export function createInitialState(puzzle) {
     // boardWords: [{ word, lockedGroupIndex: null|number }]
     boardWords: [],
 
-    // selected: Set<string>
-    selected: new Set(),
+    // selectedWords: string[] — tap order defines multi-set chunks
+    selectedWords: [],
 
     // revealedWords: Set<string>
     revealedWords: new Set(),
