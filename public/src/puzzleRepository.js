@@ -1,37 +1,26 @@
 import { getSupabase } from "./supabaseClient.js";
 import { isSupabaseConfigured } from "./supabaseConfig.js";
 import { isPublishedShell } from "./puzzleComposeTemplate.js";
-import { loadPuzzleIndex as loadStaticIndex, hydratePuzzle } from "./loadPuzzle.js";
+import { hydratePuzzleFromRow } from "./puzzleNormalize.js";
+
+export { hydratePuzzleFromRow } from "./puzzleNormalize.js";
 
 export const DEBUG_PUZZLE_ID = "debug";
 
 /**
- * @typedef {{ num: number, id: string, hasDraft?: boolean, file?: string }} PuzzleEntry
- * @typedef {{ defaultId: string, puzzles: PuzzleEntry[], source: 'supabase' | 'static' }} PuzzleCatalog
+ * @typedef {{ num: number, id: string, hasDraft?: boolean }} PuzzleEntry
+ * @typedef {{ defaultId: string | null, puzzles: PuzzleEntry[], rows: PuzzleRow[] }} PuzzleCatalog
  * @typedef {{ id: string, num: number, title: string, published_data: object, draft_data?: object | null, draft_updated_at?: string | null }} PuzzleRow
  */
-
-/** @param {{ puzzles: PuzzleEntry[], defaultId?: string }} index */
-function catalogFromIndex(index) {
-  const puzzles = index.puzzles.filter((entry) => entry.id !== DEBUG_PUZZLE_ID);
-  const defaultId =
-    index.defaultId &&
-    index.defaultId !== DEBUG_PUZZLE_ID &&
-    puzzles.some((entry) => entry.id === index.defaultId)
-      ? index.defaultId
-      : puzzles[0]?.id;
-
-  return { ...index, puzzles, defaultId };
-}
-
-/** True when published_data is playable and belongs in the Choose puzzle list. */
-export function isListableRow(row) {
-  return Boolean(row.published_data && !isPublishedShell(row.published_data));
-}
 
 /** True when draft_data exists and the puzzle has never been published. */
 export function isUnpublishedDraftRow(row) {
   return Boolean(row.draft_data != null && isPublishedShell(row.published_data));
+}
+
+/** True when the row belongs in the play picker (published at least once). */
+export function isListableRow(row) {
+  return Boolean(row.published_data && !isUnpublishedDraftRow(row));
 }
 
 /** @param {PuzzleRow} row */
@@ -50,26 +39,6 @@ function rowToEntry(row) {
     id: row.id,
     hasDraft: row.draft_data != null,
   };
-}
-
-/** @param {PuzzleRow} row @param {'published' | 'draft'} variant */
-export async function hydratePuzzleFromRow(row, variant = "published") {
-  const raw =
-    variant === "draft"
-      ? row.draft_data ?? row.published_data
-      : row.published_data;
-  if (!raw) {
-    throw new Error(`Puzzle "${row.id}" has no ${variant} data`);
-  }
-  const puzzle = structuredClone(raw);
-  const label = `supabase:${row.id}`;
-
-  // Never-published rows store real content in draft_data; published_data is a shell.
-  if (variant === "published" && row.draft_data != null && isPublishedShell(puzzle)) {
-    return puzzle;
-  }
-
-  return hydratePuzzle(puzzle, label);
 }
 
 /** @param {string} id */
@@ -91,50 +60,42 @@ export async function fetchPuzzleRow(id) {
 export async function fetchPuzzleCatalog() {
   const supabase = getSupabase();
   if (!supabase || !isSupabaseConfigured()) {
-    const index = catalogFromIndex(await loadStaticIndex("./puzzles/index.json"));
-    return { ...index, source: "static" };
+    throw new Error("Supabase is not configured. Puzzles are loaded from Supabase only.");
   }
 
-  try {
-    const { data: configRows, error: configError } = await supabase
-      .from("app_config")
-      .select("key, value")
-      .eq("key", "default_puzzle_id");
+  const { data: configRows, error: configError } = await supabase
+    .from("app_config")
+    .select("key, value")
+    .eq("key", "default_puzzle_id");
 
-    if (configError) throw configError;
+  if (configError) throw configError;
 
-    const { data, error } = await supabase
-      .from("puzzles")
-      .select("id, num, title, published_data, draft_data, draft_updated_at")
-      .order("num");
+  const { data, error } = await supabase
+    .from("puzzles")
+    .select("id, num, title, published_data, draft_data, draft_updated_at")
+    .order("num");
 
-    if (error) throw error;
-    if (!data?.length) {
-      const index = catalogFromIndex(await loadStaticIndex("./puzzles/index.json"));
-      return { ...index, source: "static" };
-    }
+  if (error) throw error;
 
-    const allRows = data.filter((row) => row.id !== DEBUG_PUZZLE_ID);
-    const listableRows = allRows.filter(isListableRow);
-    const configuredDefault = configRows?.[0]?.value;
-    const defaultId =
-      configuredDefault &&
-      configuredDefault !== DEBUG_PUZZLE_ID &&
-      listableRows.some((row) => row.id === configuredDefault)
-        ? configuredDefault
-        : listableRows[0]?.id;
-
-    return {
-      defaultId,
-      puzzles: listableRows.map(rowToEntry),
-      source: "supabase",
-      rows: allRows,
-    };
-  } catch (err) {
-    console.warn("Supabase catalog unavailable, using static puzzles:", err);
-    const index = catalogFromIndex(await loadStaticIndex("./puzzles/index.json"));
-    return { ...index, source: "static" };
+  if (!data?.length) {
+    return { defaultId: null, puzzles: [], rows: [] };
   }
+
+  const allRows = data.filter((row) => row.id !== DEBUG_PUZZLE_ID);
+  const listableRows = allRows.filter(isListableRow);
+  const configuredDefault = configRows?.[0]?.value;
+  const defaultId =
+    configuredDefault &&
+    configuredDefault !== DEBUG_PUZZLE_ID &&
+    listableRows.some((row) => row.id === configuredDefault)
+      ? configuredDefault
+      : listableRows[0]?.id ?? null;
+
+  return {
+    defaultId,
+    puzzles: listableRows.map(rowToEntry),
+    rows: allRows,
+  };
 }
 
 /**
@@ -143,53 +104,22 @@ export async function fetchPuzzleCatalog() {
  * @param {{ variant?: 'published' | 'draft' }} [options]
  */
 export async function fetchPuzzle(catalog, id, { variant = "published" } = {}) {
-  if (catalog.source === "supabase" && catalog.rows) {
-    const row = catalog.rows.find((entry) => entry.id === id);
-    if (row) {
-      return await hydratePuzzleFromRow(row, variant);
-    }
-  }
-
-  const entry = catalog.puzzles.find((p) => p.id === id);
-  if (!entry?.file) {
+  const row = catalog.rows.find((entry) => entry.id === id);
+  if (!row) {
     throw new Error(`Puzzle "${id}" not found`);
   }
-  return hydratePuzzle(await loadStaticPuzzleJson(entry.file), `./puzzles/${entry.file}`);
+  return hydratePuzzleFromRow(row, variant);
 }
 
-async function loadStaticPuzzleJson(file) {
-  const res = await fetch(`./puzzles/${file}`, { cache: "no-store" });
-  if (!res.ok) {
-    throw new Error(`Failed to load ./puzzles/${file}: ${res.status} ${res.statusText}`);
-  }
-  return res.json();
-}
-
-/** @returns {Promise<{ puzzle: object, row: PuzzleRow | null }>} */
+/** @returns {Promise<{ puzzle: object, row: PuzzleRow }>} */
 export async function fetchDebugPuzzle() {
-  const supabase = getSupabase();
-  if (supabase && isSupabaseConfigured()) {
-    try {
-      const row = await fetchPuzzleRow(DEBUG_PUZZLE_ID);
-      return {
-        puzzle: await hydratePuzzleFromRow(row, "published"),
-        row,
-      };
-    } catch (err) {
-      console.warn("Debug puzzle unavailable in Supabase, using static file:", err);
-    }
-  }
-
-  const raw = await loadStaticPuzzleJson("debug.json");
+  const row = await fetchPuzzleRow(DEBUG_PUZZLE_ID);
   return {
-    puzzle: await hydratePuzzle(raw, "./puzzles/debug.json"),
-    row: null,
+    puzzle: hydratePuzzleFromRow(row, "published"),
+    row,
   };
 }
 
-/**
- * @param {object} puzzle
- */
 /**
  * @param {object} puzzle Draft puzzle payload (must include id, title).
  * @param {object} publishedShell Minimal published_data for the new row.

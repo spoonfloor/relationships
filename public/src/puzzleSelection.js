@@ -11,7 +11,7 @@ export function getSavedPuzzleId() {
 }
 
 export function saveSelectedPuzzleId(id) {
-  if (id.startsWith("~uploaded~") || id === DEBUG_PUZZLE_ID) return;
+  if (id === DEBUG_PUZZLE_ID) return;
   try {
     localStorage.setItem(STORAGE_KEY, id);
   } catch {

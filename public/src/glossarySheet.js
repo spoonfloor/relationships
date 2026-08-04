@@ -1,3 +1,4 @@
+import { placeCaretFromPoint, selectionIsInside } from "./caret.js";
 import { setDisplayText } from "./display.js";
 import {
   applyGlossaryText,
@@ -27,6 +28,7 @@ function syncEditorPlaceholderOverlay(editor) {
   if (readGlossaryEditorText(editor).trim()) return;
   const overlay = createGlossaryPlaceholderElement();
   overlay.classList.add("glossary-editor__placeholder--overlay");
+  overlay.contentEditable = "false";
   editor.appendChild(overlay);
 }
 
@@ -55,11 +57,16 @@ function classifyGlossaryEditorLine(line) {
   line.classList.toggle("glossary-editor__line--definition", isDefinition);
 }
 
+function createEmptyGlossaryLine() {
+  const line = document.createElement("div");
+  line.appendChild(document.createElement("br"));
+  classifyGlossaryEditorLine(line);
+  return line;
+}
+
 function appendGlossaryEditorLines(editor, text) {
   if (!text) {
-    const line = document.createElement("div");
-    classifyGlossaryEditorLine(line);
-    editor.appendChild(line);
+    editor.appendChild(createEmptyGlossaryLine());
     syncEditorPlaceholderOverlay(editor);
     return;
   }
@@ -108,6 +115,155 @@ function readGlossaryEditorText(editor) {
     .filter((line) => line.classList.contains("glossary-editor__line"))
     .map((line) => line.textContent)
     .join("\n");
+}
+
+function getGlossaryLineElements(editor) {
+  return Array.from(editor.children).filter((node) =>
+    node.classList.contains("glossary-editor__line")
+  );
+}
+
+function getLineCharOffset(lineEl, container, offset) {
+  if (lineEl === container) {
+    return Math.min(offset, (lineEl.textContent ?? "").length);
+  }
+  let total = 0;
+  const walker = document.createTreeWalker(lineEl, NodeFilter.SHOW_TEXT);
+  for (let textNode = walker.nextNode(); textNode; textNode = walker.nextNode()) {
+    if (textNode === container) {
+      return total + offset;
+    }
+    total += textNode.textContent?.length ?? 0;
+  }
+  return total;
+}
+
+function mapRangeToLineCoords(editor, range) {
+  const lines = getGlossaryLineElements(editor);
+
+  function locate(container, offset) {
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
+      if (line === container || line.contains(container)) {
+        return { lineIndex: index, col: getLineCharOffset(line, container, offset) };
+      }
+    }
+    const last = lines.at(-1);
+    return {
+      lineIndex: Math.max(0, lines.length - 1),
+      col: last ? (last.textContent ?? "").length : 0,
+    };
+  }
+
+  const start = locate(range.startContainer, range.startOffset);
+  const end = locate(range.endContainer, range.endOffset);
+  return {
+    startLine: start.lineIndex,
+    startCol: start.col,
+    endLine: end.lineIndex,
+    endCol: end.col,
+  };
+}
+
+function replaceGlossaryEditorContent(editor, text) {
+  editor.querySelector(".glossary-editor__placeholder--overlay")?.remove();
+  editor.replaceChildren();
+  appendGlossaryEditorLines(editor, text);
+  syncEditorPlaceholderOverlay(editor);
+}
+
+function placeCaretInLine(lineEl, col) {
+  const range = document.createRange();
+  const text = lineEl.textContent ?? "";
+  const targetCol = Math.min(col, text.length);
+
+  if (text.length > 0) {
+    let remaining = targetCol;
+    const walker = document.createTreeWalker(lineEl, NodeFilter.SHOW_TEXT);
+    for (let textNode = walker.nextNode(); textNode; textNode = walker.nextNode()) {
+      const len = textNode.textContent?.length ?? 0;
+      if (remaining <= len) {
+        range.setStart(textNode, remaining);
+        break;
+      }
+      remaining -= len;
+    }
+  } else if (lineEl.firstChild?.nodeName === "BR") {
+    range.setStartBefore(lineEl.firstChild);
+  } else {
+    range.setStart(lineEl, 0);
+  }
+
+  range.collapse(true);
+  const sel = window.getSelection();
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+}
+
+function activateGlossaryEditor(editor, clientX, clientY) {
+  editor.focus({ preventScroll: true });
+
+  const isEmpty = !readGlossaryEditorText(editor).trim();
+  if (isEmpty) {
+    const firstLine = getGlossaryLineElements(editor)[0];
+    if (firstLine) placeCaretInLine(firstLine, 0);
+    return;
+  }
+
+  if (
+    clientX != null &&
+    clientY != null &&
+    placeCaretFromPoint(clientX, clientY) &&
+    selectionIsInside(editor)
+  ) {
+    return;
+  }
+
+  const firstLine = getGlossaryLineElements(editor)[0];
+  if (firstLine) placeCaretInLine(firstLine, 0);
+}
+
+function insertGlossaryPaste(editor, pasted) {
+  const currentText = readGlossaryEditorText(editor);
+  const isEmpty = !currentText.trim();
+  const sel = window.getSelection();
+
+  if (isEmpty || !sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)) {
+    replaceGlossaryEditorContent(editor, pasted);
+    const lastLine = getGlossaryLineElements(editor).at(-1);
+    if (lastLine) placeCaretInLine(lastLine, (lastLine.textContent ?? "").length);
+    return;
+  }
+
+  const flatLines = currentText.split("\n");
+  const { startLine, startCol, endLine, endCol } = mapRangeToLineCoords(
+    editor,
+    sel.getRangeAt(0)
+  );
+  const pastedLines = pasted.split(/\r?\n/);
+  const prefix = (flatLines[startLine] ?? "").slice(0, startCol);
+  const suffix = (flatLines[endLine] ?? "").slice(endCol);
+  const nextLines = flatLines.slice(0, startLine);
+
+  if (pastedLines.length === 1) {
+    nextLines.push(prefix + pastedLines[0] + suffix);
+    nextLines.push(...flatLines.slice(endLine + 1));
+  } else {
+    nextLines.push(prefix + pastedLines[0]);
+    nextLines.push(...pastedLines.slice(1, -1));
+    nextLines.push(pastedLines[pastedLines.length - 1] + suffix);
+    nextLines.push(...flatLines.slice(endLine + 1));
+  }
+
+  const caretLineIndex = startLine + pastedLines.length - 1;
+  const caretCol =
+    pastedLines.length === 1
+      ? startCol + pastedLines[0].length
+      : (pastedLines.at(-1)?.length ?? 0);
+
+  replaceGlossaryEditorContent(editor, nextLines.join("\n"));
+  const caretLine = getGlossaryLineElements(editor)[caretLineIndex];
+  if (caretLine) placeCaretInLine(caretLine, caretCol);
 }
 
 /**
@@ -252,7 +408,7 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
     view.appendChild(createGlossaryPlaceholderElement());
   }
 
-  function beginEditing() {
+  function beginEditing(clientX, clientY) {
     if (editing) return;
     editing = true;
     view.hidden = true;
@@ -263,7 +419,9 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
     editor.contentEditable = "true";
     appendGlossaryEditorLines(editor, serializeGlossaryText(puzzle));
     activeGlossaryCommit = applyEditorText;
-    editor.focus({ preventScroll: true });
+    requestAnimationFrame(() => {
+      activateGlossaryEditor(editor, clientX, clientY);
+    });
   }
 
   function cancelEditing() {
@@ -301,6 +459,16 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
   applyBtn.addEventListener("pointerdown", keepEditorFocused);
   applyBtn.addEventListener("click", applyEditing);
 
+  editor.addEventListener("focus", () => {
+    if (!editing || selectionIsInside(editor)) return;
+    activateGlossaryEditor(editor);
+  });
+  editor.addEventListener("paste", (event) => {
+    event.preventDefault();
+    const pasted = event.clipboardData?.getData("text/plain") ?? "";
+    if (!pasted) return;
+    insertGlossaryPaste(editor, pasted);
+  });
   editor.addEventListener("input", () => {
     normalizeGlossaryEditorLines(editor);
     syncEditorPlaceholderOverlay(editor);
@@ -321,8 +489,8 @@ function appendGlossaryEditor(parent, puzzle, onChange) {
     applyEditorText();
   });
 
-  view.addEventListener("click", () => {
-    beginEditing();
+  view.addEventListener("click", (event) => {
+    beginEditing(event.clientX, event.clientY);
   });
 
   showView();

@@ -14,29 +14,13 @@ import {
   createEmptyPuzzle,
   groupTitlePlaceholder,
   isWordPlaceholderValue,
-  normalizeComposePuzzle,
   wordFieldLabel,
   wordPlaceholder,
 } from "./puzzleComposeTemplate.js";
-import { validatePuzzle } from "./validation.js";
+import { normalizePuzzle, validateComposePublish } from "./puzzleNormalize.js";
 import { commitActiveGlossaryEditor } from "./glossarySheet.js";
 
 /** @typedef {'create' | 'edit'} ComposeVariant */
-
-/**
- * @param {object} puzzle
- * @returns {string | null}
- */
-export function validateComposePublish(puzzle, fileLabel = "puzzle", { requireId = true } = {}) {
-  normalizeComposePuzzle(puzzle);
-
-  try {
-    validatePuzzle(puzzle, fileLabel, { requireId });
-  } catch (err) {
-    return err instanceof Error ? err.message : "Puzzle validation failed.";
-  }
-  return null;
-}
 
 /**
  * @param {{
@@ -341,7 +325,7 @@ export function initPuzzleCompose({
       return false;
     }
     const puzzle = getPuzzle();
-    normalizeComposePuzzle(puzzle);
+    normalizePuzzle(puzzle);
     syncAllDisplays();
 
     if (onSaveDraft) {
@@ -413,7 +397,7 @@ export function initPuzzleCompose({
     getComposeVariant: () => composeVariant,
     commitAllFields,
     validateComposePublish: (options) => {
-      const err = validateComposePublish(getPuzzle(), "puzzle", options);
+      const err = validateComposePublish(getPuzzle(), options);
       syncAllDisplays();
       return err;
     },
