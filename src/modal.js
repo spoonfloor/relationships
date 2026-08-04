@@ -39,7 +39,7 @@ export function openModal({ title, content, actions = [], onClose }) {
   }
 
   const actionsEl = document.createElement("div");
-  actionsEl.className = "modal__actions";
+  actionsEl.className = "modal__actions cta-row";
 
   function closeModal() {
     if (!dialog.open) return;

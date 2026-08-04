@@ -32,7 +32,6 @@
   --puzzle-title-line-height: 20px;
   --puzzle-stack-gap: 24px;
   --play-gap: 10px;
-  --puzzle-edit-viewport-border-width: 4px;
   --vignette-font-size: 28px;
   --vignette-line-height: 1.15;
   --vignette-letter-spacing: -0.02em;
@@ -47,7 +46,6 @@
   --modal-max-width: 500px;
   --modal-title-font-size: 28px;
   --modal-body-font-size: var(--cta-font-size);
-  --modal-action-min-width: 160px;
 
   /* Glossary */
   --glossary-content-margin-h: 36px;
@@ -110,7 +108,6 @@
   --theme-primary: var(--theme-play-primary);
   --theme-primary-hover: var(--theme-play-primary-hover);
   --puzzle-edit-field-bg: var(--theme-edit-field-bg-focused);
-  --puzzle-edit-viewport-border-color: var(--theme-edit-cta);
   --selected: var(--theme-primary);
   --cta-primary-bg: var(--theme-primary);
   --cta-primary-hover: var(--theme-primary-hover);
@@ -317,6 +314,9 @@ body {
   /* +1px: document must exceed scrollport so iOS pins fixed footer on first paint. */
   min-height: calc(var(--app-height) + 1px);
   overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -324,6 +324,19 @@ body {
   background: var(--surface-canvas);
   color: var(--text-color);
   touch-action: manipulation;
+}
+
+/* contentEditable can ignore inherited user-select on some engines */
+.editable-field:not(.editable-field--focused),
+[contenteditable='true']:not(.editable-field--focused) {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Selection only while a field is actively focused/editing */
+:is(.editable-field--focused, input:focus, textarea:focus) {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 body.edit-mode {
@@ -428,21 +441,6 @@ body.edit-mode .page-tagline {
 
 .edit-mode .puzzle-title {
   cursor: text;
-  user-select: text;
-  -webkit-user-select: text;
-}
-
-body.edit-mode::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 11;
-  pointer-events: none;
-  box-shadow: inset 0 0 0 var(--puzzle-edit-viewport-border-width)
-    var(--puzzle-edit-viewport-border-color);
 }
 
 .app-bar {
@@ -461,11 +459,8 @@ body.edit-mode .app-bar {
 
 .app-bar__menu {
   position: fixed;
-  top: max(var(--content-padding-top), env(safe-area-inset-top));
-  right: max(
-    calc(var(--page-column-inset) + var(--content-padding-x)),
-    env(safe-area-inset-right)
-  );
+  top: 4px;
+  right: 0px;
   z-index: 20;
   flex-shrink: 0;
 }
@@ -474,8 +469,8 @@ body.edit-mode .app-bar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 10px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
   padding: 0;
   border: none;
   border-radius: 10px;
@@ -645,8 +640,6 @@ body.edit-mode .app-bar {
 .vignette--compose {
   outline: none;
   cursor: text;
-  user-select: text;
-  -webkit-user-select: text;
   touch-action: manipulation;
   white-space: pre-wrap;
   caret-color: var(--theme-caret-color);
@@ -756,8 +749,6 @@ body.edit-mode .app-bar {
   margin: 0;
   color: var(--text-color);
   cursor: text;
-  user-select: text;
-  -webkit-user-select: text;
   outline: none;
   caret-color: var(--theme-caret-color);
   white-space: pre-wrap;
@@ -781,8 +772,6 @@ body.edit-mode .app-bar {
 .word.compose-word {
   width: 100%;
   cursor: text;
-  user-select: text;
-  -webkit-user-select: text;
   outline: none;
   caret-color: var(--theme-caret-color);
   position: relative;
@@ -817,6 +806,12 @@ body.edit-mode .app-bar {
 .cta-row {
   display: flex;
   gap: 12px;
+  min-width: 0;
+}
+
+.cta-row > .btn {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .btn-block {
@@ -824,7 +819,7 @@ body.edit-mode .app-bar {
 }
 
 .btn-block-half {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -1319,10 +1314,6 @@ body.edit-mode .play-area {
   margin: var(--modal-list-title-margin);
 }
 
-.modal__panel:has(.modal-list) .modal__actions .btn {
-  min-width: 0;
-}
-
 .modal__body > .minigrid {
   margin-top: var(--minigrid-v-gap);
   flex: 1;
@@ -1361,14 +1352,7 @@ body.edit-mode .play-area {
 }
 
 .modal__actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
   margin-top: 16px;
-}
-
-.modal__actions .btn {
-  min-width: var(--modal-action-min-width);
 }
 
 .sheet {
@@ -1674,8 +1658,6 @@ body.edit-mode .play-area {
   line-height: inherit;
   outline: none;
   box-shadow: inset 0 0 0 var(--input-border-width) var(--input-border-color);
-  user-select: text;
-  -webkit-user-select: text;
 }
 
 .glossary-editor--editing.editable-field--focused {
@@ -1994,7 +1976,6 @@ body.edit-mode .play-area {
   text-transform: uppercase;
   outline: none;
   cursor: text;
-  user-select: text;
 }
 
 .color-palette-modal__swatch-input::selection {
