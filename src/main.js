@@ -3,7 +3,6 @@ import { createInitialState } from "./state.js";
 import {
   DEBUG_PUZZLE_ID,
   fetchDebugPuzzle,
-  fetchPuzzle,
   fetchPuzzleCatalog,
   hydratePuzzleFromRow,
   isUnpublishedDraftRow,
@@ -29,9 +28,6 @@ import {
 } from "./render.js";
 import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
-
-import { createPuzzleUploader } from "./fileUploader.js";
-import { validatePuzzle } from "./validation.js";
 import { alert as showAlert, openModal } from "./modal.js";
 import { closeActiveOverlay } from "./overlay.js";
 import { openGlossarySheet, commitActiveGlossaryEditor } from "./glossarySheet.js";
@@ -48,6 +44,7 @@ import {
 import { openPuzzlePicker } from "./puzzlePicker.js";
 import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
 import { initPuzzleCompose } from "./puzzleCompose.js";
+import { createEmptyPuzzle } from "./puzzleComposeTemplate.js";
 import { promptEditPassword } from "./auth.js";
 import { initPageLogo, applyLogoSwatches } from "./logoSwatches.js";
 import { bindDarkModeSwitch, initColorScheme, onColorSchemeChange } from "./colorScheme.js";
@@ -65,7 +62,6 @@ async function bootstrap() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
-  const uploaderContainer = document.getElementById("uploader-container");
 
   const [catalog, wittyResponsesRaw] = await Promise.all([
     fetchPuzzleCatalog(),
@@ -76,22 +72,25 @@ async function bootstrap() {
   const session = createPuzzleSession({ catalog });
   const listableIds = new Set(catalog.puzzles.map((entry) => entry.id));
   const draftOnlyRows =
-    catalog.rows?.filter((row) => !listableIds.has(row.id) && isUnpublishedDraftRow(row)) ??
-    [];
+    catalog.rows.filter((row) => !listableIds.has(row.id) && isUnpublishedDraftRow(row));
 
-  await Promise.all([
-    ...catalog.puzzles.map(async (entry) => {
-      const row = catalog.rows?.find((item) => item.id === entry.id) ?? null;
-      const published = row
-        ? await hydratePuzzleFromRow(row, "published")
-        : await fetchPuzzle(catalog, entry.id);
-      session.init(entry.id, { published, row, num: entry.num });
-    }),
-    ...draftOnlyRows.map(async (row) => {
-      const published = await hydratePuzzleFromRow(row, "published");
-      session.init(row.id, { published, row, num: row.num });
-    }),
-  ]);
+  for (const entry of catalog.puzzles) {
+    const row = catalog.rows.find((item) => item.id === entry.id);
+    if (!row) continue;
+    session.init(entry.id, {
+      published: hydratePuzzleFromRow(row, "published"),
+      row,
+      num: entry.num,
+    });
+  }
+
+  for (const row of draftOnlyRows) {
+    session.init(row.id, {
+      published: hydratePuzzleFromRow(row, "published"),
+      row,
+      num: row.num,
+    });
+  }
 
   dom.puzzleSelect.innerHTML = "";
   for (const p of catalog.puzzles) {
@@ -101,43 +100,14 @@ async function bootstrap() {
     dom.puzzleSelect.appendChild(opt);
   }
 
-  /** @type {Map<string, object>} */
-  const uploadedPuzzles = new Map();
-
-  const onPuzzleUploaded = (puzzle) => {
-    try {
-      validatePuzzle(puzzle, "uploaded file");
-      const uploadedId = `~uploaded~${puzzle.id}`;
-
-      const existingOption = dom.puzzleSelect.querySelector(`option[value="${uploadedId}"]`);
-      if (existingOption) {
-        existingOption.remove();
-      }
-
-      const option = document.createElement("option");
-      option.value = uploadedId;
-      setDisplayText(option, `Uploaded: ${puzzle.title ?? puzzle.id}`);
-      dom.puzzleSelect.appendChild(option);
-
-      uploadedPuzzles.set(uploadedId, puzzle);
-
-      dom.puzzleSelect.value = uploadedId;
-      dom.puzzleSelect.dispatchEvent(new Event("change"));
-    } catch (e) {
-      console.error(e);
-      renderStatus(dom, `Puzzle validation error: ${e.message}`);
-      showAlert({ title: "Error", message: `Puzzle validation error: ${e.message}` });
-    }
-  };
-
-  const uploader = createPuzzleUploader(onPuzzleUploaded);
-  uploaderContainer.appendChild(uploader);
-
   let initialId;
   if (puzzleId === DEBUG_PUZZLE_ID) {
     initialId = DEBUG_PUZZLE_ID;
   } else if (puzzleId) {
-    if (!catalog.puzzles.some((entry) => entry.id === puzzleId) && !uploadedPuzzles.has(puzzleId)) {
+    if (
+      !catalog.puzzles.some((entry) => entry.id === puzzleId) &&
+      !draftOnlyRows.some((row) => row.id === puzzleId)
+    ) {
       renderStatus(dom, `Puzzle with id "${puzzleId}" not found.`);
       return;
     }
@@ -147,7 +117,7 @@ async function bootstrap() {
     initialId =
       savedId &&
       savedId !== DEBUG_PUZZLE_ID &&
-      (catalog.puzzles.some((entry) => entry.id === savedId) || uploadedPuzzles.has(savedId))
+      catalog.puzzles.some((entry) => entry.id === savedId)
         ? savedId
         : catalog.defaultId && catalog.puzzles.some((entry) => entry.id === catalog.defaultId)
           ? catalog.defaultId
@@ -163,18 +133,26 @@ async function bootstrap() {
       num: 0,
     });
     puzzle = loaded.puzzle;
+  } else if (initialId) {
+    puzzle = session.getPlayable(initialId) ?? hydratePuzzleFromRow(
+      draftOnlyRows.find((row) => row.id === initialId) ??
+        catalog.rows.find((row) => row.id === initialId),
+      "published"
+    );
+    if (catalog.puzzles.some((entry) => entry.id === initialId)) {
+      dom.puzzleSelect.value = initialId;
+    }
   } else {
-    puzzle = uploadedPuzzles.get(initialId) ?? session.getPlayable(initialId);
-    dom.puzzleSelect.value = initialId;
+    puzzle = createEmptyPuzzle();
   }
 
   const state = createInitialState(puzzle);
-  initializePage(state, wittyResponses, session, uploadedPuzzles, catalog);
+  initializePage(state, wittyResponses, session, catalog);
   syncAppShellHeight();
   syncBottomSheetReserve();
 }
 
-function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog) {
+function initializePage(state, wittyResponses, session, catalog) {
   const dom = getDom();
   dom.glossaryTooltip = document.getElementById("glossary-tooltip");
   dom.glossaryBtn = document.getElementById("glossaryBtn");
@@ -319,16 +297,11 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     },
     onBeforeEnterEdit: async (targetId) => {
       const id = targetId ?? getCurrentPuzzleId();
-      if (!session.isPersistable(id)) {
-        throw new Error(
-          "Online editing requires Supabase. This puzzle is loaded from static files."
-        );
-      }
       const returnId = getCurrentPuzzleId();
       composeReturnTo = {
         id: returnId,
         puzzle:
-          session.isPersistable(returnId) && session.getPublished(returnId)
+          session.getPublished(returnId)
             ? structuredClone(session.getPublished(returnId))
             : structuredClone(state.activePuzzle),
       };
@@ -340,11 +313,6 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
       renderStatus(dom, "Editing draft.");
     },
     onEnterCreate: () => {
-      if (!session.canAuthorOnline()) {
-        throw new Error(
-          "Online authoring requires Supabase. This puzzle cannot be created offline."
-        );
-      }
       const currentId = getCurrentPuzzleId();
       composeReturnTo = {
         id: currentId,
@@ -552,7 +520,6 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
 
   dom.publishBtn?.addEventListener("click", async () => {
     const id = getCurrentPuzzleId();
-    if (id.startsWith("~uploaded~")) return;
 
     try {
       if (puzzleCompose.isComposeMode()) {
@@ -625,12 +592,11 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
 
     if (session.getPublished(id)) return;
 
-    const row = catalog.rows?.find((item) => item.id === id);
-    const fetched = row
-      ? await hydratePuzzleFromRow(row, "published")
-      : await fetchPuzzle(catalog, id);
+    const row = catalog.rows.find((item) => item.id === id);
+    if (!row) throw new Error(`Puzzle "${id}" not found`);
+    const fetched = hydratePuzzleFromRow(row, "published");
     const entry = catalog.puzzles.find((item) => item.id === id);
-    session.init(id, { published: fetched, row: row ?? null, num: entry?.num ?? 0 });
+    session.init(id, { published: fetched, row, num: entry?.num ?? row.num ?? 0 });
   }
 
   async function selectPuzzleById(id) {
@@ -638,17 +604,11 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
       puzzleCompose.cancelCompose();
     }
 
-    let puzzle;
-    if (id.startsWith("~uploaded~")) {
-      puzzle = uploadedPuzzles.get(id);
-      if (!puzzle) throw new Error(`Uploaded puzzle "${id}" not found`);
-    } else {
-      await ensurePuzzleLoaded(id);
-      puzzle = session.getPlayable(id);
-      if (!puzzle) throw new Error(`Puzzle "${id}" not found`);
-    }
+    await ensurePuzzleLoaded(id);
+    const puzzle = session.getPlayable(id);
+    if (!puzzle) throw new Error(`Puzzle "${id}" not found`);
 
-    if (!id.startsWith("~uploaded~") && id !== DEBUG_PUZZLE_ID) {
+    if (id !== DEBUG_PUZZLE_ID) {
       dom.puzzleSelect.value = id;
       saveSelectedPuzzleId(id);
     }
@@ -700,8 +660,45 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
     });
   });
 
-  /** @param {string} title */
-  function confirmDeletePuzzle(title) {
+  /** @returns {Promise<string[] | null>} */
+  function pickPuzzlesToDelete() {
+    const sections = session.getDeletablePuzzleSections();
+    const currentId = getCurrentPuzzleId();
+    const preselectId =
+      currentId !== DEBUG_PUZZLE_ID &&
+      sections.some((section) => section.puzzles.some((puzzle) => puzzle.id === currentId))
+        ? currentId
+        : "";
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const settle = (ids) => {
+        if (settled) return;
+        settled = true;
+        resolve(ids);
+      };
+
+      openPuzzlePicker({
+        title: "Delete puzzle",
+        emptyMessage: "No puzzles to delete.",
+        listAriaLabel: "Puzzles to delete",
+        sections,
+        currentId: preselectId,
+        multiple: true,
+        primaryLabel: "Delete forever",
+        onSelect: (selection) => settle(Array.isArray(selection) ? selection : [selection]),
+        onDismiss: () => settle(null),
+      });
+    });
+  }
+
+  /** @param {string[]} ids */
+  function confirmDeletePuzzles(ids) {
+    const content =
+      ids.length === 1
+        ? `Permanently delete '${session.getDeletableTitle(ids[0])}'? This action cannot be undone.`
+        : `Permanently delete ${ids.length} puzzles? This action cannot be undone.`;
+
     return new Promise((resolve) => {
       let settled = false;
       const settle = (confirmed) => {
@@ -712,7 +709,7 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
 
       openModal({
         title: "Delete puzzle",
-        content: `Permanently delete '${title}'? This action cannot be undone.`,
+        content,
         actions: [
           { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
           { label: "Delete forever", variant: "primary", onClick: () => settle(true) },
@@ -727,51 +724,61 @@ function initializePage(state, wittyResponses, session, uploadedPuzzles, catalog
   dom.deletePuzzleBtn?.addEventListener("click", async (event) => {
     event.stopPropagation();
 
-    const id = getCurrentPuzzleId();
-    if (id === DEBUG_PUZZLE_ID || id.startsWith("~uploaded~")) {
-      showAlert({ title: "Error", message: "This puzzle cannot be deleted." });
-      return;
-    }
-    if (!session.isPersistable(id)) {
-      showAlert({
-        title: "Error",
-        message: "Online delete requires Supabase. Static puzzles cannot be removed here.",
-      });
-      return;
-    }
-
     const ok = await promptEditPassword();
     if (!ok) return;
 
-    const title = session.getPublishedTitle(id);
-    const confirmed = await confirmDeletePuzzle(title);
-    if (!confirmed) return;
+    const selectedIds = await pickPuzzlesToDelete();
+    if (!selectedIds?.length) return;
 
-    if (puzzleCompose.isComposeMode()) {
-      puzzleCompose.cancelCompose();
-    }
-
-    const result = await session.remove(id);
-    if (!result.ok) {
-      showAlert({ title: "Error", message: result.error });
+    const ids = selectedIds.filter(
+      (id) => id !== DEBUG_PUZZLE_ID && session.isPersistable(id)
+    );
+    if (ids.length === 0) {
+      showAlert({ title: "Error", message: "This puzzle cannot be deleted." });
       return;
     }
 
-    dom.puzzleSelect.querySelector(`option[value="${CSS.escape(id)}"]`)?.remove();
+    const confirmed = await confirmDeletePuzzles(ids);
+    if (!confirmed) return;
 
-    const returnId = result.wasListed
-      ? result.nextId
-      : composeReturnTo?.id ?? result.nextId;
-    if (returnId) {
+    const currentId = getCurrentPuzzleId();
+    const deletingCurrent = ids.includes(currentId);
+
+    if (deletingCurrent && puzzleCompose.isComposeMode()) {
+      puzzleCompose.cancelCompose();
+    }
+
+    let navigateId = null;
+    let deletedCount = 0;
+
+    for (const id of ids) {
+      const result = await session.remove(id);
+      if (!result.ok) {
+        showAlert({ title: "Error", message: result.error });
+        break;
+      }
+
+      dom.puzzleSelect.querySelector(`option[value="${CSS.escape(id)}"]`)?.remove();
+      if (id === currentId) {
+        navigateId = result.wasListed
+          ? result.nextId
+          : composeReturnTo?.id ?? result.nextId;
+      }
+      deletedCount += 1;
+    }
+
+    if (deletedCount === 0) return;
+
+    if (deletingCurrent && navigateId) {
       try {
-        await selectPuzzleById(returnId);
+        await selectPuzzleById(navigateId);
       } catch (e) {
         console.error(e);
         renderStatus(dom, `Puzzle load error: ${e.message}`);
       }
     }
 
-    showToast("Puzzle deleted.");
+    showToast(deletedCount === 1 ? "Puzzle deleted." : `${deletedCount} puzzles deleted.`);
   });
 
   dom.puzzleSelect.addEventListener("change", async () => {

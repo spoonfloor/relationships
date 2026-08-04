@@ -4,11 +4,13 @@ import {
   draftTitleFromRow,
   fetchPuzzleRow,
   hydratePuzzleFromRow,
+  isListableRow,
   isUnpublishedDraftRow,
   publishPuzzle,
   savePuzzleDraft,
 } from "./puzzleRepository.js";
-import { createPublishedShell, isPublishedShell, normalizeComposePuzzle } from "./puzzleComposeTemplate.js";
+import { createPublishedShell } from "./puzzleComposeTemplate.js";
+import { normalizePuzzle } from "./puzzleNormalize.js";
 import { slugFromTitle, uniqueSlug } from "./puzzleSlug.js";
 
 /**
@@ -17,18 +19,19 @@ import { slugFromTitle, uniqueSlug } from "./puzzleSlug.js";
  */
 
 /**
- * @param {{ catalog: { source: string, puzzles: { id: string, num: number }[], rows?: PuzzleRow[] } }} options
+ * @param {{ catalog: { puzzles: { id: string, num: number }[], rows: PuzzleRow[] } }} options
  */
 export function createPuzzleSession({ catalog }) {
   /** @type {Map<string, PuzzleRecord>} */
   const records = new Map();
 
+  /** @param {string} id */
   function isPersistable(id) {
-    return catalog.source === "supabase" && !id.startsWith("~uploaded~");
+    return Boolean(typeof id === "string" && id.trim());
   }
 
   function canAuthorOnline() {
-    return catalog.source === "supabase";
+    return true;
   }
 
   /** @returns {string[]} */
@@ -54,7 +57,9 @@ export function createPuzzleSession({ catalog }) {
   /** @param {string} id */
   function isListable(id) {
     const rec = records.get(id);
-    return Boolean(rec && !isPublishedShell(rec.published));
+    if (!rec) return false;
+    if (rec.row) return isListableRow(rec.row);
+    return Boolean(rec.published);
   }
 
   /** @param {string} id */
@@ -111,7 +116,7 @@ export function createPuzzleSession({ catalog }) {
 
   /** @returns {{ id: string, title: string }[]} */
   function getUnpublishedDraftOptions() {
-    if (catalog.source !== "supabase" || !catalog.rows?.length) return [];
+    if (!catalog.rows?.length) return [];
 
     return catalog.rows
       .filter(isUnpublishedDraftRow)
@@ -120,6 +125,36 @@ export function createPuzzleSession({ catalog }) {
         id: row.id,
         title: draftTitleFromRow(row),
       }));
+  }
+
+  /** @returns {{ heading?: string, puzzles: { id: string, title: string }[] }[]} */
+  function getDeletablePuzzleSections() {
+    /** @type {{ heading?: string, puzzles: { id: string, title: string }[] }[]} */
+    const sections = [];
+
+    const published = catalog.puzzles.map((entry) => ({
+      id: entry.id,
+      title: getPickerLabel(entry.id),
+    }));
+    if (published.length > 0) {
+      sections.push({ puzzles: published });
+    }
+
+    const drafts = getUnpublishedDraftOptions();
+    if (drafts.length > 0) {
+      sections.push({ heading: "DRAFTS", puzzles: drafts });
+    }
+
+    return sections;
+  }
+
+  /** @param {string} id */
+  function getDeletableTitle(id) {
+    for (const section of getDeletablePuzzleSections()) {
+      const match = section.puzzles.find((puzzle) => puzzle.id === id);
+      if (match) return match.title;
+    }
+    return getPublishedTitle(id);
   }
 
   /** @param {string} id */
@@ -134,7 +169,7 @@ export function createPuzzleSession({ catalog }) {
     rec.row = row;
     rec.hasDraft = row.draft_data != null;
     rec.num = row.num ?? rec.num;
-    rec.published = await hydratePuzzleFromRow(row, "published");
+    rec.published = hydratePuzzleFromRow(row, "published");
   }
 
   /** @param {string} id */
@@ -147,12 +182,12 @@ export function createPuzzleSession({ catalog }) {
   /** @param {string} id */
   async function enterEdit(id) {
     if (!isPersistable(id)) {
-      throw new Error("This puzzle cannot be edited online.");
+      throw new Error("This puzzle cannot be edited.");
     }
     await refreshRow(id);
     const rec = records.get(id);
     if (!rec?.row) throw new Error(`Puzzle "${id}" not found`);
-    return await hydratePuzzleFromRow(rec.row, "draft");
+    return hydratePuzzleFromRow(rec.row, "draft");
   }
 
   /** @param {string} id */
@@ -174,7 +209,7 @@ export function createPuzzleSession({ catalog }) {
       return { ok: false, error: `Puzzle "${id}" not found.` };
     }
 
-    normalizeComposePuzzle(working);
+    normalizePuzzle(working);
     const payload = { ...working, id, num: rec.num };
     try {
       const row = await savePuzzleDraft(payload);
@@ -217,11 +252,7 @@ export function createPuzzleSession({ catalog }) {
    * @returns {Promise<{ ok: true, id: string, row: PuzzleRow, draft: object, created: true } | { ok: false, error: string }>}
    */
   async function createDraft(working) {
-    if (!canAuthorOnline()) {
-      return { ok: false, error: "Online authoring requires Supabase." };
-    }
-
-    normalizeComposePuzzle(working);
+    normalizePuzzle(working);
 
     const resolvedTitle = (working.title ?? "").trim();
     const id = uniqueSlug(slugFromTitle(resolvedTitle), getExistingIds());
@@ -232,7 +263,7 @@ export function createPuzzleSession({ catalog }) {
     payload.num = num;
 
     try {
-      const publishedShell = createPublishedShell(id, resolvedTitle);
+      const publishedShell = normalizePuzzle(createPublishedShell(id, resolvedTitle));
       const row = await createPuzzleRow(payload, publishedShell, num);
       init(id, {
         published: structuredClone(publishedShell),
@@ -253,7 +284,7 @@ export function createPuzzleSession({ catalog }) {
    * @returns {Promise<{ ok: true, id: string, draft: object, created: boolean, row?: PuzzleRow } | { ok: false, error: string }>}
    */
   async function ensurePersisted(working) {
-    normalizeComposePuzzle(working);
+    normalizePuzzle(working);
     const id = typeof working.id === "string" ? working.id.trim() : "";
     if (id && records.has(id) && isPersistable(id)) {
       return { ok: true, id, draft: structuredClone(working), created: false };
@@ -271,11 +302,11 @@ export function createPuzzleSession({ catalog }) {
 
   /**
    * @param {string} id
-   * @returns {Promise<{ ok: true, nextId: string | null } | { ok: false, error: string }>}
+   * @returns {Promise<{ ok: true, nextId: string | null, wasListed: boolean } | { ok: false, error: string }>}
    */
   async function remove(id) {
     if (!isPersistable(id)) {
-      return { ok: false, error: "This puzzle cannot be deleted online." };
+      return { ok: false, error: "This puzzle cannot be deleted." };
     }
     if (!records.has(id)) {
       return { ok: false, error: `Puzzle "${id}" not found.` };
@@ -318,6 +349,8 @@ export function createPuzzleSession({ catalog }) {
     getPickerLabel,
     hasDraft,
     getUnpublishedDraftOptions,
+    getDeletablePuzzleSections,
+    getDeletableTitle,
     enterEdit,
     exitEdit,
     saveDraft,

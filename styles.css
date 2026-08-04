@@ -39,7 +39,7 @@
   --word-font-size: 0.9rem;
   --word-font-family: 'Cabin Condensed', var(--font-family);
   --word-line-height: 1.2;
-  --cta-font-size: 20px;
+  --cta-font-size: 18px;
 
   /* Modals */
   --modal-padding: 24px;
@@ -611,13 +611,13 @@ body.edit-mode .app-bar {
 }
 
 .app-bar-menu__item:disabled,
-.app-bar-menu__item[aria-disabled="true"] {
+.app-bar-menu__item[aria-disabled='true'] {
   opacity: 0.45;
   cursor: default;
 }
 
 .app-bar-menu__item:disabled:hover,
-.app-bar-menu__item[aria-disabled="true"]:hover {
+.app-bar-menu__item[aria-disabled='true']:hover {
   background: transparent;
 }
 
@@ -1294,6 +1294,23 @@ body.edit-mode .play-area {
   background: color-mix(in srgb, var(--cta-primary-hover) 60%, transparent);
 }
 
+.puzzle-picker__section-divider {
+  margin: 8px var(--modal-list-item-padding-x);
+  border: none;
+  border-top: 1px solid
+    var(--border-color, color-mix(in srgb, var(--text-color) 15%, transparent));
+}
+
+.puzzle-picker__section-heading {
+  margin: 0;
+  padding: 8px var(--modal-list-item-padding-x) 4px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .modal__panel:has(.modal-list) {
   padding: var(--modal-list-padding-y) var(--modal-list-padding-x);
 }
@@ -1507,12 +1524,20 @@ body.edit-mode .play-area {
   font-weight: var(--glossary-definition-font-weight);
 }
 
-:is(.sheet--glossary .sheet__body, .sheet--glossary .glossary-editor__view, .sheet--glossary .glossary-editor--editing) {
+:is(
+  .sheet--glossary .sheet__body,
+  .sheet--glossary .glossary-editor__view,
+  .sheet--glossary .glossary-editor--editing
+) {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-:is(.sheet--glossary .sheet__body, .sheet--glossary .glossary-editor__view, .sheet--glossary .glossary-editor--editing)::-webkit-scrollbar {
+:is(
+  .sheet--glossary .sheet__body,
+  .sheet--glossary .glossary-editor__view,
+  .sheet--glossary .glossary-editor--editing
+)::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
@@ -1649,6 +1674,8 @@ body.edit-mode .play-area {
   line-height: inherit;
   outline: none;
   box-shadow: inset 0 0 0 var(--input-border-width) var(--input-border-color);
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .glossary-editor--editing.editable-field--focused {
@@ -1687,7 +1714,8 @@ body.edit-mode .play-area {
   color: var(--theme-edit-placeholder);
 }
 
-.glossary-editor--editing:not(.editable-field--focused) .glossary-editor__placeholder--overlay {
+.glossary-editor--editing:not(.editable-field--focused)
+  .glossary-editor__placeholder--overlay {
   color: var(--theme-edit-placeholder-blurred);
 }
 
@@ -2022,7 +2050,7 @@ body.edit-mode .play-area {
 .toast-layer {
   position: fixed;
   inset: 0;
-  z-index: 11;
+  z-index: 21;
   pointer-events: none;
 }
 

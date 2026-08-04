@@ -1,6 +1,4 @@
-import { normalizeGlossary } from "./puzzleSchema.js";
-
-/** Default group colors for published static puzzles (not compose unset state). */
+/** Default group colors for published puzzles (not compose unset state). */
 export const DEFAULT_GROUP_COLORS = [
   { text: "#916026", bg: "#E9C478", border: "#B48847" },
   { text: "#FFFADE", bg: "#C9BBA3", border: "#E9E1C6" },
@@ -62,40 +60,6 @@ export function defaultUntitledTitle(date = new Date()) {
   return `Untitled ${month} ${date.getDate()}`;
 }
 
-/**
- * Materialize compose placeholders into persisted puzzle values before save/publish.
- * Mutates `puzzle` in place.
- * @param {object} puzzle
- */
-export function normalizeComposePuzzle(puzzle) {
-  if (isPlaceholderValue(puzzle.title ?? "", COMPOSE_PLACEHOLDERS.PUZZLE_TITLE)) {
-    puzzle.title = defaultUntitledTitle();
-  }
-
-  if (isPlaceholderValue(puzzle.vignette ?? "", COMPOSE_PLACEHOLDERS.VIGNETTE)) {
-    puzzle.vignette = "";
-  }
-
-  for (let gi = 0; gi < 4; gi += 1) {
-    const group = puzzle.groups?.[gi];
-    if (!group) continue;
-
-    if (isPlaceholderValue(group.title ?? "", groupTitlePlaceholder(gi))) {
-      group.title = "";
-    }
-
-    for (let wi = 0; wi < 4; wi += 1) {
-      const text = group.words?.[wi]?.text ?? "";
-      if (isWordPlaceholderValue(text, gi, wi)) {
-        group.words[wi].text = "";
-      }
-    }
-  }
-
-  normalizeGlossary(puzzle);
-  return puzzle;
-}
-
 /** @returns {object} Empty puzzle suitable for compose/create. */
 export function createEmptyPuzzle() {
   return {
@@ -129,8 +93,6 @@ export function isPublishedShell(puzzle) {
 export function createPublishedShell(id, title) {
   const shell = createEmptyPuzzle();
   shell.id = id;
-  shell.title = title || "Untitled";
-  normalizeComposePuzzle(shell);
-  if (title) shell.title = title;
+  shell.title = title || defaultUntitledTitle();
   return shell;
 }
