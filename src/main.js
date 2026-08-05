@@ -12,6 +12,8 @@ import { initAppBarMenu } from "./appBar.js";
 import {
   initGameState,
   resetGameProgress,
+  canSubmitSelection,
+  isPuzzleComplete,
   submitSelection,
   solvePuzzle,
   generateDebugGuessHistory,
@@ -29,6 +31,7 @@ import {
 import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
 import { alert as showAlert, openModal } from "./modal.js";
+import { openSubmitResultsModal } from "./submitResultsModal.js";
 import { closeActiveOverlay } from "./overlay.js";
 import { openGlossarySheet, commitActiveGlossaryEditor } from "./glossarySheet.js";
 import { showToast } from "./toast.js";
@@ -236,6 +239,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     applyLogoSwatches(puzzle.groups);
     syncGlossaryCta(puzzle);
     renderPlayArea(dom, state, handlers);
+    updateSubmitBtn();
   }
 
   function renderPaletteChips() {
@@ -264,6 +268,7 @@ function initializePage(state, wittyResponses, session, catalog) {
         res.ok ? `${getSelectionCount(state)} selected.` : res.message,
       );
       renderPlayArea(dom, state, handlers);
+      updateSubmitBtn();
     },
     onMouseOverWord(word, event) {
       if (!state.glossaryEnabled) return;
@@ -387,7 +392,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     setDisplayText(dom.glossaryBtn, "Glossary: OFF");
     applyPuzzleToUi(puzzle);
     renderStatus(dom, "Pick 4–16 words.");
-    updateSubmitLabel();
+    updateSubmitBtn();
   }
 
   function applyClear() {
@@ -401,6 +406,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     renderPlayArea(dom, state, handlers);
     renderGuesses(dom, state.guesses);
     renderStatus(dom, "Pick 4–16 words.");
+    updateSubmitBtn();
   }
 
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
@@ -423,21 +429,22 @@ function initializePage(state, wittyResponses, session, catalog) {
 
   let optionHeld = false;
 
-  function updateSubmitLabel() {
+  function updateSubmitBtn() {
     setDisplayText(dom.submitBtn, optionHeld ? "Solve" : "Submit");
+    dom.submitBtn.disabled = !(optionHeld || canSubmitSelection(state));
   }
 
   window.addEventListener("keydown", (event) => {
     if (event.key === "Alt" && !optionHeld) {
       optionHeld = true;
-      updateSubmitLabel();
+      updateSubmitBtn();
     }
   });
 
   window.addEventListener("keyup", (event) => {
     if (event.key === "Alt") {
       optionHeld = false;
-      updateSubmitLabel();
+      updateSubmitBtn();
     }
   });
 
@@ -448,14 +455,35 @@ function initializePage(state, wittyResponses, session, catalog) {
     }
     renderPlayArea(dom, state, handlers);
     renderMostRecentGuess(dom, state.guesses.at(-1));
-    if (state.boardWords.filter((wordItem) => wordItem.lockedGroupIndex != null).length === 16) {
-      showResultsPopup();
-    } else {
+    const puzzleComplete = isPuzzleComplete(state);
+    updateSubmitBtn();
+    if (!puzzleComplete) {
       renderGuesses(dom, state.guesses);
     }
     renderStatus(dom, res.message);
-    const toasts = res.toasts ?? (res.toastMessage ? [res.toastMessage] : []);
-    for (const toastMessage of toasts) {
+
+    const feedback = res.feedback;
+    if (feedback?.mode === "modal") {
+      openSubmitResultsModal({
+        rows: feedback.rows,
+        onClose: () => {
+          if (puzzleComplete) {
+            showResultsPopup();
+          }
+        },
+      });
+      return;
+    }
+
+    if (puzzleComplete) {
+      showResultsPopup();
+    }
+
+    const toastMessage =
+      feedback?.mode === "toast"
+        ? feedback.toastMessage
+        : res.toasts?.[0] ?? res.toastMessage;
+    if (toastMessage) {
       showToast(toastMessage);
     }
   }
@@ -466,6 +494,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     renderPlayArea(dom, state, handlers);
     showResultsPopup(generateDebugGuessHistory(state.activePuzzle));
     renderStatus(dom, res.message);
+    updateSubmitBtn();
   }
 
   dom.submitBtn.addEventListener("click", (event) => {
@@ -473,6 +502,7 @@ function initializePage(state, wittyResponses, session, catalog) {
       handleDebugSolve();
       return;
     }
+    if (!canSubmitSelection(state)) return;
     handleGameAction(submitSelection(state, wittyResponses));
   });
 
@@ -521,6 +551,7 @@ function initializePage(state, wittyResponses, session, catalog) {
     const res = hintRevealWord(state);
     renderPlayArea(dom, state, handlers);
     renderStatus(dom, res.message);
+    updateSubmitBtn();
   });
 
   function getPuzzleOptions() {
