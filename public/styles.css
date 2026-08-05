@@ -398,6 +398,19 @@ body::-webkit-scrollbar,
   height: 0;
 }
 
+/* Keep overlay scroll gestures from chaining to the document behind */
+:is(
+  .modal__panel,
+  .sheet__panel,
+  .sheet--glossary .sheet__body,
+  .glossary-editor__view,
+  .glossary-editor--editing,
+  .puzzle-picker,
+  .modal__body > .minigrid
+) {
+  overscroll-behavior: contain;
+}
+
 html {
   font-family: var(--font-family);
 }
