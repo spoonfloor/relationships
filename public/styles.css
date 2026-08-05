@@ -13,6 +13,8 @@
   --content-padding-top: 20px;
   --content-padding-bottom: 24px;
   --content-padding-x: 24px;
+  --app-bar-more-top: 12px;
+  --app-bar-more-right: 0px;
   --app-height: 100vh;
   --app-height: 100dvh;
   --bottom-sheet-reserved: 148px;
@@ -434,6 +436,7 @@ textarea {
 }
 
 #scroll-content.app {
+  position: relative;
   padding-top: max(var(--content-padding-top), env(safe-area-inset-top));
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
@@ -524,11 +527,15 @@ body.edit-mode .app-bar {
 }
 
 .app-bar__menu {
-  position: fixed;
-  top: 10px;
-  right: 0px;
+  position: absolute;
+  top: var(--app-bar-more-top);
+  right: var(--app-bar-more-right);
   z-index: 20;
   flex-shrink: 0;
+}
+
+body.edit-mode .app-bar__menu {
+  --app-bar-more-top: 11px;
 }
 
 .app-bar__more-btn {

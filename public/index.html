@@ -43,43 +43,43 @@
 </head>
 <body>
   <div id="app-shell" class="app-shell">
-    <div class="app-bar__menu">
-      <button
-        id="app-bar-more-btn"
-        class="app-bar__more-btn"
-        type="button"
-        aria-haspopup="menu"
-        aria-expanded="false"
-        aria-controls="app-bar-menu"
-        aria-label="More"
-      >
-        <span class="material-icons" aria-hidden="true">more_vert</span>
-      </button>
-      <div id="app-bar-menu" class="app-bar-menu" role="menu" hidden>
-        <div class="app-bar-menu__row" data-menu-tier="always">
-          <label class="app-bar-menu__switch" for="dark-mode-switch">
-            <span class="app-bar-menu__switch-label">Dark mode</span>
-            <input
-              id="dark-mode-switch"
-              type="checkbox"
-              role="switch"
-              aria-checked="true"
-              aria-label="Dark mode"
-            />
-          </label>
-        </div>
-        <hr class="app-bar-menu__divider" data-menu-tier="always" />
-        <!-- Every menuitem requires data-menu-tier="public" or "secret". -->
-        <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public">Choose puzzle</button>
-        <button id="reset-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public" data-unavailable-in-compose>Reset</button>
-        <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose data-unavailable-in-compose hidden>Edit</button>
-        <button id="add-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Add new</button>
-        <button id="delete-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Delete</button>
-        <button id="view-drafts-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Open draft</button>
-        <button id="open-debug-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" hidden>Debug puzzle</button>
-      </div>
-    </div>
     <main id="scroll-content" class="app">
+      <div class="app-bar__menu">
+        <button
+          id="app-bar-more-btn"
+          class="app-bar__more-btn"
+          type="button"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          aria-controls="app-bar-menu"
+          aria-label="More"
+        >
+          <span class="material-icons" aria-hidden="true">more_vert</span>
+        </button>
+        <div id="app-bar-menu" class="app-bar-menu" role="menu" hidden>
+          <div class="app-bar-menu__row" data-menu-tier="always">
+            <label class="app-bar-menu__switch" for="dark-mode-switch">
+              <span class="app-bar-menu__switch-label">Dark mode</span>
+              <input
+                id="dark-mode-switch"
+                type="checkbox"
+                role="switch"
+                aria-checked="true"
+                aria-label="Dark mode"
+              />
+            </label>
+          </div>
+          <hr class="app-bar-menu__divider" data-menu-tier="always" />
+          <!-- Every menuitem requires data-menu-tier="public" or "secret". -->
+          <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public">Choose puzzle</button>
+          <button id="reset-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public" data-unavailable-in-compose>Reset</button>
+          <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose data-unavailable-in-compose hidden>Edit</button>
+          <button id="add-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Add new</button>
+          <button id="delete-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Delete</button>
+          <button id="view-drafts-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Open draft</button>
+          <button id="open-debug-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" hidden>Debug puzzle</button>
+        </div>
+      </div>
       <div class="page-logo" aria-hidden="true"></div>
       <p class="page-tagline">find four sets of four</p>
       <header id="app-bar" class="app-bar">
