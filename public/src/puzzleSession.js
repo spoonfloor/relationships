@@ -1,17 +1,23 @@
 import {
+  clearPuzzleDraft,
   createPuzzleRow,
   deletePuzzleRow,
   draftTitleFromRow,
   fetchPuzzleRow,
   hydratePuzzleFromRow,
+  insertPublishedPuzzleRow,
   isListableRow,
   isUnpublishedDraftRow,
-  publishPuzzle,
+  promoteStoredDraft,
   savePuzzleDraft,
+  updatePublishedPuzzle,
 } from "./puzzleRepository.js";
 import { createPublishedShell } from "./puzzleComposeTemplate.js";
 import { normalizePuzzle } from "./puzzleNormalize.js";
 import { slugFromTitle, uniqueSlug } from "./puzzleSlug.js";
+
+/** Prefix for delete-picker ids that target a saved draft overlay, not the published puzzle. */
+export const DRAFT_DELETE_PREFIX = "draft:";
 
 /**
  * @typedef {import("./puzzleRepository.js").PuzzleRow} PuzzleRow
@@ -60,6 +66,23 @@ export function createPuzzleSession({ catalog }) {
     if (!rec) return false;
     if (rec.row) return isListableRow(rec.row);
     return Boolean(rec.published);
+  }
+
+  /** @param {string} id */
+  function isDraftOnlyId(id) {
+    const row = catalog.rows?.find((entry) => entry.id === id);
+    return Boolean(row && isUnpublishedDraftRow(row));
+  }
+
+  /** @param {string} pickerId */
+  function resolveDeleteTarget(pickerId) {
+    if (pickerId.startsWith(DRAFT_DELETE_PREFIX)) {
+      return { kind: "draft", id: pickerId.slice(DRAFT_DELETE_PREFIX.length) };
+    }
+    if (isDraftOnlyId(pickerId)) {
+      return { kind: "draft", id: pickerId };
+    }
+    return { kind: "published", id: pickerId };
   }
 
   /** @param {string} id */
@@ -114,17 +137,34 @@ export function createPuzzleSession({ catalog }) {
     return records.get(id)?.hasDraft ?? false;
   }
 
-  /** @returns {{ id: string, title: string }[]} */
-  function getUnpublishedDraftOptions() {
+  /** @returns {{ id: string, title: string, isOverlay: boolean }[]} */
+  function getDraftRowOptions() {
     if (!catalog.rows?.length) return [];
 
     return catalog.rows
-      .filter(isUnpublishedDraftRow)
-      .sort((a, b) => (a.num ?? 0) - (b.num ?? 0))
+      .filter((row) => row.draft_data != null)
       .map((row) => ({
         id: row.id,
         title: draftTitleFromRow(row),
+        isOverlay: isListableRow(row),
       }));
+  }
+
+  /** Saved drafts: draft-only rows and overlays on published puzzles. */
+  function getSavedDraftOptions() {
+    return getDraftRowOptions()
+      .map(({ id, title }) => ({ id, title }))
+      .sort((a, b) => a.title.localeCompare(b.title));
+  }
+
+  /** @returns {{ id: string, title: string }[]} */
+  function getDeletableDraftOptions() {
+    return getDraftRowOptions()
+      .map(({ id, title, isOverlay }) => ({
+        id: isOverlay ? `${DRAFT_DELETE_PREFIX}${id}` : id,
+        title,
+      }))
+      .sort((a, b) => a.title.localeCompare(b.title));
   }
 
   /** @returns {{ heading?: string, puzzles: { id: string, title: string }[] }[]} */
@@ -140,7 +180,7 @@ export function createPuzzleSession({ catalog }) {
       sections.push({ puzzles: published });
     }
 
-    const drafts = getUnpublishedDraftOptions();
+    const drafts = getDeletableDraftOptions();
     if (drafts.length > 0) {
       sections.push({ heading: "DRAFTS", puzzles: drafts });
     }
@@ -148,12 +188,13 @@ export function createPuzzleSession({ catalog }) {
     return sections;
   }
 
-  /** @param {string} id */
-  function getDeletableTitle(id) {
+  /** @param {string} pickerId */
+  function getDeletableTitle(pickerId) {
     for (const section of getDeletablePuzzleSections()) {
-      const match = section.puzzles.find((puzzle) => puzzle.id === id);
+      const match = section.puzzles.find((puzzle) => puzzle.id === pickerId);
       if (match) return match.title;
     }
+    const { id } = resolveDeleteTarget(pickerId);
     return getPublishedTitle(id);
   }
 
@@ -170,6 +211,16 @@ export function createPuzzleSession({ catalog }) {
     rec.hasDraft = row.draft_data != null;
     rec.num = row.num ?? rec.num;
     rec.published = hydratePuzzleFromRow(row, "published");
+
+    const catalogEntry = catalog.puzzles.find((entry) => entry.id === id);
+    if (catalogEntry) {
+      catalogEntry.hasDraft = rec.hasDraft;
+    }
+
+    const catalogRow = catalog.rows?.find((entry) => entry.id === id);
+    if (catalogRow) {
+      Object.assign(catalogRow, row);
+    }
   }
 
   /** @param {string} id */
@@ -222,22 +273,80 @@ export function createPuzzleSession({ catalog }) {
   }
 
   /**
+   * Publish working content directly to published_data (never writes draft_data).
+   * @param {object} working
+   * @param {string} [existingId]
+   * @returns {Promise<{ ok: true, id: string, row: PuzzleRow, newlyListed: boolean } | { ok: false, error: string }>}
+   */
+  async function publishWorkingCopy(working, existingId = "") {
+    normalizePuzzle(working);
+
+    const persistableId =
+      typeof existingId === "string" && existingId.trim() ? existingId.trim() : "";
+    const rec = persistableId ? records.get(persistableId) : null;
+
+    /** @type {string} */
+    let targetId;
+    /** @type {object} */
+    let payload;
+    /** @type {PuzzleRow} */
+    let row;
+
+    try {
+      if (rec) {
+        targetId = persistableId;
+        payload = { ...working, id: targetId, num: rec.num };
+        row = await updatePublishedPuzzle(payload);
+      } else {
+        const resolvedTitle = (working.title ?? "").trim();
+        targetId = uniqueSlug(slugFromTitle(resolvedTitle), getExistingIds());
+        const num = getNextNum();
+        payload = structuredClone(working);
+        payload.id = targetId;
+        payload.title = resolvedTitle;
+        payload.num = num;
+        row = await insertPublishedPuzzleRow(payload, num);
+        init(targetId, {
+          published: structuredClone(payload),
+          row,
+          num,
+        });
+        if (catalog.rows) catalog.rows.push(row);
+      }
+
+      await applyRow(targetId, row);
+      const wasListed = isInCatalog(targetId);
+      const newlyListed = !wasListed && addToCatalog(targetId);
+      return { ok: true, id: targetId, row, newlyListed };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not publish puzzle.";
+      return { ok: false, error: message };
+    }
+  }
+
+  /**
    * @param {string} id
-   * @param {object | null} working
+   * @param {object | null} [working]
    * @returns {Promise<{ ok: true, published: object, newlyListed: boolean } | { ok: false, error: string }>}
    */
   async function publish(id, working = null) {
+    if (working) {
+      const result = await publishWorkingCopy(working, id);
+      if (!result.ok) return result;
+      return {
+        ok: true,
+        published: getPublished(result.id),
+        newlyListed: result.newlyListed,
+      };
+    }
+
     if (!isPersistable(id)) {
       return { ok: false, error: "Publish is not available for this puzzle." };
-    }
-    if (working) {
-      const saved = await saveDraft(id, working);
-      if (!saved.ok) return saved;
     }
 
     const wasListed = isInCatalog(id);
     try {
-      const row = await publishPuzzle(id);
+      const row = await promoteStoredDraft(id);
       await applyRow(id, row);
       const newlyListed = !wasListed && addToCatalog(id);
       return { ok: true, published: getPublished(id), newlyListed };
@@ -279,43 +388,68 @@ export function createPuzzleSession({ catalog }) {
   }
 
   /**
-   * Persist a compose working copy when it has no session row yet.
-   * @param {object} working
-   * @returns {Promise<{ ok: true, id: string, draft: object, created: boolean, row?: PuzzleRow } | { ok: false, error: string }>}
+   * Delete a draft document only. Never removes a published puzzle.
+   * @param {string} id
+   * @returns {Promise<{ ok: true, wasListed: boolean, nextId: string | null, draftOnly: boolean } | { ok: false, error: string }>}
    */
-  async function ensurePersisted(working) {
-    normalizePuzzle(working);
-    const id = typeof working.id === "string" ? working.id.trim() : "";
-    if (id && records.has(id) && isPersistable(id)) {
-      return { ok: true, id, draft: structuredClone(working), created: false };
+  async function removeDraft(id) {
+    if (!isPersistable(id)) {
+      return { ok: false, error: "This draft cannot be deleted." };
     }
-    const created = await createDraft(working);
-    if (!created.ok) return created;
-    return {
-      ok: true,
-      id: created.id,
-      draft: created.draft,
-      created: true,
-      row: created.row,
-    };
+    if (!records.has(id)) {
+      return { ok: false, error: `Puzzle "${id}" not found.` };
+    }
+
+    const draftOnly = isDraftOnlyId(id);
+
+    try {
+      if (draftOnly) {
+        await deletePuzzleRow(id);
+        records.delete(id);
+        if (catalog.rows) {
+          catalog.rows = catalog.rows.filter((row) => row.id !== id);
+        }
+        return { ok: true, wasListed: false, nextId: catalog.puzzles[0]?.id ?? null, draftOnly: true };
+      }
+
+      if (!hasDraft(id)) {
+        return { ok: false, error: "This puzzle has no saved draft." };
+      }
+
+      const row = await clearPuzzleDraft(id);
+      await applyRow(id, row);
+      return {
+        ok: true,
+        wasListed: isInCatalog(id),
+        nextId: id,
+        draftOnly: false,
+      };
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not delete draft.";
+      return { ok: false, error: message };
+    }
   }
 
   /**
+   * Delete a published puzzle (and any draft on the same row).
    * @param {string} id
    * @returns {Promise<{ ok: true, nextId: string | null, wasListed: boolean } | { ok: false, error: string }>}
    */
-  async function remove(id) {
+  async function removePublished(id) {
     if (!isPersistable(id)) {
       return { ok: false, error: "This puzzle cannot be deleted." };
     }
     if (!records.has(id)) {
       return { ok: false, error: `Puzzle "${id}" not found.` };
     }
-    if (isInCatalog(id) && catalog.puzzles.length <= 1) {
+    if (!isInCatalog(id)) {
+      return { ok: false, error: "Only published puzzles can be deleted here." };
+    }
+    if (catalog.puzzles.length <= 1) {
       return { ok: false, error: "Cannot delete the last puzzle." };
     }
 
-    const wasListed = isInCatalog(id);
+    const wasListed = true;
 
     try {
       await deletePuzzleRow(id);
@@ -348,15 +482,17 @@ export function createPuzzleSession({ catalog }) {
     getPublishedTitle,
     getPickerLabel,
     hasDraft,
-    getUnpublishedDraftOptions,
+    isDraftOnlyId,
+    resolveDeleteTarget,
+    getSavedDraftOptions,
     getDeletablePuzzleSections,
     getDeletableTitle,
     enterEdit,
     exitEdit,
     saveDraft,
     createDraft,
-    ensurePersisted,
     publish,
-    remove,
+    removeDraft,
+    removePublished,
   };
 }

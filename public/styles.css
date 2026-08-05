@@ -164,6 +164,11 @@
 
   --cta-secondary-bg: #e0e0e0;
   --cta-secondary-hover: #d4d4d4;
+  --btn-secondary-disabled-label: color-mix(
+    in srgb,
+    var(--muted) 78%,
+    var(--surface-canvas)
+  );
 
   --modal-backdrop: rgba(0, 0, 0, 0.7);
   --menu-divider: color-mix(in srgb, var(--text-color) 12%, transparent);
@@ -266,6 +271,11 @@
 
   --cta-secondary-bg: #2a2a2a;
   --cta-secondary-hover: #333333;
+  --btn-secondary-disabled-label: color-mix(
+    in srgb,
+    var(--muted) 78%,
+    var(--text-color)
+  );
 
   --modal-backdrop: rgba(0, 0, 0, 0.75);
   --menu-divider: color-mix(in srgb, var(--text-color) 14%, transparent);
@@ -963,23 +973,38 @@ body.edit-mode .app-bar__menu {
   color: var(--cta-primary-color);
 }
 
-.btn:disabled {
+.btn:disabled,
+.btn[aria-disabled='true'] {
   opacity: 0.85;
   cursor: not-allowed;
 }
-.btn:disabled:hover {
+.btn:disabled:hover,
+.btn[aria-disabled='true']:hover {
   background: var(--cta-secondary-bg);
 }
-.btn-primary:disabled:hover {
+.btn-secondary:disabled,
+.btn-secondary[aria-disabled='true'] {
+  opacity: 0.68;
+  color: var(--btn-secondary-disabled-label);
+}
+.btn-secondary:disabled:hover,
+.btn-secondary[aria-disabled='true']:hover {
+  background: var(--cta-secondary-bg);
+  color: var(--btn-secondary-disabled-label);
+}
+.btn-primary:disabled:hover,
+.btn-primary[aria-disabled='true']:hover {
   background: var(--cta-primary-bg);
 }
 
-#fixed-footer .btn-primary.btn-block:disabled {
+#fixed-footer .btn-primary.btn-block:disabled,
+#fixed-footer .btn-primary.btn-block[aria-disabled='true'] {
   opacity: 1;
   background: color-mix(in srgb, var(--cta-primary-bg) 85%, transparent);
   color: color-mix(in srgb, var(--cta-primary-color) 55%, transparent);
 }
-#fixed-footer .btn-primary.btn-block:disabled:hover {
+#fixed-footer .btn-primary.btn-block:disabled:hover,
+#fixed-footer .btn-primary.btn-block[aria-disabled='true']:hover {
   background: color-mix(in srgb, var(--cta-primary-bg) 85%, transparent);
   color: color-mix(in srgb, var(--cta-primary-color) 55%, transparent);
 }
