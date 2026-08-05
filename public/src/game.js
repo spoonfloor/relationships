@@ -5,8 +5,6 @@ import {
   clearSelection,
   chunkSelection,
   getSelectionCount,
-  purgeLockedFromSelection,
-  removeEvaluatedChunks,
 } from "./selection.js";
 
 function pickPuzzleWords(puzzle) {
@@ -150,6 +148,50 @@ export function evaluateGuess(state, words, wittyResponses) {
   };
 }
 
+function getSetFeedback(result) {
+  if (result.ok && result.group) return "Solved!";
+  return result.toastMessage ?? result.message ?? "Not quite.";
+}
+
+/** @param {{ setIndex: 0 | 1 | 2 | 3, words: string[] }[]} chunks */
+function resolveSubmitFeedback(results) {
+  const count = results.length;
+  if (count === 0) {
+    return { mode: /** @type {const} */ ("none") };
+  }
+  if (count === 1) {
+    const [result] = results;
+    return {
+      mode: /** @type {const} */ ("toast"),
+      toastMessage: result.toastMessage ?? result.message ?? "Not quite.",
+    };
+  }
+  const allSuccess = results.every((result) => result.ok && result.group);
+  if (allSuccess) {
+    return { mode: /** @type {const} */ ("none") };
+  }
+  return {
+    mode: /** @type {const} */ ("modal"),
+    rows: results.map((result) => ({
+      setIndex: result.setIndex,
+      feedback: getSetFeedback(result),
+    })),
+  };
+}
+
+export function isPuzzleComplete(state) {
+  return (
+    state.boardWords.length > 0 &&
+    state.boardWords.every((item) => item.lockedGroupIndex != null)
+  );
+}
+
+export function canSubmitSelection(state) {
+  if (!state.activePuzzle?.groups?.length) return false;
+  if (isPuzzleComplete(state)) return false;
+  return getSelectionCount(state) >= CHUNK_SIZE;
+}
+
 export function submitSelection(state, wittyResponses) {
   if (getSelectionCount(state) < CHUNK_SIZE) {
     return {
@@ -158,23 +200,20 @@ export function submitSelection(state, wittyResponses) {
       toasts: ["Select at least 4 words."],
       results: [],
       solved: false,
+      feedback: { mode: /** @type {const} */ ("toast"), toastMessage: "Select at least 4 words." },
     };
   }
 
   const chunks = chunkSelection(state);
   const results = [];
-  const toasts = [];
   let anySuccess = false;
   let lastSuccessMessage = null;
   let lastFailureMessage = null;
   let solved = false;
 
-  for (const words of chunks) {
+  for (const { setIndex, words } of chunks) {
     const result = evaluateGuess(state, words, wittyResponses);
-    results.push(result);
-    if (result.toastMessage) {
-      toasts.push(result.toastMessage);
-    }
+    results.push({ ...result, setIndex, words });
     if (result.ok && result.group) {
       anySuccess = true;
       lastSuccessMessage = result.message;
@@ -186,9 +225,6 @@ export function submitSelection(state, wittyResponses) {
     }
   }
 
-  removeEvaluatedChunks(state);
-  purgeLockedFromSelection(state);
-
   let message;
   if (solved) {
     message = "Solved! 🎉";
@@ -198,12 +234,18 @@ export function submitSelection(state, wittyResponses) {
     message = lastFailureMessage ?? "Nope — those 4 don't form a group in this puzzle.";
   }
 
+  const feedback = resolveSubmitFeedback(results);
+
   return {
     ok: anySuccess || solved,
     results,
     solved,
     message,
-    toasts,
+    feedback,
+    toasts:
+      feedback.mode === "toast" && feedback.toastMessage
+        ? [feedback.toastMessage]
+        : [],
   };
 }
 

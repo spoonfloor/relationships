@@ -52,34 +52,20 @@ export function toggleSelection(state, word) {
   return { ok: true };
 }
 
-/** Complete sets of four in set order; partial sets omitted. */
+/**
+ * Complete sets of four in set order; partial sets omitted.
+ * @returns {{ setIndex: 0 | 1 | 2 | 3, words: string[] }[]}
+ */
 export function chunkSelection(state) {
-  return state.selectionSets
-    .filter((set) => set.length === CHUNK_SIZE)
-    .map((set) => set.slice());
-}
-
-/** Clear complete sets that were submitted for evaluation. */
-export function removeEvaluatedChunks(state) {
-  for (const set of state.selectionSets) {
+  /** @type {{ setIndex: 0 | 1 | 2 | 3, words: string[] }[]} */
+  const chunks = [];
+  state.selectionSets.forEach((set, setIndex) => {
     if (set.length === CHUNK_SIZE) {
-      set.length = 0;
+      chunks.push({
+        setIndex: /** @type {0 | 1 | 2 | 3} */ (setIndex),
+        words: set.slice(),
+      });
     }
-  }
-}
-
-export function purgeLockedFromSelection(state) {
-  const locked = new Set(
-    state.boardWords
-      .filter((item) => item.lockedGroupIndex != null)
-      .map((item) => item.word),
-  );
-  if (locked.size === 0) return;
-  for (const set of state.selectionSets) {
-    for (let i = set.length - 1; i >= 0; i--) {
-      if (locked.has(set[i])) {
-        set.splice(i, 1);
-      }
-    }
-  }
+  });
+  return chunks;
 }
