@@ -466,6 +466,23 @@ textarea {
   font-family: inherit;
 }
 
+/* Single source of truth: no browser default focus/tap chrome on buttons. */
+button {
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+button:focus,
+button:focus-visible,
+button:active {
+  outline: none;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
 .app-shell {
   position: relative;
   width: 100%;
