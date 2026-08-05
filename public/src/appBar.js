@@ -5,9 +5,10 @@
  *   moreBtn: HTMLButtonElement | null,
  *   menu: HTMLElement | null,
  *   isComposeMode?: () => boolean,
+ *   syncMenuItemAvailability?: () => void,
  * }} dom
  */
-export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
+export function initAppBarMenu({ moreBtn, menu, isComposeMode, syncMenuItemAvailability }) {
   if (!moreBtn || !menu) return;
 
   const LONG_PRESS_MS = 500;
@@ -45,6 +46,8 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
       item.disabled = unavailable;
       item.toggleAttribute("aria-disabled", unavailable);
     }
+
+    syncMenuItemAvailability?.();
   }
 
   function endLongPressTracking() {
@@ -82,6 +85,7 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode }) {
 
   /** @param {HTMLElement} item */
   function activateMenuItem(item) {
+    if (item instanceof HTMLButtonElement && item.disabled) return;
     closeMenu();
     item.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
   }

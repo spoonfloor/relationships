@@ -3,21 +3,41 @@ import { setDisplayText } from "./display.js";
 import { activateOverlay, deactivateOverlay } from "./overlay.js";
 
 /**
+ * @typedef {object} ModalPanelParts
+ * @property {HTMLDivElement} panel
+ * @property {HTMLHeadingElement} titleEl
+ * @property {HTMLDivElement} bodyEl
+ * @property {HTMLDivElement} actionsEl
+ * @property {() => void} close
+ */
+
+/**
  * @param {object} options
  * @param {string} options.title
  * @param {string | Node | ((bodyEl: HTMLElement) => void)} [options.content]
  * @param {{ label: string, variant?: "primary" | "secondary", onClick?: () => void, close?: boolean }[]} [options.actions]
  * @param {() => void} [options.onClose]
+ * @param {string} [options.dialogClass]
+ * @param {string} [options.panelClass]
+ * @param {(parts: ModalPanelParts) => void} [options.assemblePanel]
  * @returns {{ close: () => void, dialog: HTMLDialogElement }}
  */
-export function openModal({ title, content, actions = [], onClose }) {
+export function openModal({
+  title,
+  content,
+  actions = [],
+  onClose,
+  dialogClass,
+  panelClass,
+  assemblePanel,
+}) {
   const previousFocus = document.activeElement;
 
   const dialog = document.createElement("dialog");
-  dialog.className = "modal";
+  dialog.className = dialogClass ? `modal ${dialogClass}` : "modal";
 
   const panel = document.createElement("div");
-  panel.className = "modal__panel";
+  panel.className = panelClass ? `modal__panel ${panelClass}` : "modal__panel";
 
   const titleEl = document.createElement("h2");
   titleEl.className = "modal__title";
@@ -62,10 +82,14 @@ export function openModal({ title, content, actions = [], onClose }) {
     actionsEl.appendChild(btn);
   }
 
-  panel.appendChild(titleEl);
-  panel.appendChild(bodyEl);
-  if (actions.length > 0) {
-    panel.appendChild(actionsEl);
+  if (assemblePanel) {
+    assemblePanel({ panel, titleEl, bodyEl, actionsEl, close: closeModal });
+  } else {
+    panel.appendChild(titleEl);
+    panel.appendChild(bodyEl);
+    if (actions.length > 0) {
+      panel.appendChild(actionsEl);
+    }
   }
   dialog.appendChild(panel);
   document.body.appendChild(dialog);

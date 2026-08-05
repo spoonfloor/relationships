@@ -7,6 +7,7 @@ export function getDom() {
     appBarMenu: document.getElementById("app-bar-menu"),
     darkModeSwitch: document.getElementById("dark-mode-switch"),
     choosePuzzleBtn: document.getElementById("choose-puzzle-btn"),
+    resetPuzzleBtn: document.getElementById("reset-puzzle-btn"),
     openDebugPuzzleBtn: document.getElementById("open-debug-puzzle-btn"),
     editPuzzleBtn: document.getElementById("edit-puzzle-btn"),
     addPuzzleBtn: document.getElementById("add-puzzle-btn"),

@@ -950,6 +950,16 @@ body.edit-mode .app-bar {
   background: var(--cta-primary-bg);
 }
 
+#fixed-footer .btn-primary.btn-block:disabled {
+  opacity: 1;
+  background: color-mix(in srgb, var(--cta-primary-bg) 85%, transparent);
+  color: color-mix(in srgb, var(--cta-primary-color) 55%, transparent);
+}
+#fixed-footer .btn-primary.btn-block:disabled:hover {
+  background: color-mix(in srgb, var(--cta-primary-bg) 85%, transparent);
+  color: color-mix(in srgb, var(--cta-primary-color) 55%, transparent);
+}
+
 .btn-secondary {
   background: var(--cta-secondary-bg);
   color: var(--text-color);
@@ -1464,12 +1474,6 @@ body.edit-mode .play-area {
   --submit-results-close-inset-top: 12px;
   --submit-results-close-inset-right: 12px;
   position: relative;
-  width: fit-content;
-  min-width: min(360px, calc(100vw - 2 * var(--content-padding-x)));
-  max-width: min(
-    calc(100% - 2 * var(--content-padding-x)),
-    var(--modal-max-width)
-  );
 }
 
 .submit-results-modal__close {

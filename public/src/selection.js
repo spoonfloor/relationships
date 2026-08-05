@@ -2,6 +2,11 @@ export const CHUNK_SIZE = 4;
 export const MAX_CHUNKS = 4;
 export const MAX_SELECTION = CHUNK_SIZE * MAX_CHUNKS;
 
+/**
+ * selectionSets is mutated only by toggleSelection, clearSelection, and game init/reset.
+ * Submit and other game actions read selection; they never write it.
+ */
+
 /** @returns {string[][]} */
 export function createEmptySelectionSets() {
   return Array.from({ length: MAX_CHUNKS }, () => []);
@@ -11,8 +16,21 @@ export function clearSelection(state) {
   state.selectionSets = createEmptySelectionSets();
 }
 
+function isUnlockedOnBoard(state, word) {
+  const item = state.boardWords.find((boardItem) => boardItem.word === word);
+  return item != null && item.lockedGroupIndex == null;
+}
+
+function getSetBoardSelectionCount(state, set) {
+  return set.filter((word) => isUnlockedOnBoard(state, word)).length;
+}
+
+/** Count of selected tiles still on the board (ignores solved/locked ghosts in sets). */
 export function getSelectionCount(state) {
-  return state.selectionSets.reduce((sum, set) => sum + set.length, 0);
+  return state.selectionSets.reduce(
+    (sum, set) => sum + getSetBoardSelectionCount(state, set),
+    0,
+  );
 }
 
 export function isSelected(state, word) {
@@ -27,7 +45,9 @@ export function getSelectionBand(state, word) {
 }
 
 function findFirstSetWithVacancy(state) {
-  return state.selectionSets.findIndex((set) => set.length < CHUNK_SIZE);
+  return state.selectionSets.findIndex(
+    (set) => getSetBoardSelectionCount(state, set) < CHUNK_SIZE,
+  );
 }
 
 export function toggleSelection(state, word) {
@@ -53,17 +73,18 @@ export function toggleSelection(state, word) {
 }
 
 /**
- * Complete sets of four in set order; partial sets omitted.
+ * Complete sets of four unlocked board tiles in set order; partial sets omitted.
  * @returns {{ setIndex: 0 | 1 | 2 | 3, words: string[] }[]}
  */
 export function chunkSelection(state) {
   /** @type {{ setIndex: 0 | 1 | 2 | 3, words: string[] }[]} */
   const chunks = [];
   state.selectionSets.forEach((set, setIndex) => {
-    if (set.length === CHUNK_SIZE) {
+    const words = set.filter((word) => isUnlockedOnBoard(state, word));
+    if (words.length === CHUNK_SIZE) {
       chunks.push({
         setIndex: /** @type {0 | 1 | 2 | 3} */ (setIndex),
-        words: set.slice(),
+        words: words.slice(),
       });
     }
   });
