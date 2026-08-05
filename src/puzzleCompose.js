@@ -46,7 +46,7 @@ import { commitActiveGlossaryEditor } from "./glossarySheet.js";
  *   onValidationError: (message: string) => void,
  *   onSaveDraft?: (puzzle: object, variant: ComposeVariant) => Promise<{ ok: boolean, error?: string, id?: string } | void>,
  *   onBeforeEnterEdit?: (targetId?: string) => Promise<void>,
- *   onEnterCreate?: () => void,
+ *   onEnterCreate?: (options?: { switching?: boolean }) => void,
  *   onCancelCompose?: (variant: ComposeVariant) => void,
  *   onConfirmDiscard?: () => Promise<boolean>,
  *   onComposeChange?: () => void,
@@ -295,14 +295,7 @@ export function initPuzzleCompose({
     }
   }
 
-  function enterComposeMode(variant) {
-    if (composeVariant) return;
-    composeVariant = variant;
-
-    vignetteEl.classList.add("vignette--compose");
-    document.body.classList.add("edit-mode");
-    setCtaMode(true);
-
+  function bindComposeChromeFields() {
     clearFieldControllers();
 
     if (puzzleTitleEl instanceof HTMLElement && titleWrap instanceof HTMLElement) {
@@ -329,11 +322,36 @@ export function initPuzzleCompose({
       },
       allowMultiline: true,
     });
+  }
 
+  function finishComposeSetup() {
     renderComposeBoard();
     syncAllDisplays();
     setComposeBaselines();
     syncComposeControls();
+  }
+
+  function enterComposeMode(variant) {
+    if (composeVariant) return;
+    composeVariant = variant;
+
+    vignetteEl.classList.add("vignette--compose");
+    document.body.classList.add("edit-mode");
+    setCtaMode(true);
+
+    bindComposeChromeFields();
+    finishComposeSetup();
+  }
+
+  /** Switch from edit compose to a blank create compose without leaving compose mode. */
+  function switchToCreateVariant() {
+    if (!composeVariant || composeVariant === "create") return;
+
+    clearFieldControllers();
+    clearComposeGroups();
+    composeVariant = "create";
+    bindComposeChromeFields();
+    finishComposeSetup();
   }
 
   function exitComposeMode() {
@@ -423,16 +441,41 @@ export function initPuzzleCompose({
     await beginEdit();
   });
 
+  async function beginCreate() {
+    const ok = await promptEditPassword();
+    if (!ok) return false;
+
+    if (!onEnterCreate) {
+      throw new Error("Create flow is not configured.");
+    }
+
+    const switching = isComposeMode();
+
+    if (switching) {
+      commitAllFields();
+      const glossaryCommit = commitActiveGlossaryEditor();
+      if (!glossaryCommit.ok) {
+        onValidationError(glossaryCommit.error);
+        return false;
+      }
+      if (hasDraftChanges() && onConfirmDiscard) {
+        const confirmed = await onConfirmDiscard();
+        if (!confirmed) return false;
+      }
+      onEnterCreate({ switching: true });
+      switchToCreateVariant();
+      return true;
+    }
+
+    onEnterCreate({ switching: false });
+    enterComposeMode("create");
+    return true;
+  }
+
   dom.addPuzzleBtn?.addEventListener("click", async (event) => {
     event.stopPropagation();
-    const ok = await promptEditPassword();
-    if (!ok) return;
     try {
-      if (!onEnterCreate) {
-        throw new Error("Create flow is not configured.");
-      }
-      onEnterCreate();
-      enterComposeMode("create");
+      await beginCreate();
     } catch (err) {
       console.error(err);
       onValidationError(err instanceof Error ? err.message : "Could not start a new puzzle.");
@@ -459,6 +502,7 @@ export function initPuzzleCompose({
     exitComposeMode,
     cancelCompose,
     beginEdit,
+    beginCreate,
     isComposeMode,
     getComposeVariant: () => composeVariant,
     commitAllFields,
