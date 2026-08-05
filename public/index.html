@@ -17,11 +17,14 @@
     name="viewport"
     content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover"
   />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="relationships" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#121212" />
   <title>relationships</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-180.png" />
   <link
@@ -74,7 +77,7 @@
           <button id="choose-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public">Choose puzzle</button>
           <button id="reset-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="public" data-unavailable-in-compose>Reset</button>
           <button id="edit-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose data-unavailable-in-compose hidden>Edit</button>
-          <button id="add-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Add new</button>
+          <button id="add-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>New</button>
           <button id="delete-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Delete</button>
           <button id="view-drafts-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" data-hide-in-compose hidden>Open draft</button>
           <button id="open-debug-puzzle-btn" type="button" class="app-bar-menu__item" role="menuitem" data-menu-tier="secret" hidden>Debug puzzle</button>

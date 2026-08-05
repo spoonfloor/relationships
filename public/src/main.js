@@ -23,7 +23,7 @@ import { toggleSelection, getSelectionCount, clearSelection } from "./selection.
 import {
   renderPlayArea,
   renderStatus,
-  clearFoundGroups,
+  clearPlaySurface,
   renderGuesses,
 } from "./render.js";
 import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
@@ -221,19 +221,25 @@ function initializePage(state, session, catalog) {
     syncPickerOption(id);
   }
 
-  function applyPuzzleToUi(puzzle) {
+  function resetPlaySession(puzzle) {
     state.activePuzzle = puzzle;
+    initGameState(state);
     setDisplayText(dom.puzzleTitleEl, puzzle.title ?? "");
     setDisplayText(dom.vignetteEl, puzzle.vignette ?? "");
-    initGameState(state);
-    clearFoundGroups(dom);
-    dom.guessesEl.innerHTML = "";
-    dom.mostRecentGuessEl.innerHTML = "";
-    renderPaletteChips();
     applyLogoSwatches(puzzle.groups);
     syncGlossaryCta(puzzle);
-    renderPlayArea(dom, state, handlers);
+    renderPaletteChips();
     updateSubmitBtn();
+  }
+
+  function renderPlaySession() {
+    clearPlaySurface(dom);
+    renderPlayArea(dom, state, handlers);
+  }
+
+  function applyPuzzleToUi(puzzle) {
+    resetPlaySession(puzzle);
+    renderPlaySession();
   }
 
   function renderPaletteChips() {
@@ -315,10 +321,8 @@ function initializePage(state, session, catalog) {
             : structuredClone(state.activePuzzle),
       };
       const working = await session.enterEdit(id);
-      state.activePuzzle = working;
-      setDisplayText(dom.puzzleTitleEl, working.title ?? "");
-      setDisplayText(dom.vignetteEl, working.vignette ?? "");
-      applyLogoSwatches(working.groups);
+      resetPlaySession(working);
+      clearPlaySurface(dom);
       renderStatus(dom, "Editing draft.");
     },
     onEnterCreate: () => {
@@ -327,10 +331,8 @@ function initializePage(state, session, catalog) {
         id: currentId,
         puzzle: structuredClone(state.activePuzzle),
       };
-      state.activePuzzle = puzzleCompose.createEmptyPuzzle();
-      setDisplayText(dom.puzzleTitleEl, "");
-      setDisplayText(dom.vignetteEl, "");
-      applyLogoSwatches(state.activePuzzle.groups);
+      resetPlaySession(puzzleCompose.createEmptyPuzzle());
+      clearPlaySurface(dom);
       renderStatus(dom, "New puzzle.");
     },
     onComposeChange: () => {
@@ -389,6 +391,7 @@ function initializePage(state, session, catalog) {
   }
 
   function startPuzzle(puzzle) {
+    cancelWinModalTimer();
     puzzleCompose.exitComposeMode();
     composeReturnTo = null;
     state.glossaryEnabled = false;
@@ -399,6 +402,7 @@ function initializePage(state, session, catalog) {
   }
 
   function applyClear() {
+    cancelWinModalTimer();
     closeActiveOverlay();
     hideTooltip();
     clearSelection(state);
@@ -467,29 +471,36 @@ function initializePage(state, session, catalog) {
     handleGameAction(submitSelection(state));
   });
 
-  function showResultsPopup() {
-    const guesses = state.guesses;
-    openModal({
-      title: "Congratulations!",
-      content: (bodyEl) => {
-        const summary = document.createElement("p");
-        setDisplayText(summary, `You solved the puzzle in ${guesses.length} guesses.`);
-        bodyEl.appendChild(summary);
+  const WIN_MODAL_DELAY_MS = 500;
+  /** @type {ReturnType<typeof setTimeout> | null} */
+  let winModalTimer = null;
 
-        const guessesEl = document.createElement("div");
-        guessesEl.className = "minigrid";
-        renderGuesses({ guessesEl }, guesses);
-        guessesEl.addEventListener(
-          "scroll",
-          () => {
-            guessesEl.classList.add("has-scrolled");
-          },
-          { once: true }
-        );
-        bodyEl.appendChild(guessesEl);
-      },
-      actions: [{ label: "Okay", variant: "primary" }],
-    });
+  function cancelWinModalTimer() {
+    if (winModalTimer == null) return;
+    window.clearTimeout(winModalTimer);
+    winModalTimer = null;
+  }
+
+  function showResultsPopup() {
+    cancelWinModalTimer();
+    winModalTimer = window.setTimeout(() => {
+      winModalTimer = null;
+      const guesses = state.guesses;
+      openModal({
+        title: "Congratulations!",
+        content: (bodyEl) => {
+          const summary = document.createElement("p");
+          setDisplayText(summary, `You solved the puzzle in ${guesses.length} guesses.`);
+          bodyEl.appendChild(summary);
+
+          const guessesEl = document.createElement("div");
+          guessesEl.className = "minigrid";
+          renderGuesses({ guessesEl }, guesses);
+          bodyEl.appendChild(guessesEl);
+        },
+        actions: [{ label: "Okay", variant: "primary" }],
+      });
+    }, WIN_MODAL_DELAY_MS);
   }
 
   function renderMostRecentGuess(dom, guess) {

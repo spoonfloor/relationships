@@ -215,14 +215,6 @@ export function openPuzzlePicker({
 
       bodyEl.appendChild(list);
       syncPrimaryButton();
-
-      list.addEventListener(
-        "scroll",
-        () => {
-          list.classList.add("has-scrolled");
-        },
-        { once: true }
-      );
     },
     actions: [
       { label: "Cancel", variant: "secondary", onClick: onDismiss },

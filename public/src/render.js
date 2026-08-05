@@ -124,6 +124,14 @@ export function clearFoundGroups({ foundEl }) {
   foundEl.innerHTML = "";
 }
 
+/** Clear play-mode DOM without rendering the board (e.g. before compose takes over). */
+export function clearPlaySurface(dom) {
+  renderSolvedSets(dom, []);
+  clearFoundGroups(dom);
+  dom.guessesEl.innerHTML = "";
+  dom.mostRecentGuessEl.innerHTML = "";
+}
+
 export function renderGuesses({ guessesEl }, guesses) {
   guessesEl.innerHTML = "";
   const surface = guessSwatchSurface(guessesEl);
