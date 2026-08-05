@@ -48,6 +48,7 @@ import { commitActiveGlossaryEditor } from "./glossarySheet.js";
  *   onBeforeEnterEdit?: (targetId?: string) => Promise<void>,
  *   onEnterCreate?: () => void,
  *   onCancelCompose?: (variant: ComposeVariant) => void,
+ *   onConfirmDiscard?: () => Promise<boolean>,
  *   onComposeChange?: () => void,
  *   getPublishBaseline?: () => object,
  * }} options
@@ -61,6 +62,7 @@ export function initPuzzleCompose({
   onBeforeEnterEdit,
   onEnterCreate,
   onCancelCompose,
+  onConfirmDiscard,
   onComposeChange,
   getPublishBaseline,
 }) {
@@ -356,12 +358,22 @@ export function initPuzzleCompose({
     }
   }
 
-  function cancelCompose() {
+  /** @param {{ force?: boolean }} [options] */
+  async function cancelCompose({ force = false } = {}) {
     const variant = composeVariant;
-    if (!variant) return;
+    if (!variant) return true;
+
+    commitAllFields();
+
+    if (!force && hasDraftChanges() && onConfirmDiscard) {
+      const confirmed = await onConfirmDiscard();
+      if (!confirmed) return false;
+    }
+
     // Tear down bindings before restore so field teardown cannot write into the restored puzzle.
     exitComposeMode();
     onCancelCompose?.(variant);
+    return true;
   }
 
   async function saveDraft() {
@@ -436,7 +448,10 @@ export function initPuzzleCompose({
   });
 
   dom.cancelEditBtn.addEventListener("click", () => {
-    cancelCompose();
+    cancelCompose().catch((err) => {
+      console.error(err);
+      onValidationError(err instanceof Error ? err.message : "Could not close edit mode.");
+    });
   });
 
   return {

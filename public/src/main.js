@@ -205,6 +205,31 @@ function initializePage(state, session, catalog) {
   /** @type {{ id: string, puzzle: object } | null} */
   let composeReturnTo = null;
 
+  /** @returns {Promise<boolean>} */
+  function confirmDiscardChanges() {
+    return new Promise((resolve) => {
+      let settled = false;
+      const settle = (confirmed) => {
+        if (settled) return;
+        settled = true;
+        resolve(confirmed);
+      };
+
+      openModal({
+        title: "Discard changes",
+        content:
+          "This puzzle has unsaved changes. Do you want to permanently discard those changes?",
+        actions: [
+          { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
+          { label: "Discard", variant: "primary", onClick: () => settle(true) },
+        ],
+        onClose: () => {
+          if (!settled) settle(false);
+        },
+      });
+    });
+  }
+
   function registerPersistedDraft(id, draft) {
     state.activePuzzle = draft;
     state.activePuzzle.id = id;
@@ -369,6 +394,7 @@ function initializePage(state, session, catalog) {
 
       renderStatus(dom, "Pick 4–16 words.");
     },
+    onConfirmDiscard: confirmDiscardChanges,
   });
 
   initAppBarMenu({
@@ -622,7 +648,8 @@ function initializePage(state, session, catalog) {
 
   async function selectPuzzleById(id) {
     if (puzzleCompose.isComposeMode()) {
-      puzzleCompose.cancelCompose();
+      const closed = await puzzleCompose.cancelCompose();
+      if (!closed) return;
     }
 
     await ensurePuzzleLoaded(id);
@@ -683,7 +710,8 @@ function initializePage(state, session, catalog) {
       currentId,
       onSelect: async (id) => {
         if (puzzleCompose.isComposeMode()) {
-          puzzleCompose.cancelCompose();
+          const closed = await puzzleCompose.cancelCompose();
+          if (!closed) return;
         }
         await puzzleCompose.beginEdit(id);
       },
@@ -825,7 +853,7 @@ function initializePage(state, session, catalog) {
     });
 
     if ((deletingCurrentPublished || deletingCurrentDraft) && puzzleCompose.isComposeMode()) {
-      puzzleCompose.cancelCompose();
+      await puzzleCompose.cancelCompose({ force: true });
     }
 
     let navigateId = null;
