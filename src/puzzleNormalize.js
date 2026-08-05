@@ -127,3 +127,16 @@ export function hydratePuzzleFromRow(row, variant = "published") {
   }
   return normalizePuzzle(puzzle);
 }
+
+/** @param {object} puzzle */
+export function normalizedPuzzleSnapshot(puzzle) {
+  return normalizePuzzle(structuredClone(puzzle));
+}
+
+/** @param {object} a @param {object} b */
+export function puzzlesEquivalent(a, b) {
+  return (
+    JSON.stringify(normalizedPuzzleSnapshot(a)) ===
+    JSON.stringify(normalizedPuzzleSnapshot(b))
+  );
+}
