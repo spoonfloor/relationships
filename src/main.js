@@ -11,17 +11,15 @@ import { createPuzzleSession } from "./puzzleSession.js";
 import { initAppBarMenu } from "./appBar.js";
 import {
   initGameState,
-  resetGameProgress,
   canSubmitSelection,
   isPuzzleComplete,
+  isPuzzleAtZeroState,
   submitSelection,
-  solvePuzzle,
-  generateDebugGuessHistory,
   shuffleUnlocked,
   hintRevealCategory,
   hintRevealWord,
 } from "./game.js";
-import { toggleSelection, getSelectionCount } from "./selection.js";
+import { toggleSelection, getSelectionCount, clearSelection } from "./selection.js";
 import {
   renderPlayArea,
   renderStatus,
@@ -69,11 +67,7 @@ async function bootstrap() {
   const urlParams = new URLSearchParams(window.location.search);
   const puzzleId = urlParams.get("puzzleId");
 
-  const [catalog, wittyResponsesRaw] = await Promise.all([
-    fetchPuzzleCatalog(),
-    fetch("./witty_responses.json").then((res) => res.json()),
-  ]);
-  const wittyResponses = wittyResponsesRaw.repeated_incorrect_guess;
+  const catalog = await fetchPuzzleCatalog();
 
   const session = createPuzzleSession({ catalog });
   const listableIds = new Set(catalog.puzzles.map((entry) => entry.id));
@@ -153,12 +147,12 @@ async function bootstrap() {
   }
 
   const state = createInitialState(puzzle);
-  initializePage(state, wittyResponses, session, catalog);
+  initializePage(state, session, catalog);
   syncAppShellHeight();
   syncBottomSheetReserve();
 }
 
-function initializePage(state, wittyResponses, session, catalog) {
+function initializePage(state, session, catalog) {
   const dom = getDom();
   dom.glossaryTooltip = document.getElementById("glossary-tooltip");
   dom.glossaryBtn = document.getElementById("glossaryBtn");
@@ -368,7 +362,16 @@ function initializePage(state, wittyResponses, session, catalog) {
     moreBtn: dom.appBarMoreBtn,
     menu: dom.appBarMenu,
     isComposeMode: () => puzzleCompose.isComposeMode(),
+    syncMenuItemAvailability: syncResetMenuItem,
   });
+
+  function syncResetMenuItem() {
+    if (!dom.resetPuzzleBtn) return;
+    const unavailable =
+      puzzleCompose.isComposeMode() || isPuzzleAtZeroState(state);
+    dom.resetPuzzleBtn.disabled = unavailable;
+    dom.resetPuzzleBtn.toggleAttribute("aria-disabled", unavailable);
+  }
 
   onColorSchemeChange(() => {
     if (state.activePuzzle?.groups) {
@@ -398,13 +401,8 @@ function initializePage(state, wittyResponses, session, catalog) {
   function applyClear() {
     closeActiveOverlay();
     hideTooltip();
-    resetGameProgress(state);
-    clearFoundGroups(dom);
-    dom.guessesEl.innerHTML = "";
-    dom.mostRecentGuessEl.innerHTML = "";
-    renderPaletteChips();
+    clearSelection(state);
     renderPlayArea(dom, state, handlers);
-    renderGuesses(dom, state.guesses);
     renderStatus(dom, "Pick 4–16 words.");
     updateSubmitBtn();
   }
@@ -427,26 +425,10 @@ function initializePage(state, wittyResponses, session, catalog) {
     });
   });
 
-  let optionHeld = false;
-
   function updateSubmitBtn() {
-    setDisplayText(dom.submitBtn, optionHeld ? "Solve" : "Submit");
-    dom.submitBtn.disabled = !(optionHeld || canSubmitSelection(state));
+    setDisplayText(dom.submitBtn, "Submit");
+    dom.submitBtn.disabled = !canSubmitSelection(state);
   }
-
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Alt" && !optionHeld) {
-      optionHeld = true;
-      updateSubmitBtn();
-    }
-  });
-
-  window.addEventListener("keyup", (event) => {
-    if (event.key === "Alt") {
-      optionHeld = false;
-      updateSubmitBtn();
-    }
-  });
 
   function handleGameAction(res) {
     const foundGroup = res.group || res.results?.some((chunk) => chunk.group);
@@ -478,36 +460,15 @@ function initializePage(state, wittyResponses, session, catalog) {
     if (puzzleComplete) {
       showResultsPopup();
     }
-
-    const toastMessage =
-      feedback?.mode === "toast"
-        ? feedback.toastMessage
-        : res.toasts?.[0] ?? res.toastMessage;
-    if (toastMessage) {
-      showToast(toastMessage);
-    }
   }
 
-  function handleDebugSolve() {
-    const res = solvePuzzle(state);
-    renderPaletteChips();
-    renderPlayArea(dom, state, handlers);
-    showResultsPopup(generateDebugGuessHistory(state.activePuzzle));
-    renderStatus(dom, res.message);
-    updateSubmitBtn();
-  }
-
-  dom.submitBtn.addEventListener("click", (event) => {
-    if (optionHeld || event.altKey) {
-      handleDebugSolve();
-      return;
-    }
+  dom.submitBtn.addEventListener("click", () => {
     if (!canSubmitSelection(state)) return;
-    handleGameAction(submitSelection(state, wittyResponses));
+    handleGameAction(submitSelection(state));
   });
 
-  function showResultsPopup(debugGuesses) {
-    const guesses = debugGuesses ?? state.guesses;
+  function showResultsPopup() {
+    const guesses = state.guesses;
     openModal({
       title: "Congratulations!",
       content: (bodyEl) => {
@@ -681,6 +642,15 @@ function initializePage(state, wittyResponses, session, catalog) {
     });
   });
 
+  dom.resetPuzzleBtn?.addEventListener("click", async () => {
+    if (puzzleCompose.isComposeMode() || isPuzzleAtZeroState(state)) return;
+    const confirmed = await confirmResetPuzzle();
+    if (!confirmed) return;
+    closeActiveOverlay();
+    hideTooltip();
+    startPuzzle(state.activePuzzle);
+  });
+
   dom.viewDraftsBtn?.addEventListener("click", () => {
     const drafts = session.getUnpublishedDraftOptions();
     const currentId = drafts.some((entry) => entry.id === getCurrentPuzzleId())
@@ -731,6 +701,31 @@ function initializePage(state, wittyResponses, session, catalog) {
         primaryLabel: "Delete forever",
         onSelect: (selection) => settle(Array.isArray(selection) ? selection : [selection]),
         onDismiss: () => settle(null),
+      });
+    });
+  }
+
+  /** @returns {Promise<boolean>} */
+  function confirmResetPuzzle() {
+    return new Promise((resolve) => {
+      let settled = false;
+      const settle = (confirmed) => {
+        if (settled) return;
+        settled = true;
+        resolve(confirmed);
+      };
+
+      openModal({
+        title: "Reset puzzle",
+        content:
+          "Are you sure you want to start over from beginning? The puzzle will be reset and all your progress will be lost.",
+        actions: [
+          { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
+          { label: "Reset", variant: "primary", onClick: () => settle(true) },
+        ],
+        onClose: () => {
+          if (!settled) settle(false);
+        },
       });
     });
   }

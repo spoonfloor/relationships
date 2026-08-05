@@ -86,7 +86,7 @@ export function getProximityFeedback(words, wordToGroupMap) {
   }
 }
 
-export function evaluateGuess(state, words, wittyResponses) {
+export function evaluateGuess(state, words) {
   const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
   const canonicalWordStrings = [...words].sort();
   const shuffledWords = shuffle(words);
@@ -100,21 +100,9 @@ export function evaluateGuess(state, words, wittyResponses) {
     isCorrect: false,
   };
 
-  const isRepeated = state.guesses.some(
-    (g) =>
-      g.canonicalWords.length === guess.canonicalWords.length &&
-      g.canonicalWords.every((w, i) => w === guess.canonicalWords[i])
-  );
-
   const group = getGroupBySelection(state.activePuzzle, words);
   if (group) {
     guess.isCorrect = true;
-  }
-
-  if (isRepeated && !guess.isCorrect) {
-    const randomIndex = Math.floor(Math.random() * wittyResponses.length);
-    const message = wittyResponses[randomIndex];
-    return { ok: false, message, toastMessage: message };
   }
 
   state.guesses.push(guess);
@@ -153,18 +141,9 @@ function getSetFeedback(result) {
   return result.toastMessage ?? result.message ?? "Not quite.";
 }
 
-/** @param {{ setIndex: 0 | 1 | 2 | 3, words: string[] }[]} chunks */
 function resolveSubmitFeedback(results) {
-  const count = results.length;
-  if (count === 0) {
+  if (results.length === 0) {
     return { mode: /** @type {const} */ ("none") };
-  }
-  if (count === 1) {
-    const [result] = results;
-    return {
-      mode: /** @type {const} */ ("toast"),
-      toastMessage: result.toastMessage ?? result.message ?? "Not quite.",
-    };
   }
   const allSuccess = results.every((result) => result.ok && result.group);
   if (allSuccess) {
@@ -186,21 +165,31 @@ export function isPuzzleComplete(state) {
   );
 }
 
+/** True when the puzzle has no in-progress play state worth resetting. */
+export function isPuzzleAtZeroState(state) {
+  if (state.guesses.length > 0) return false;
+  if (state.foundGroups.some((group) => group.words.length > 0)) return false;
+  if (state.revealedCategories.size > 0) return false;
+  if (state.revealedWords.size > 0) return false;
+  if (getSelectionCount(state) > 0) return false;
+  if (state.boardWords.some((item) => item.lockedGroupIndex != null)) return false;
+  return true;
+}
+
 export function canSubmitSelection(state) {
   if (!state.activePuzzle?.groups?.length) return false;
   if (isPuzzleComplete(state)) return false;
   return getSelectionCount(state) >= CHUNK_SIZE;
 }
 
-export function submitSelection(state, wittyResponses) {
+export function submitSelection(state) {
   if (getSelectionCount(state) < CHUNK_SIZE) {
     return {
       ok: false,
       message: "Select at least 4 words.",
-      toasts: ["Select at least 4 words."],
       results: [],
       solved: false,
-      feedback: { mode: /** @type {const} */ ("toast"), toastMessage: "Select at least 4 words." },
+      feedback: { mode: /** @type {const} */ ("none") },
     };
   }
 
@@ -212,7 +201,7 @@ export function submitSelection(state, wittyResponses) {
   let solved = false;
 
   for (const { setIndex, words } of chunks) {
-    const result = evaluateGuess(state, words, wittyResponses);
+    const result = evaluateGuess(state, words);
     results.push({ ...result, setIndex, words });
     if (result.ok && result.group) {
       anySuccess = true;
@@ -242,10 +231,6 @@ export function submitSelection(state, wittyResponses) {
     solved,
     message,
     feedback,
-    toasts:
-      feedback.mode === "toast" && feedback.toastMessage
-        ? [feedback.toastMessage]
-        : [],
   };
 }
 
@@ -272,51 +257,6 @@ export function hintRevealCategory(state) {
   const revealedGroup = { ...pick.g, words: [] };
   state.foundGroups.push(revealedGroup);
   return { ok: true, group: revealedGroup, message: "Hint: Revealed a group." };
-}
-
-export function solvePuzzle(state) {
-  const remaining = state.activePuzzle.groups.filter((g) => !isGroupFound(state, g));
-
-  for (const group of remaining) {
-    const existing = state.foundGroups.find((g) => g.title === group.title);
-    if (existing) {
-      existing.words = group.words;
-    } else {
-      state.foundGroups.push(group);
-    }
-    const groupIndex = findGroupIndex(state.activePuzzle, group);
-    lockWords(state, groupWordTexts(group), groupIndex);
-  }
-
-  clearSelection(state);
-  state.revealedWords.clear();
-  return { ok: true, solved: true, debugSolve: true, message: "Solved! 🎉" };
-}
-
-export function generateDebugGuessHistory(puzzle) {
-  const groups = puzzle.groups;
-  const total = 4 + Math.floor(Math.random() * 9);
-  const guesses = [];
-
-  for (let i = 0; i < total - 4; i++) {
-    let indices;
-    do {
-      indices = Array.from({ length: 4 }, () => Math.floor(Math.random() * groups.length));
-    } while (indices.every((idx) => idx === indices[0]));
-    guesses.push({
-      words: indices.map((idx) => ({ word: "", colors: groups[idx].colors })),
-      isCorrect: false,
-    });
-  }
-
-  for (const group of shuffle([...groups])) {
-    guesses.push({
-      words: Array.from({ length: 4 }, () => ({ word: "", colors: group.colors })),
-      isCorrect: true,
-    });
-  }
-
-  return guesses;
 }
 
 export function hintRevealWord(state) {
