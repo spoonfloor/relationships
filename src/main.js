@@ -471,7 +471,7 @@ function initializePage(state, session, catalog) {
     handleGameAction(submitSelection(state));
   });
 
-  const WIN_MODAL_DELAY_MS = 500;
+  const WIN_MODAL_DELAY_MS = 600;
   /** @type {ReturnType<typeof setTimeout> | null} */
   let winModalTimer = null;
 
