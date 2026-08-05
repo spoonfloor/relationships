@@ -1,6 +1,6 @@
 import { bindEditableField } from "./editableField.js";
 import { observeTileBoard } from "./display.js";
-import { syncBottomSheetReserve } from "./ctaLayout.js";
+import { syncBottomSheetReserve, setCtaAvailability } from "./ctaLayout.js";
 import { promptEditPassword } from "./auth.js";
 import { openColorPaletteModal } from "./colorPaletteModal.js";
 import {
@@ -17,7 +17,12 @@ import {
   wordFieldLabel,
   wordPlaceholder,
 } from "./puzzleComposeTemplate.js";
-import { normalizePuzzle, validateComposePublish } from "./puzzleNormalize.js";
+import {
+  normalizePuzzle,
+  normalizedPuzzleSnapshot,
+  puzzlesEquivalent,
+  validateComposePublish,
+} from "./puzzleNormalize.js";
 import { commitActiveGlossaryEditor } from "./glossarySheet.js";
 
 /** @typedef {'create' | 'edit'} ComposeVariant */
@@ -31,6 +36,7 @@ import { commitActiveGlossaryEditor } from "./glossarySheet.js";
  *     ctaStackPlay: HTMLElement,
  *     ctaStackEdit: HTMLElement,
  *     saveBtn: HTMLButtonElement,
+ *     publishBtn: HTMLButtonElement | null,
  *     cancelEditBtn: HTMLButtonElement,
  *     editPuzzleBtn: HTMLButtonElement | null,
  *     addPuzzleBtn: HTMLButtonElement | null,
@@ -43,6 +49,7 @@ import { commitActiveGlossaryEditor } from "./glossarySheet.js";
  *   onEnterCreate?: () => void,
  *   onCancelCompose?: (variant: ComposeVariant) => void,
  *   onComposeChange?: () => void,
+ *   getPublishBaseline?: () => object,
  * }} options
  */
 export function initPuzzleCompose({
@@ -55,6 +62,7 @@ export function initPuzzleCompose({
   onEnterCreate,
   onCancelCompose,
   onComposeChange,
+  getPublishBaseline,
 }) {
   const { puzzleTitleEl, vignetteEl, boardEl, ctaStackPlay, ctaStackEdit } = dom;
   const titleWrap =
@@ -79,6 +87,10 @@ export function initPuzzleCompose({
 
   /** @type {ComposeVariant | null} */
   let composeVariant = null;
+  /** @type {object | null} */
+  let composeDraftBaseline = null;
+  /** @type {object | null} */
+  let composePublishBaseline = null;
   /** @type {import("./editableField.js").ReturnType<typeof bindEditableField>[]} */
   let fieldControllers = [];
 
@@ -90,8 +102,39 @@ export function initPuzzleCompose({
     return isComposeMode();
   }
 
+  function setDraftBaseline() {
+    composeDraftBaseline = normalizedPuzzleSnapshot(getPuzzle());
+  }
+
+  function setPublishBaseline() {
+    const source = getPublishBaseline?.() ?? getPuzzle();
+    composePublishBaseline = normalizedPuzzleSnapshot(source);
+  }
+
+  function setComposeBaselines() {
+    setDraftBaseline();
+    setPublishBaseline();
+  }
+
+  function hasDraftChanges() {
+    if (!composeDraftBaseline) return false;
+    return !puzzlesEquivalent(getPuzzle(), composeDraftBaseline);
+  }
+
+  function hasPublishChanges() {
+    if (!composePublishBaseline) return false;
+    return !puzzlesEquivalent(getPuzzle(), composePublishBaseline);
+  }
+
+  function syncComposeControls() {
+    if (!composeVariant) return;
+    setCtaAvailability(dom.saveBtn, hasDraftChanges());
+    setCtaAvailability(dom.publishBtn, hasPublishChanges());
+  }
+
   function notifyChange() {
     syncComposeWordColors();
+    syncComposeControls();
     onComposeChange?.();
   }
 
@@ -287,6 +330,8 @@ export function initPuzzleCompose({
 
     renderComposeBoard();
     syncAllDisplays();
+    setComposeBaselines();
+    syncComposeControls();
   }
 
   function exitComposeMode() {
@@ -300,6 +345,8 @@ export function initPuzzleCompose({
     boardEl.innerHTML = "";
 
     composeVariant = null;
+    composeDraftBaseline = null;
+    composePublishBaseline = null;
     document.body.classList.remove("edit-mode");
     setCtaMode(false);
 
@@ -336,7 +383,10 @@ export function initPuzzleCompose({
       }
       if (result?.id && composeVariant === "create") {
         composeVariant = "edit";
+        setPublishBaseline();
       }
+      setDraftBaseline();
+      syncComposeControls();
     }
     return true;
   }
@@ -378,6 +428,7 @@ export function initPuzzleCompose({
   });
 
   dom.saveBtn.addEventListener("click", () => {
+    if (dom.saveBtn.disabled) return;
     saveDraft().catch((err) => {
       console.error(err);
       onValidationError(err instanceof Error ? err.message : "Could not save draft.");
@@ -403,5 +454,6 @@ export function initPuzzleCompose({
     },
     createEmptyPuzzle,
     refreshSurfaceColors: () => syncComposeWordColors(),
+    syncComposeControls,
   };
 }

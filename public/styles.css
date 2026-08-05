@@ -992,6 +992,19 @@ body.edit-mode .app-bar__menu {
   background: var(--cta-secondary-bg);
   color: var(--btn-secondary-disabled-label);
 }
+
+/* Footer row CTAs share one disabled treatment (play + edit). */
+#fixed-footer .cta-row .btn-block-half:disabled,
+#fixed-footer .cta-row .btn-block-half[aria-disabled='true'] {
+  opacity: 0.68;
+  color: var(--btn-secondary-disabled-label);
+}
+#fixed-footer .cta-row .btn-block-half:disabled:hover,
+#fixed-footer .cta-row .btn-block-half[aria-disabled='true']:hover {
+  background: var(--cta-secondary-bg);
+  color: var(--btn-secondary-disabled-label);
+}
+
 .btn-primary:disabled:hover,
 .btn-primary[aria-disabled='true']:hover {
   background: var(--cta-primary-bg);

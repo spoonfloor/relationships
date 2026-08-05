@@ -226,6 +226,13 @@ export function syncAllCtaRows() {
   });
 }
 
+/** @param {HTMLButtonElement | null | undefined} btn @param {boolean} available */
+export function setCtaAvailability(btn, available) {
+  if (!btn) return;
+  btn.disabled = !available;
+  btn.toggleAttribute("aria-disabled", !available);
+}
+
 const ctaRowObservers = new WeakMap();
 
 /** @param {HTMLElement} row */

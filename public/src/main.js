@@ -45,6 +45,7 @@ import {
   syncCtaRow,
   syncAppShellHeight,
   syncBottomSheetReserve,
+  setCtaAvailability,
 } from "./ctaLayout.js";
 import { openPuzzlePicker } from "./puzzlePicker.js";
 import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
@@ -341,6 +342,14 @@ function initializePage(state, session, catalog) {
       renderPaletteChips();
       applyLogoSwatches(state.activePuzzle.groups);
     },
+    getPublishBaseline: () => {
+      const id = state.activePuzzle?.id?.trim();
+      if (id) {
+        const published = session.getPublished(id);
+        if (published) return published;
+      }
+      return createEmptyPuzzle();
+    },
     onCancelCompose: (variant) => {
       const restore = composeReturnTo?.puzzle;
       const restoreId = composeReturnTo?.id;
@@ -427,21 +436,18 @@ function initializePage(state, session, catalog) {
     if (!puzzleCompose.isComposeMode()) return;
     openGlossarySheet(state.activePuzzle, {
       editable: true,
-      onChange: () => syncGlossaryCta(state.activePuzzle),
+      onChange: () => {
+        syncGlossaryCta(state.activePuzzle);
+        puzzleCompose.syncComposeControls();
+      },
     });
   });
 
-  function setControlAvailability(btn, available) {
-    if (!btn) return;
-    btn.disabled = !available;
-    btn.toggleAttribute("aria-disabled", !available);
-  }
-
   function syncPlayControls() {
     setDisplayText(dom.submitBtn, "Submit");
-    setControlAvailability(dom.submitBtn, canSubmitSelection(state));
-    setControlAvailability(dom.shuffleBtn, canShuffle(state));
-    setControlAvailability(dom.clearBtn, canClearSelection(state));
+    setCtaAvailability(dom.submitBtn, canSubmitSelection(state));
+    setCtaAvailability(dom.shuffleBtn, canShuffle(state));
+    setCtaAvailability(dom.clearBtn, canClearSelection(state));
   }
 
   function handleGameAction(res) {
@@ -545,6 +551,7 @@ function initializePage(state, session, catalog) {
   }
 
   dom.publishBtn?.addEventListener("click", async () => {
+    if (dom.publishBtn?.disabled) return;
     const id = getCurrentPuzzleId();
 
     try {
