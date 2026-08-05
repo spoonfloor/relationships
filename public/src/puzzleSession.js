@@ -10,6 +10,7 @@ import {
   isUnpublishedDraftRow,
   promoteStoredDraft,
   savePuzzleDraft,
+  sortCatalogEntriesNewestFirst,
   updatePublishedPuzzle,
 } from "./puzzleRepository.js";
 import { createPublishedShell } from "./puzzleComposeTemplate.js";
@@ -91,7 +92,7 @@ export function createPuzzleSession({ catalog }) {
     const rec = records.get(id);
     if (!rec || !isListable(id)) return false;
     catalog.puzzles.push({ id, num: rec.num, hasDraft: rec.hasDraft });
-    catalog.puzzles.sort((a, b) => a.num - b.num);
+    sortCatalogEntriesNewestFirst(catalog.puzzles);
     return true;
   }
 

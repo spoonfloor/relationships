@@ -235,12 +235,23 @@ function initializePage(state, session, catalog) {
     state.activePuzzle.id = id;
   }
 
+  function syncCatalogSelect() {
+    const selected = dom.puzzleSelect.value;
+    dom.puzzleSelect.innerHTML = "";
+    for (const p of catalog.puzzles) {
+      const opt = document.createElement("option");
+      opt.value = p.id;
+      setDisplayText(opt, session.getPickerLabel(p.id));
+      dom.puzzleSelect.appendChild(opt);
+    }
+    if (catalog.puzzles.some((entry) => entry.id === selected)) {
+      dom.puzzleSelect.value = selected;
+    }
+  }
+
   function addCatalogOption(id) {
-    if (dom.puzzleSelect.querySelector(`option[value="${CSS.escape(id)}"]`)) return;
-    const opt = document.createElement("option");
-    opt.value = id;
-    setDisplayText(opt, session.getPickerLabel(id));
-    dom.puzzleSelect.appendChild(opt);
+    if (!catalog.puzzles.some((entry) => entry.id === id)) return;
+    syncCatalogSelect();
   }
 
   function registerPublishedPuzzle(id) {
@@ -353,12 +364,14 @@ function initializePage(state, session, catalog) {
       clearPlaySurface(dom);
       renderStatus(dom, "Editing draft.");
     },
-    onEnterCreate: () => {
-      const currentId = getCurrentPuzzleId();
-      composeReturnTo = {
-        id: currentId,
-        puzzle: structuredClone(state.activePuzzle),
-      };
+    onEnterCreate: ({ switching = false } = {}) => {
+      if (!switching) {
+        const currentId = getCurrentPuzzleId();
+        composeReturnTo = {
+          id: currentId,
+          puzzle: structuredClone(state.activePuzzle),
+        };
+      }
       resetPlaySession(puzzleCompose.createEmptyPuzzle());
       clearPlaySurface(dom);
       renderStatus(dom, "New puzzle.");
@@ -570,9 +583,9 @@ function initializePage(state, session, catalog) {
   });
 
   function getPuzzleOptions() {
-    return [...dom.puzzleSelect.options].map((opt) => ({
-      id: opt.value,
-      title: opt.textContent ?? opt.value,
+    return catalog.puzzles.map((entry) => ({
+      id: entry.id,
+      title: session.getPickerLabel(entry.id),
     }));
   }
 

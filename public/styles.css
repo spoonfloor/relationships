@@ -398,7 +398,7 @@ body::-webkit-scrollbar,
   height: 0;
 }
 
-/* Keep overlay scroll gestures from chaining to the document behind */
+/* Vertical-only overlay scrollports: no horizontal scroll, no scroll chaining */
 :is(
   .modal__panel,
   .sheet__panel,
@@ -409,6 +409,7 @@ body::-webkit-scrollbar,
   .modal__body > .minigrid
 ) {
   overscroll-behavior: contain;
+  overflow-x: hidden;
 }
 
 html {
@@ -1801,6 +1802,8 @@ body.edit-mode .play-area {
   margin: var(--glossary-definition-gap-above) 0 0;
   padding-left: 1.2em;
   list-style-type: disc;
+  list-style-position: inside;
+  overflow-wrap: anywhere;
   font-family: var(--glossary-definition-font-family);
   font-size: var(--glossary-definition-font-size);
   font-weight: var(--glossary-definition-font-weight);
@@ -1810,12 +1813,17 @@ body.edit-mode .play-area {
   margin-top: var(--glossary-definition-gap-above);
 }
 
+.sheet__body--hints .glossary-entry__trigger .glossary-entry__word {
+  min-width: 0;
+}
+
 .sheet__body--hints .glossary-entry__trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   width: 100%;
+  min-width: 0;
   margin: 0;
   padding: 0;
   border: none;

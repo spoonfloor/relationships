@@ -51,6 +51,17 @@ function rowToEntry(row) {
   };
 }
 
+/** @param {{ num?: number }} a @param {{ num?: number }} b */
+export function compareCatalogEntriesNewestFirst(a, b) {
+  return (b.num ?? 0) - (a.num ?? 0);
+}
+
+/** @template T @param {T[]} entries @returns {T[]} */
+export function sortCatalogEntriesNewestFirst(entries) {
+  entries.sort(compareCatalogEntriesNewestFirst);
+  return entries;
+}
+
 /** @param {string} id */
 export async function fetchPuzzleRow(id) {
   const supabase = getSupabase();
@@ -103,7 +114,7 @@ export async function fetchPuzzleCatalog() {
 
   return {
     defaultId,
-    puzzles: listableRows.map(rowToEntry),
+    puzzles: sortCatalogEntriesNewestFirst(listableRows.map(rowToEntry)),
     rows: allRows,
   };
 }
