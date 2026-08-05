@@ -12,6 +12,8 @@ import { initAppBarMenu } from "./appBar.js";
 import {
   initGameState,
   canSubmitSelection,
+  canShuffle,
+  canClearSelection,
   isPuzzleComplete,
   isPuzzleAtZeroState,
   submitSelection,
@@ -229,7 +231,7 @@ function initializePage(state, session, catalog) {
     applyLogoSwatches(puzzle.groups);
     syncGlossaryCta(puzzle);
     renderPaletteChips();
-    updateSubmitBtn();
+    syncPlayControls();
   }
 
   function renderPlaySession() {
@@ -268,7 +270,7 @@ function initializePage(state, session, catalog) {
         res.ok ? `${getSelectionCount(state)} selected.` : res.message,
       );
       renderPlayArea(dom, state, handlers);
-      updateSubmitBtn();
+      syncPlayControls();
     },
     onMouseOverWord(word, event) {
       if (!state.glossaryEnabled) return;
@@ -398,7 +400,7 @@ function initializePage(state, session, catalog) {
     setDisplayText(dom.glossaryBtn, "Glossary: OFF");
     applyPuzzleToUi(puzzle);
     renderStatus(dom, "Pick 4–16 words.");
-    updateSubmitBtn();
+    syncPlayControls();
   }
 
   function applyClear() {
@@ -408,7 +410,7 @@ function initializePage(state, session, catalog) {
     clearSelection(state);
     renderPlayArea(dom, state, handlers);
     renderStatus(dom, "Pick 4–16 words.");
-    updateSubmitBtn();
+    syncPlayControls();
   }
 
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
@@ -429,9 +431,17 @@ function initializePage(state, session, catalog) {
     });
   });
 
-  function updateSubmitBtn() {
+  function setControlAvailability(btn, available) {
+    if (!btn) return;
+    btn.disabled = !available;
+    btn.toggleAttribute("aria-disabled", !available);
+  }
+
+  function syncPlayControls() {
     setDisplayText(dom.submitBtn, "Submit");
-    dom.submitBtn.disabled = !canSubmitSelection(state);
+    setControlAvailability(dom.submitBtn, canSubmitSelection(state));
+    setControlAvailability(dom.shuffleBtn, canShuffle(state));
+    setControlAvailability(dom.clearBtn, canClearSelection(state));
   }
 
   function handleGameAction(res) {
@@ -442,7 +452,7 @@ function initializePage(state, session, catalog) {
     renderPlayArea(dom, state, handlers);
     renderMostRecentGuess(dom, state.guesses.at(-1));
     const puzzleComplete = isPuzzleComplete(state);
-    updateSubmitBtn();
+    syncPlayControls();
     if (!puzzleComplete) {
       renderGuesses(dom, state.guesses);
     }
@@ -514,6 +524,7 @@ function initializePage(state, session, catalog) {
       renderPlayArea(dom, state, handlers);
       renderPaletteChips();
       renderStatus(dom, `Hint: One category is “${res.group.title}”.`);
+      syncPlayControls();
     } else {
       renderStatus(dom, res.message);
     }
@@ -523,7 +534,7 @@ function initializePage(state, session, catalog) {
     const res = hintRevealWord(state);
     renderPlayArea(dom, state, handlers);
     renderStatus(dom, res.message);
-    updateSubmitBtn();
+    syncPlayControls();
   });
 
   function getPuzzleOptions() {
@@ -552,19 +563,6 @@ function initializePage(state, session, catalog) {
           showAlert({ title: "Error", message: publishError });
           return;
         }
-
-        if (isNew) {
-          const persisted = await session.ensurePersisted(state.activePuzzle);
-          if (!persisted.ok) {
-            showAlert({ title: "Error", message: persisted.error });
-            return;
-          }
-          if (persisted.created) {
-            registerPersistedDraft(persisted.id, persisted.draft);
-          } else {
-            state.activePuzzle = persisted.draft;
-          }
-        }
       }
 
       const publishId = getCurrentPuzzleId();
@@ -577,10 +575,11 @@ function initializePage(state, session, catalog) {
         return;
       }
 
+      const publishedId = result.published.id;
       if (result.newlyListed) {
-        registerPublishedPuzzle(publishId);
+        registerPublishedPuzzle(publishedId);
       } else {
-        syncPickerOption(publishId);
+        syncPickerOption(publishedId);
       }
       puzzleCompose.exitComposeMode();
       composeReturnTo = null;
@@ -663,14 +662,14 @@ function initializePage(state, session, catalog) {
   });
 
   dom.viewDraftsBtn?.addEventListener("click", () => {
-    const drafts = session.getUnpublishedDraftOptions();
+    const drafts = session.getSavedDraftOptions();
     const currentId = drafts.some((entry) => entry.id === getCurrentPuzzleId())
       ? getCurrentPuzzleId()
       : "";
 
     openPuzzlePicker({
       title: "Drafts",
-      emptyMessage: "No unpublished drafts.",
+      emptyMessage: "No saved drafts.",
       emptyDismissLabel: "Close",
       listAriaLabel: "Draft puzzles",
       puzzles: drafts,
@@ -741,12 +740,28 @@ function initializePage(state, session, catalog) {
     });
   }
 
-  /** @param {string[]} ids */
-  function confirmDeletePuzzles(ids) {
-    const content =
-      ids.length === 1
-        ? `Permanently delete '${session.getDeletableTitle(ids[0])}'? This action cannot be undone.`
-        : `Permanently delete ${ids.length} puzzles? This action cannot be undone.`;
+  /** @param {string[]} pickerIds */
+  function confirmDeletePuzzles(pickerIds) {
+    const draftCount = pickerIds.filter(
+      (pickerId) => session.resolveDeleteTarget(pickerId).kind === "draft"
+    ).length;
+    const publishedCount = pickerIds.length - draftCount;
+
+    let content;
+    if (pickerIds.length === 1) {
+      const target = session.resolveDeleteTarget(pickerIds[0]);
+      const title = session.getDeletableTitle(pickerIds[0]);
+      content =
+        target.kind === "draft"
+          ? `Delete draft '${title}'? The published puzzle will not be changed.`
+          : `Permanently delete '${title}'? This action cannot be undone.`;
+    } else if (draftCount > 0 && publishedCount > 0) {
+      content = `Delete ${draftCount} draft${draftCount === 1 ? "" : "s"} and permanently delete ${publishedCount} published puzzle${publishedCount === 1 ? "" : "s"}? Published puzzles selected for deletion cannot be undone.`;
+    } else if (draftCount > 0) {
+      content = `Delete ${draftCount} draft${draftCount === 1 ? "" : "s"}? Published puzzles will not be changed.`;
+    } else {
+      content = `Permanently delete ${publishedCount} puzzle${publishedCount === 1 ? "" : "s"}? This action cannot be undone.`;
+    }
 
     return new Promise((resolve) => {
       let settled = false;
@@ -757,7 +772,7 @@ function initializePage(state, session, catalog) {
       };
 
       openModal({
-        title: "Delete puzzle",
+        title: "Delete",
         content,
         actions: [
           { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
@@ -779,46 +794,77 @@ function initializePage(state, session, catalog) {
     const selectedIds = await pickPuzzlesToDelete();
     if (!selectedIds?.length) return;
 
-    const ids = selectedIds.filter(
-      (id) => id !== DEBUG_PUZZLE_ID && session.isPersistable(id)
-    );
-    if (ids.length === 0) {
+    const pickerIds = selectedIds.filter((pickerId) => {
+      if (pickerId === DEBUG_PUZZLE_ID) return false;
+      const { id } = session.resolveDeleteTarget(pickerId);
+      return session.isPersistable(id);
+    });
+    if (pickerIds.length === 0) {
       showAlert({ title: "Error", message: "This puzzle cannot be deleted." });
       return;
     }
 
-    const confirmed = await confirmDeletePuzzles(ids);
+    const confirmed = await confirmDeletePuzzles(pickerIds);
     if (!confirmed) return;
 
     const currentId = getCurrentPuzzleId();
-    const deletingCurrent = ids.includes(currentId);
+    const deletingCurrentPublished = pickerIds.some((pickerId) => {
+      const target = session.resolveDeleteTarget(pickerId);
+      return target.kind === "published" && target.id === currentId;
+    });
+    const deletingCurrentDraft = pickerIds.some((pickerId) => {
+      const target = session.resolveDeleteTarget(pickerId);
+      return target.kind === "draft" && target.id === currentId;
+    });
 
-    if (deletingCurrent && puzzleCompose.isComposeMode()) {
+    if ((deletingCurrentPublished || deletingCurrentDraft) && puzzleCompose.isComposeMode()) {
       puzzleCompose.cancelCompose();
     }
 
     let navigateId = null;
-    let deletedCount = 0;
+    let deletedDraftCount = 0;
+    let deletedPublishedCount = 0;
 
-    for (const id of ids) {
-      const result = await session.remove(id);
+    for (const pickerId of pickerIds) {
+      const target = session.resolveDeleteTarget(pickerId);
+      const result =
+        target.kind === "draft"
+          ? await session.removeDraft(target.id)
+          : await session.removePublished(target.id);
       if (!result.ok) {
         showAlert({ title: "Error", message: result.error });
         break;
       }
 
-      dom.puzzleSelect.querySelector(`option[value="${CSS.escape(id)}"]`)?.remove();
-      if (id === currentId) {
-        navigateId = result.wasListed
-          ? result.nextId
-          : composeReturnTo?.id ?? result.nextId;
+      if (target.kind === "published") {
+        dom.puzzleSelect.querySelector(`option[value="${CSS.escape(target.id)}"]`)?.remove();
+        deletedPublishedCount += 1;
+        if (target.id === currentId) {
+          navigateId = result.nextId;
+        }
+      } else {
+        deletedDraftCount += 1;
+        if (target.id === currentId) {
+          if (result.draftOnly) {
+            navigateId = composeReturnTo?.id ?? result.nextId;
+          } else if (session.getPublished(target.id)) {
+            applyPuzzleToUi(session.getPublished(target.id));
+            renderStatus(dom, "Pick 4–16 words.");
+          }
+        }
       }
-      deletedCount += 1;
     }
 
-    if (deletedCount === 0) return;
+    if (deletedDraftCount === 0 && deletedPublishedCount === 0) return;
 
-    if (deletingCurrent && navigateId) {
+    if (deletingCurrentPublished && navigateId) {
+      try {
+        await selectPuzzleById(navigateId);
+      } catch (e) {
+        console.error(e);
+        renderStatus(dom, `Puzzle load error: ${e.message}`);
+      }
+    } else if (deletingCurrentDraft && navigateId) {
       try {
         await selectPuzzleById(navigateId);
       } catch (e) {
@@ -827,7 +873,17 @@ function initializePage(state, session, catalog) {
       }
     }
 
-    showToast(deletedCount === 1 ? "Puzzle deleted." : `${deletedCount} puzzles deleted.`);
+    if (deletedDraftCount > 0 && deletedPublishedCount > 0) {
+      showToast(`${deletedDraftCount} draft${deletedDraftCount === 1 ? "" : "s"} and ${deletedPublishedCount} puzzle${deletedPublishedCount === 1 ? "" : "s"} deleted.`);
+    } else if (deletedDraftCount > 0) {
+      showToast(deletedDraftCount === 1 ? "Draft deleted." : `${deletedDraftCount} drafts deleted.`);
+    } else {
+      showToast(
+        deletedPublishedCount === 1
+          ? "Puzzle deleted."
+          : `${deletedPublishedCount} puzzles deleted.`
+      );
+    }
   });
 
   dom.puzzleSelect.addEventListener("change", async () => {

@@ -182,6 +182,15 @@ export function canSubmitSelection(state) {
   return getSelectionCount(state) >= CHUNK_SIZE;
 }
 
+export function canShuffle(state) {
+  return state.boardWords.length > 0 && !isPuzzleComplete(state);
+}
+
+export function canClearSelection(state) {
+  if (isPuzzleComplete(state)) return false;
+  return getSelectionCount(state) > 0;
+}
+
 export function submitSelection(state) {
   if (getSelectionCount(state) < CHUNK_SIZE) {
     return {
