@@ -13,7 +13,7 @@ import {
   initGameState,
   canSubmitSelection,
   canShuffle,
-  canClearSelection,
+  canUseClearCta,
   isPuzzleComplete,
   isPuzzleAtZeroState,
   submitSelection,
@@ -461,13 +461,30 @@ function initializePage(state, session, catalog) {
     syncPlayControls();
   }
 
+  async function applyResetPlaySession() {
+    if (puzzleCompose.isComposeMode() || isPuzzleAtZeroState(state)) return;
+    if (!isPuzzleComplete(state)) {
+      const confirmed = await confirmResetPuzzle();
+      if (!confirmed) return;
+    }
+    closeActiveOverlay();
+    hideTooltip();
+    startPuzzle(state.activePuzzle);
+  }
+
   dom.newGameBtn.addEventListener("click", () => startPuzzle(state.activePuzzle));
   dom.shuffleBtn.addEventListener("click", () => {
     shuffleUnlocked(state);
     renderPlayArea(dom, state, handlers);
     renderStatus(dom, "Shuffled.");
   });
-  dom.clearBtn.addEventListener("click", applyClear);
+  dom.clearBtn.addEventListener("click", () => {
+    if (isPuzzleComplete(state)) {
+      applyResetPlaySession();
+      return;
+    }
+    applyClear();
+  });
   dom.glossaryCtaBtn?.addEventListener("click", () => {
     openGlossarySheet(state.activePuzzle);
   });
@@ -483,10 +500,12 @@ function initializePage(state, session, catalog) {
   });
 
   function syncPlayControls() {
+    const puzzleComplete = isPuzzleComplete(state);
     setDisplayText(dom.submitBtn, "Submit");
     setCtaAvailability(dom.submitBtn, canSubmitSelection(state));
     setCtaAvailability(dom.shuffleBtn, canShuffle(state));
-    setCtaAvailability(dom.clearBtn, canClearSelection(state));
+    setDisplayText(dom.clearBtn, puzzleComplete ? "Reset" : "Clear");
+    setCtaAvailability(dom.clearBtn, canUseClearCta(state));
   }
 
   function handleGameAction(res) {
@@ -699,13 +718,8 @@ function initializePage(state, session, catalog) {
     });
   });
 
-  dom.resetPuzzleBtn?.addEventListener("click", async () => {
-    if (puzzleCompose.isComposeMode() || isPuzzleAtZeroState(state)) return;
-    const confirmed = await confirmResetPuzzle();
-    if (!confirmed) return;
-    closeActiveOverlay();
-    hideTooltip();
-    startPuzzle(state.activePuzzle);
+  dom.resetPuzzleBtn?.addEventListener("click", () => {
+    applyResetPlaySession();
   });
 
   dom.viewDraftsBtn?.addEventListener("click", () => {
