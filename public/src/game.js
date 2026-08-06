@@ -191,6 +191,12 @@ export function canClearSelection(state) {
   return getSelectionCount(state) > 0;
 }
 
+/** Footer Clear (in progress) or Reset (solved) CTA availability. */
+export function canUseClearCta(state) {
+  if (isPuzzleComplete(state)) return true;
+  return getSelectionCount(state) > 0;
+}
+
 export function submitSelection(state) {
   if (getSelectionCount(state) < CHUNK_SIZE) {
     return {
