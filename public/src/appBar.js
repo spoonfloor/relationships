@@ -13,8 +13,8 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode, syncMenuItemAvail
 
   const LONG_PRESS_MS = 500;
   let longPressTimer = null;
-  let ignoreNextMoreClick = false;
-  let longPressActive = false;
+  let suppressNextClick = false;
+  let menuOpenedByTouch = false;
 
   const menuItems = [...menu.querySelectorAll('[role="menuitem"]')];
   const tieredElements = [...menu.querySelectorAll("[data-menu-tier]")];
@@ -50,16 +50,19 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode, syncMenuItemAvail
     syncMenuItemAvailability?.();
   }
 
-  function endLongPressTracking() {
-    longPressActive = false;
-    document.removeEventListener("pointerup", handleLongPressRelease, true);
+  function clearLongPressTimer() {
+    if (longPressTimer != null) {
+      window.clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
   }
 
   function closeMenu() {
     menu.hidden = true;
     moreBtn.setAttribute("aria-expanded", "false");
     setMenuTier("public");
-    endLongPressTracking();
+    menuOpenedByTouch = false;
+    clearLongPressTimer();
   }
 
   /** @param {Exclude<MenuTier, "always">} tier */
@@ -73,62 +76,39 @@ export function initAppBarMenu({ moreBtn, menu, isComposeMode, syncMenuItemAvail
     openMenu("secret");
   }
 
-  /** @param {Node | null} target */
-  function findVisibleMenuItem(target) {
-    if (!(target instanceof Node)) return null;
-    for (const item of menuItems) {
-      if (item.hidden) continue;
-      if (item === target || item.contains(target)) return item;
-    }
-    return null;
-  }
-
-  /** @param {HTMLElement} item */
-  function activateMenuItem(item) {
-    if (item instanceof HTMLButtonElement && item.disabled) return;
-    closeMenu();
-    item.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
-  }
-
-  function clearLongPressTimer() {
-    if (longPressTimer != null) {
-      window.clearTimeout(longPressTimer);
-      longPressTimer = null;
-    }
-  }
-
-  function handleLongPressRelease(event) {
-    if (!longPressActive || (isComposeMode?.() ?? false)) return;
-
-    const item = findVisibleMenuItem(
-      document.elementFromPoint(event.clientX, event.clientY)
-    );
-    if (item) {
-      event.preventDefault();
-      activateMenuItem(item);
-      return;
-    }
-
-    endLongPressTracking();
+  function isTouchUi() {
+    return window.matchMedia("(pointer: coarse)").matches;
   }
 
   function finishLongPress() {
-    ignoreNextMoreClick = true;
-    longPressActive = true;
+    longPressTimer = null;
+    suppressNextClick = true;
+    menuOpenedByTouch = true;
     openSecretMenu();
-    document.addEventListener("pointerup", handleLongPressRelease, true);
   }
+
+  moreBtn.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+  });
+
+  menu.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+  });
 
   moreBtn.addEventListener("click", (event) => {
     event.stopPropagation();
-    if (ignoreNextMoreClick) {
-      ignoreNextMoreClick = false;
+    if (suppressNextClick) {
+      suppressNextClick = false;
       return;
     }
     if (menu.hidden) {
       if ((isComposeMode?.() ?? false) || event.altKey) openSecretMenu();
       else openMenu("public");
-    } else {
+      menuOpenedByTouch = false;
+      return;
+    }
+
+    if (!isTouchUi() && !menuOpenedByTouch) {
       closeMenu();
     }
   });

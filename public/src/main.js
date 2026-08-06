@@ -440,8 +440,17 @@ function initializePage(state, session, catalog) {
     return state.activePuzzle.id;
   }
 
-  function startPuzzle(puzzle) {
+  let playSessionGeneration = 0;
+
+  function endPlayMoment({ closeOverlays = true } = {}) {
+    playSessionGeneration += 1;
     cancelWinModalTimer();
+    if (closeOverlays) closeActiveOverlay();
+    hideTooltip();
+  }
+
+  function startPuzzle(puzzle) {
+    endPlayMoment();
     puzzleCompose.exitComposeMode();
     composeReturnTo = null;
     state.glossaryEnabled = false;
@@ -467,8 +476,6 @@ function initializePage(state, session, catalog) {
       const confirmed = await confirmResetPuzzle();
       if (!confirmed) return;
     }
-    closeActiveOverlay();
-    hideTooltip();
     startPuzzle(state.activePuzzle);
   }
 
@@ -527,7 +534,7 @@ function initializePage(state, session, catalog) {
       openSubmitResultsModal({
         rows: feedback.rows,
         onClose: () => {
-          if (puzzleComplete) {
+          if (isPuzzleComplete(state)) {
             showResultsPopup();
           }
         },
@@ -557,8 +564,11 @@ function initializePage(state, session, catalog) {
 
   function showResultsPopup() {
     cancelWinModalTimer();
+    const generation = playSessionGeneration;
     winModalTimer = window.setTimeout(() => {
       winModalTimer = null;
+      if (generation !== playSessionGeneration) return;
+      if (!isPuzzleComplete(state)) return;
       const guesses = state.guesses;
       openModal({
         title: "Congratulations!",

@@ -608,7 +608,12 @@ body.edit-mode .app-bar__menu {
   background: transparent;
   color: var(--text-color);
   cursor: pointer;
+  -webkit-touch-callout: none;
   touch-action: manipulation;
+}
+
+.app-bar-menu {
+  -webkit-touch-callout: none;
 }
 
 .app-bar__more-btn .material-icons {
