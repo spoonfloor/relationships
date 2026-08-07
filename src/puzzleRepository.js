@@ -84,13 +84,6 @@ export async function fetchPuzzleCatalog() {
     throw new Error("Supabase is not configured. Puzzles are loaded from Supabase only.");
   }
 
-  const { data: configRows, error: configError } = await supabase
-    .from("app_config")
-    .select("key, value")
-    .eq("key", "default_puzzle_id");
-
-  if (configError) throw configError;
-
   const { data, error } = await supabase
     .from("puzzles")
     .select("id, num, title, published_data, draft_data, draft_updated_at")
@@ -103,18 +96,13 @@ export async function fetchPuzzleCatalog() {
   }
 
   const allRows = data.filter((row) => row.id !== DEBUG_PUZZLE_ID);
-  const listableRows = allRows.filter(isListableRow);
-  const configuredDefault = configRows?.[0]?.value;
-  const defaultId =
-    configuredDefault &&
-    configuredDefault !== DEBUG_PUZZLE_ID &&
-    listableRows.some((row) => row.id === configuredDefault)
-      ? configuredDefault
-      : listableRows[0]?.id ?? null;
+  const puzzles = sortCatalogEntriesNewestFirst(
+    allRows.filter(isListableRow).map(rowToEntry)
+  );
 
   return {
-    defaultId,
-    puzzles: sortCatalogEntriesNewestFirst(listableRows.map(rowToEntry)),
+    defaultId: puzzles[0]?.id ?? null,
+    puzzles,
     rows: allRows,
   };
 }

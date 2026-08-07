@@ -50,7 +50,6 @@ import {
   syncAllCtaRows,
 } from "./ctaLayout.js";
 import { openPuzzlePicker } from "./puzzlePicker.js";
-import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
 import { initPuzzleCompose } from "./puzzleCompose.js";
 import { createEmptyPuzzle } from "./puzzleComposeTemplate.js";
 import { promptEditPassword } from "./auth.js";
@@ -118,15 +117,10 @@ async function bootstrap() {
     }
     initialId = puzzleId;
   } else {
-    const savedId = getSavedPuzzleId();
     initialId =
-      savedId &&
-      savedId !== DEBUG_PUZZLE_ID &&
-      catalog.puzzles.some((entry) => entry.id === savedId)
-        ? savedId
-        : catalog.defaultId && catalog.puzzles.some((entry) => entry.id === catalog.defaultId)
-          ? catalog.defaultId
-          : catalog.puzzles[0]?.id;
+      catalog.defaultId && catalog.puzzles.some((entry) => entry.id === catalog.defaultId)
+        ? catalog.defaultId
+        : catalog.puzzles[0]?.id;
   }
 
   let puzzle;
@@ -736,7 +730,6 @@ function initializePage(state, session, catalog) {
 
     if (id !== DEBUG_PUZZLE_ID) {
       dom.puzzleSelect.value = id;
-      saveSelectedPuzzleId(id);
     }
     startPuzzle(puzzle);
   }

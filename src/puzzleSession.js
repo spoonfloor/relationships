@@ -93,6 +93,7 @@ export function createPuzzleSession({ catalog }) {
     if (!rec || !isListable(id)) return false;
     catalog.puzzles.push({ id, num: rec.num, hasDraft: rec.hasDraft });
     sortCatalogEntriesNewestFirst(catalog.puzzles);
+    catalog.defaultId = catalog.puzzles[0]?.id ?? null;
     return true;
   }
 
