@@ -30,6 +30,7 @@ export function getDom() {
     clearBtn: document.getElementById("clearBtn"),
     glossaryCtaBtn: document.getElementById("glossaryCtaBtn"),
     submitBtn: document.getElementById("submitBtn"),
+    shareBtn: document.getElementById("shareBtn"),
 
     hintCategoryBtn: document.getElementById("hintCategoryBtn"),
     hintWordBtn: document.getElementById("hintWordBtn"),

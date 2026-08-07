@@ -35,6 +35,7 @@ import { openSubmitResultsModal } from "./submitResultsModal.js";
 import { closeActiveOverlay } from "./overlay.js";
 import { openGlossarySheet, commitActiveGlossaryEditor } from "./glossarySheet.js";
 import { showToast } from "./toast.js";
+import { copyGuessResultsToClipboard } from "./shareResults.js";
 import {
   formatStaticUi,
   setDisplayText,
@@ -46,6 +47,7 @@ import {
   syncAppShellHeight,
   syncBottomSheetReserve,
   setCtaAvailability,
+  syncAllCtaRows,
 } from "./ctaLayout.js";
 import { openPuzzlePicker } from "./puzzlePicker.js";
 import { getSavedPuzzleId, saveSelectedPuzzleId } from "./puzzleSelection.js";
@@ -508,11 +510,33 @@ function initializePage(state, session, catalog) {
 
   function syncPlayControls() {
     const puzzleComplete = isPuzzleComplete(state);
-    setDisplayText(dom.submitBtn, "Submit");
-    setCtaAvailability(dom.submitBtn, canSubmitSelection(state));
-    setCtaAvailability(dom.shuffleBtn, canShuffle(state));
+    const hasGuesses = state.guesses.length > 0;
+
+    dom.submitBtn.hidden = puzzleComplete;
+    dom.shareBtn.hidden = !puzzleComplete;
+    dom.shuffleBtn.hidden = puzzleComplete;
+
+    if (!puzzleComplete) {
+      setDisplayText(dom.submitBtn, "Submit");
+      setCtaAvailability(dom.submitBtn, canSubmitSelection(state));
+      setCtaAvailability(dom.shuffleBtn, canShuffle(state));
+    } else {
+      setCtaAvailability(dom.shareBtn, hasGuesses);
+    }
+
     setDisplayText(dom.clearBtn, puzzleComplete ? "Reset" : "Clear");
     setCtaAvailability(dom.clearBtn, canUseClearCta(state));
+    requestAnimationFrame(() => syncAllCtaRows());
+  }
+
+  async function handleShareResults() {
+    if (!state.guesses.length) return;
+    try {
+      await copyGuessResultsToClipboard(state.guesses);
+      showToast("Results copied to clipboard");
+    } catch {
+      showToast("Could not copy results");
+    }
   }
 
   function handleGameAction(res) {
@@ -551,6 +575,9 @@ function initializePage(state, session, catalog) {
     if (!canSubmitSelection(state)) return;
     handleGameAction(submitSelection(state));
   });
+  dom.shareBtn.addEventListener("click", () => {
+    void handleShareResults();
+  });
 
   const WIN_MODAL_DELAY_MS = 600;
   /** @type {ReturnType<typeof setTimeout> | null} */
@@ -582,7 +609,16 @@ function initializePage(state, session, catalog) {
           renderGuesses({ guessesEl }, guesses);
           bodyEl.appendChild(guessesEl);
         },
-        actions: [{ label: "Okay", variant: "primary" }],
+        actions: [
+          { label: "Close", variant: "secondary" },
+          {
+            label: "Share",
+            variant: "primary",
+            onClick: () => {
+              void handleShareResults();
+            },
+          },
+        ],
       });
     }, WIN_MODAL_DELAY_MS);
   }
