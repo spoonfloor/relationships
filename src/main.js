@@ -4,9 +4,11 @@ import {
   DEBUG_PUZZLE_ID,
   fetchDebugPuzzle,
   fetchPuzzleCatalog,
+  getAdjacentPuzzleId,
   hydratePuzzleFromRow,
   isUnpublishedDraftRow,
 } from "./puzzleRepository.js";
+import { bindPuzzleAdjacentNav } from "./puzzleSwipeNav.js";
 import { createPuzzleSession } from "./puzzleSession.js";
 import { initAppBarMenu } from "./appBar.js";
 import {
@@ -32,7 +34,7 @@ import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
 import { alert as showAlert, openModal } from "./modal.js";
 import { openSubmitResultsModal } from "./submitResultsModal.js";
-import { closeActiveOverlay } from "./overlay.js";
+import { closeActiveOverlay, isOverlayActive } from "./overlay.js";
 import { openGlossarySheet, commitActiveGlossaryEditor } from "./glossarySheet.js";
 import { showToast } from "./toast.js";
 import { copyGuessResultsToClipboard } from "./shareResults.js";
@@ -737,6 +739,44 @@ function initializePage(state, session, catalog) {
       dom.puzzleSelect.value = id;
     }
     startPuzzle(puzzle);
+  }
+
+  let navigateAdjacentInFlight = false;
+
+  function canNavigateAdjacent() {
+    if (navigateAdjacentInFlight) return false;
+    if (puzzleCompose.isComposeMode()) return false;
+    if (isOverlayActive()) return false;
+    if (dom.appBarMenu && !dom.appBarMenu.hidden) return false;
+    return catalog.puzzles.length >= 2;
+  }
+
+  /** @param {1 | -1} delta */
+  async function navigateAdjacent(delta) {
+    if (!canNavigateAdjacent()) return;
+    const nextId = getAdjacentPuzzleId(catalog.puzzles, getCurrentPuzzleId(), delta);
+    if (!nextId) return;
+
+    navigateAdjacentInFlight = true;
+    try {
+      await selectPuzzleById(nextId);
+    } catch (e) {
+      console.error(e);
+      renderStatus(dom, `Puzzle load error: ${e.message}`);
+    } finally {
+      navigateAdjacentInFlight = false;
+    }
+  }
+
+  const appShell = document.getElementById("app-shell");
+  if (appShell) {
+    bindPuzzleAdjacentNav({
+      root: appShell,
+      canNavigate: canNavigateAdjacent,
+      onNavigate: (delta) => {
+        navigateAdjacent(delta);
+      },
+    });
   }
 
   dom.openDebugPuzzleBtn?.addEventListener("click", () => {

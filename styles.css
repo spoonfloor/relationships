@@ -499,6 +499,8 @@ button::-moz-focus-inner {
   padding-right: max(var(--content-padding-x), env(safe-area-inset-right));
   padding-left: max(var(--content-padding-x), env(safe-area-inset-left));
   padding-bottom: var(--bottom-sheet-reserved, 148px);
+  /* Vertical scroll stays native; horizontal pan is claimed by puzzle swipe nav. */
+  touch-action: pan-y;
 }
 
 .page-logo {
@@ -1814,6 +1816,10 @@ body.edit-mode .play-area {
   font-weight: var(--glossary-definition-font-weight);
 }
 
+.glossary-entry__definitions li {
+  white-space: pre-line;
+}
+
 .glossary-entry__definitions li + li {
   margin-top: var(--glossary-definition-gap-above);
 }
@@ -1953,16 +1959,25 @@ body.edit-mode .play-area {
   margin-top: var(--glossary-definition-gap-above);
 }
 
+.glossary-editor__line + .glossary-editor__line--continuation {
+  margin-top: 0;
+}
+
 .glossary-editor__line--term {
   font-family: var(--glossary-term-font-family);
   font-size: var(--glossary-term-font-size);
   font-weight: var(--glossary-term-font-weight);
 }
 
-.glossary-editor__line--definition {
+.glossary-editor__line--definition,
+.glossary-editor__line--continuation {
   font-family: var(--glossary-definition-font-family);
   font-size: var(--glossary-definition-font-size);
   font-weight: var(--glossary-definition-font-weight);
+}
+
+.glossary-editor__line--continuation {
+  padding-left: 0.75em;
 }
 
 .glossary-editor__placeholder--overlay {
@@ -2298,6 +2313,7 @@ body.edit-mode .play-area {
 
 .tooltip li {
   margin-bottom: 2px;
+  white-space: pre-line;
 }
 
 .tooltip li:last-child {

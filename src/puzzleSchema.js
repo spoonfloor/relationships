@@ -106,7 +106,11 @@ function serializeGlossaryEntry(entry) {
     lines.push(entry.term);
   }
   for (const definition of entry.definitions ?? []) {
-    lines.push(`- ${definition}`);
+    const parts = String(definition).split("\n");
+    lines.push(`- ${parts[0] ?? ""}`);
+    for (const part of parts.slice(1)) {
+      lines.push(`+ ${part}`);
+    }
   }
   return lines.join("\n");
 }
@@ -121,6 +125,7 @@ export function serializeGlossaryText(puzzle) {
 
 /**
  * Parse glossary editor text into entries. Permissive: any term, orphan definitions allowed.
+ * `-` starts a definition; `+` continues the previous definition (nested line).
  * @param {string} text
  * @returns {{ term: string | null, definitions: string[] }[]}
  */
@@ -136,6 +141,11 @@ export function parseGlossaryText(text) {
     current = null;
   }
 
+  function ensureCurrent() {
+    if (!current) current = { term: null, definitions: [] };
+    return current;
+  }
+
   for (const line of String(text ?? "").split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed) continue;
@@ -143,8 +153,19 @@ export function parseGlossaryText(text) {
     if (trimmed.startsWith("-")) {
       const definition = trimmed.slice(1).trim();
       if (!definition) continue;
-      if (!current) current = { term: null, definitions: [] };
-      current.definitions.push(definition);
+      ensureCurrent().definitions.push(definition);
+      continue;
+    }
+
+    if (trimmed.startsWith("+")) {
+      const continuation = trimmed.slice(1).trim();
+      if (!continuation) continue;
+      const entry = ensureCurrent();
+      if (entry.definitions.length > 0) {
+        entry.definitions[entry.definitions.length - 1] += `\n${continuation}`;
+      } else {
+        entry.definitions.push(continuation);
+      }
       continue;
     }
 
