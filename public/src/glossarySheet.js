@@ -11,6 +11,7 @@ import { openSheet } from "./sheet.js";
 const GLOSSARY_PLACEHOLDER_LINES = [
   "Add glossary terms and definitions.",
   "Use regular text for terms. Add hyphens for definitions.",
+  "Use + for extra lines under a definition.",
 ];
 
 function createGlossaryPlaceholderElement() {
@@ -52,10 +53,13 @@ function clearActiveGlossaryEditor() {
 }
 
 function classifyGlossaryEditorLine(line) {
-  const isDefinition = line.textContent.trim().startsWith("-");
+  const trimmed = line.textContent.trim();
+  const isContinuation = trimmed.startsWith("+");
+  const isDefinition = trimmed.startsWith("-");
   line.classList.add("glossary-editor__line");
-  line.classList.toggle("glossary-editor__line--term", !isDefinition);
+  line.classList.toggle("glossary-editor__line--term", !isDefinition && !isContinuation);
   line.classList.toggle("glossary-editor__line--definition", isDefinition);
+  line.classList.toggle("glossary-editor__line--continuation", isContinuation);
 }
 
 function createEmptyGlossaryLine() {

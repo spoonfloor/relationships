@@ -5,6 +5,10 @@
  */
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import {
+  parseGlossaryText,
+  sortGlossaryEntries,
+} from "../public/src/puzzleSchema.js";
 
 const SUPABASE_URL = "https://luwnxayrthtyxgxdidtf.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY =
@@ -30,39 +34,6 @@ function uniqueSlug(base, taken) {
   let n = 2;
   while (taken.has(`${base}-${n}`)) n += 1;
   return `${base}-${n}`;
-}
-
-function parseGlossaryText(text) {
-  const entries = [];
-  let current = null;
-
-  function pushCurrent() {
-    if (!current) return;
-    entries.push(current);
-    current = null;
-  }
-
-  for (const line of String(text ?? "").split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
-
-    if (trimmed.startsWith("-")) {
-      const definition = trimmed.slice(1).trim();
-      if (!definition) continue;
-      if (!current) current = { term: null, definitions: [] };
-      current.definitions.push(definition);
-      continue;
-    }
-
-    pushCurrent();
-    current = { term: trimmed, definitions: [] };
-  }
-
-  pushCurrent();
-  entries.sort((a, b) =>
-    (a.term ?? "").localeCompare(b.term ?? "", undefined, { sensitivity: "base" })
-  );
-  return entries;
 }
 
 function parseDocument(text) {
@@ -141,6 +112,7 @@ function parseDocument(text) {
       i += 1;
       const glossaryBody = lines.slice(i).join("\n");
       glossary = parseGlossaryText(glossaryBody);
+      sortGlossaryEntries(glossary);
     }
 
     puzzles.push({ title, vignette, sets, glossary });

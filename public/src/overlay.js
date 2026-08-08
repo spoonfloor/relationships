@@ -77,3 +77,8 @@ export function deactivateOverlay(close) {
 export function closeActiveOverlay({ immediate = true } = {}) {
   activeOverlayClose?.({ immediate });
 }
+
+/** True while a modal/sheet owns the screen. */
+export function isOverlayActive() {
+  return activeOverlayClose != null;
+}

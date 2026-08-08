@@ -62,6 +62,26 @@ export function sortCatalogEntriesNewestFirst(entries) {
   return entries;
 }
 
+/**
+ * Neighbor in the play catalog (newest-first).
+ * delta +1 = older (toward end); delta -1 = newer (toward start).
+ * @param {{ id: string }[]} puzzles
+ * @param {string | null | undefined} currentId
+ * @param {1 | -1} delta
+ * @returns {string | null}
+ */
+export function getAdjacentPuzzleId(puzzles, currentId, delta) {
+  if (!Array.isArray(puzzles) || puzzles.length < 2) return null;
+  if (delta !== 1 && delta !== -1) return null;
+  if (!currentId || currentId === DEBUG_PUZZLE_ID) return null;
+  const index = puzzles.findIndex((entry) => entry.id === currentId);
+  if (index < 0) return null;
+  const nextIndex = index + delta;
+  if (nextIndex < 0 || nextIndex >= puzzles.length) return null;
+  const nextId = puzzles[nextIndex]?.id;
+  return nextId && nextId !== DEBUG_PUZZLE_ID ? nextId : null;
+}
+
 /** @param {string} id */
 export async function fetchPuzzleRow(id) {
   const supabase = getSupabase();
