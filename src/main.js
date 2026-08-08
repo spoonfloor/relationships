@@ -910,8 +910,8 @@ function initializePage(state, session, catalog) {
         content:
           "Are you sure you want to switch to a new puzzle? All progress on this puzzle will be lost.",
         actions: [
-          { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
-          { label: "Switch", variant: "primary", onClick: () => settle(true) },
+          { label: "No, stay here", variant: "secondary", onClick: () => settle(false) },
+          { label: "Yes, switch", variant: "primary", onClick: () => settle(true) },
         ],
         onClose: () => {
           if (!settled) settle(false);
