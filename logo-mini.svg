@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="logo" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 56 56">
+  <!-- Generator: Adobe Illustrator 30.6.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 109)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #d6d6d6;
+      }
+
+      .st1 {
+        fill: #454545;
+      }
+
+      .st2 {
+        fill: #696969;
+      }
+
+      .st3 {
+        fill: #fff;
+      }
+
+      .st4 {
+        fill: #adadad;
+      }
+    </style>
+  </defs>
+  <path id="swatch-4-B" class="st1" d="M28,28v28H11.6c-6.4,0-11.6-5.2-11.6-11.6v-16.4l.7-8.6h26.6l.7,8.6Z"/>
+  <path id="swatch-1" class="st0" d="M28,28H0V11.6C0,5.2,5.2,0,11.6,0h16.4l8.6.7v26.6l-8.6.7Z"/>
+  <path id="swatch-2" class="st4" d="M28,28V0h16.4c6.4,0,11.6,5.2,11.6,11.6v16.4l-.7,8.6h-26.6l-.7-8.6Z"/>
+  <path id="swatch-3" class="st2" d="M28,28h28v16.4c0,6.4-5.2,11.6-11.6,11.6h-16.4l-8.6-.7v-26.6l8.6-.7Z"/>
+  <path id="swatch-4-T" class="st1" d="M28,28v28H11.6c-6.4,0-11.6-5.2-11.6-11.6v-16.4h28Z"/>
+  <path id="text" class="st3" d="M25.2,11h2.8v5.5h.3c1-1.8,2.4-3.4,4.5-4.3,2.1-1.1,4.5-1.5,7.1-1.5h1.1v2.8h-1.3c-7.4,0-11.7,5.3-11.7,10.3v22.7h-2.8V11Z"/>
+</svg>
