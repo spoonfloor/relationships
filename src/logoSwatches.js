@@ -62,18 +62,61 @@ async function loadPageLogo() {
 }
 
 /**
- * @param {Array<{ colors?: { text?: string, bg?: string } }> | null | undefined} groups
+ * Nodes for group n: #swatch-n, plus split variants (#swatch-4a / #swatch-4b,
+ * #swatch-4-T / #swatch-4-B). All variants share the same group fill.
+ * @param {ParentNode} root
+ * @param {number} index 0-based group index
+ * @returns {SVGElement[]}
  */
-export function applyLogoSwatches(groups) {
-  const root = document.querySelector(".page-logo svg");
+export function swatchElementsForIndex(root, index) {
+  const n = index + 1;
+  const prefix = `swatch-${n}`;
+  return [...root.querySelectorAll(`[id^="${prefix}"]`)].filter((el) => {
+    if (!(el instanceof SVGElement)) return false;
+    const id = el.id;
+    if (id === prefix) return true;
+    const rest = id.slice(prefix.length);
+    const lead = rest.charAt(0);
+    return lead === "a" || lead === "b" || lead === "-";
+  });
+}
+
+/**
+ * Paint logo swatches on any SVG root (header or share lockup).
+ * @param {ParentNode | null | undefined} root
+ * @param {Array<{ colors?: { text?: string, bg?: string } }> | null | undefined} groups
+ * @param {{ surface?: "modal" | "canvas", surfaceElement?: Element, textFill?: string }} [options]
+ */
+export function paintLogoSwatches(root, groups, { surface = "canvas", surfaceElement, textFill } = {}) {
   if (!root || !Array.isArray(groups)) return;
 
   for (let i = 0; i < 4; i += 1) {
-    const swatch = root.querySelector(`#swatch-${i + 1}`);
-    if (!(swatch instanceof SVGElement)) continue;
-    swatch.removeAttribute("class");
-    swatch.style.fill = resolveLogoSwatchFill(resolveGroupColors(groups[i]).bg, {
-      surface: "canvas",
+    const fill = resolveLogoSwatchFill(resolveGroupColors(groups[i]).bg, {
+      surface,
+      surfaceElement,
     });
+    for (const swatch of swatchElementsForIndex(root, i)) {
+      swatch.removeAttribute("class");
+      swatch.style.fill = fill;
+    }
   }
+
+  if (typeof textFill === "string" && textFill) {
+    const text = root.querySelector("#text");
+    if (text instanceof SVGElement) {
+      text.removeAttribute("class");
+      text.style.fill = textFill;
+      for (const path of text.querySelectorAll("path")) {
+        path.removeAttribute("class");
+        path.style.fill = "inherit";
+      }
+    }
+  }
+}
+
+/**
+ * @param {Array<{ colors?: { text?: string, bg?: string } }> | null | undefined} groups
+ */
+export function applyLogoSwatches(groups) {
+  paintLogoSwatches(document.querySelector(".page-logo svg"), groups);
 }

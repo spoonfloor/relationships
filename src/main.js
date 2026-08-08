@@ -526,9 +526,14 @@ function initializePage(state, session, catalog) {
   async function handleShareResults() {
     if (!state.guesses.length) return;
     try {
-      await copyGuessResultsToClipboard(state.guesses);
+      await copyGuessResultsToClipboard({
+        guesses: state.guesses,
+        title: state.activePuzzle?.title ?? "",
+        groups: state.activePuzzle?.groups ?? [],
+      });
       showToast("Results copied to clipboard");
-    } catch {
+    } catch (err) {
+      console.error("Share failed:", err);
       showToast("Could not copy results");
     }
   }
