@@ -731,6 +731,15 @@ function initializePage(state, session, catalog) {
       if (!closed) return;
     }
 
+    if (
+      id !== getCurrentPuzzleId() &&
+      !isPuzzleAtZeroState(state) &&
+      !isPuzzleComplete(state)
+    ) {
+      const confirmed = await confirmSwitchPuzzle();
+      if (!confirmed) return;
+    }
+
     await ensurePuzzleLoaded(id);
     const puzzle = session.getPlayable(id);
     if (!puzzle) throw new Error(`Puzzle "${id}" not found`);
@@ -878,6 +887,31 @@ function initializePage(state, session, catalog) {
         actions: [
           { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
           { label: "Reset", variant: "primary", onClick: () => settle(true) },
+        ],
+        onClose: () => {
+          if (!settled) settle(false);
+        },
+      });
+    });
+  }
+
+  /** @returns {Promise<boolean>} */
+  function confirmSwitchPuzzle() {
+    return new Promise((resolve) => {
+      let settled = false;
+      const settle = (confirmed) => {
+        if (settled) return;
+        settled = true;
+        resolve(confirmed);
+      };
+
+      openModal({
+        title: "Switch puzzle",
+        content:
+          "Are you sure you want to switch to a new puzzle? All progress on this puzzle will be lost.",
+        actions: [
+          { label: "Cancel", variant: "secondary", onClick: () => settle(false) },
+          { label: "Switch", variant: "primary", onClick: () => settle(true) },
         ],
         onClose: () => {
           if (!settled) settle(false);
