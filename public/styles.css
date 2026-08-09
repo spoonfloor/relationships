@@ -63,6 +63,7 @@
   --glossary-term-font-size: var(--modal-body-font-size);
   --glossary-term-font-weight: 600;
   --glossary-definition-gap-above: 8px;
+  --glossary-continuation-gap-above: 4px;
   --glossary-definition-font-family: var(--font-family);
   --glossary-definition-font-size: 18px;
   --glossary-definition-font-weight: 200;
@@ -1807,9 +1808,8 @@ body.edit-mode .play-area {
 
 .glossary-entry__definitions {
   margin: var(--glossary-definition-gap-above) 0 0;
-  padding-left: 1.2em;
-  list-style-type: disc;
-  list-style-position: inside;
+  padding-left: 0;
+  list-style: none;
   overflow-wrap: anywhere;
   font-family: var(--glossary-definition-font-family);
   font-size: var(--glossary-definition-font-size);
@@ -1817,7 +1817,30 @@ body.edit-mode .play-area {
 }
 
 .glossary-entry__definitions li {
-  white-space: pre-line;
+  position: relative;
+  padding-left: 1.2em;
+}
+
+.glossary-entry__definitions li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  width: 1.2em;
+  text-align: center;
+}
+
+.glossary-entry__continuation {
+  margin-top: var(--glossary-continuation-gap-above);
+}
+
+.glossary-entry__definitions strong,
+.tooltip li strong {
+  font-weight: 600;
+}
+
+.glossary-entry__definitions em,
+.tooltip li em {
+  font-style: italic;
 }
 
 .glossary-entry__definitions li + li {
@@ -1960,7 +1983,7 @@ body.edit-mode .play-area {
 }
 
 .glossary-editor__line + .glossary-editor__line--continuation {
-  margin-top: 0;
+  margin-top: var(--glossary-continuation-gap-above);
 }
 
 .glossary-editor__line--term {
@@ -2306,14 +2329,23 @@ body.edit-mode .play-area {
 }
 
 .tooltip ul {
-  list-style-type: disc;
-  padding-left: 20px;
+  list-style: none;
+  padding-left: 0;
   margin: 0;
 }
 
 .tooltip li {
+  position: relative;
+  padding-left: 1.2em;
   margin-bottom: 2px;
-  white-space: pre-line;
+}
+
+.tooltip li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  width: 1.2em;
+  text-align: center;
 }
 
 .tooltip li:last-child {

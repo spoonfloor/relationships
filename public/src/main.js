@@ -35,7 +35,11 @@ import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } 
 import { alert as showAlert, openModal } from "./modal.js";
 import { openSubmitResultsModal } from "./submitResultsModal.js";
 import { closeActiveOverlay, isOverlayActive } from "./overlay.js";
-import { openGlossarySheet, commitActiveGlossaryEditor } from "./glossarySheet.js";
+import {
+  openGlossarySheet,
+  commitActiveGlossaryEditor,
+  fillGlossaryDefinitionItem,
+} from "./glossarySheet.js";
 import { showToast } from "./toast.js";
 import { copyGuessResultsToClipboard } from "./shareResults.js";
 import {
@@ -173,7 +177,7 @@ function initializePage(state, session, catalog) {
     const ul = document.createElement("ul");
     for (const def of definitions) {
       const li = document.createElement("li");
-      setDisplayText(li, def);
+      fillGlossaryDefinitionItem(li, def);
       ul.appendChild(li);
     }
     dom.glossaryTooltip.appendChild(ul);
