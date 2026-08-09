@@ -1,6 +1,6 @@
 import { placeCaretFromPoint, selectionIsInside } from "./caret.js";
 import { syncCtaRow, watchCtaRow } from "./ctaLayout.js";
-import { setDisplayText } from "./display.js";
+import { setDisplayText, setInlineMarkupText } from "./display.js";
 import {
   applyGlossaryText,
   collectGlossaryEntries,
@@ -12,6 +12,7 @@ const GLOSSARY_PLACEHOLDER_LINES = [
   "Add glossary terms and definitions.",
   "Use regular text for terms. Add hyphens for definitions.",
   "Use + for extra lines under a definition.",
+  "Use * for italics, ** for bold, *** for both.",
 ];
 
 function createGlossaryPlaceholderElement() {
@@ -272,6 +273,23 @@ function insertGlossaryPaste(editor, pasted) {
 }
 
 /**
+ * Fill a definition list item; `+` continuation lines become spaced blocks.
+ * Supports *italic*, **bold**, and ***bold italic*** in definition text.
+ * @param {HTMLElement} li
+ * @param {string} definition
+ */
+export function fillGlossaryDefinitionItem(li, definition) {
+  const parts = String(definition ?? "").split("\n");
+  setInlineMarkupText(li, parts[0] ?? "");
+  for (const part of parts.slice(1)) {
+    const line = document.createElement("div");
+    line.className = "glossary-entry__continuation";
+    setInlineMarkupText(line, part);
+    li.appendChild(line);
+  }
+}
+
+/**
  * @param {HTMLElement} parent
  * @param {string | null} term
  * @param {string[]} definitions
@@ -294,7 +312,7 @@ function appendGlossaryEntry(parent, term, definitions, index, { collapsible = t
   ul.className = "glossary-entry__definitions";
   for (const def of definitions) {
     const li = document.createElement("li");
-    setDisplayText(li, def);
+    fillGlossaryDefinitionItem(li, def);
     ul.appendChild(li);
   }
 
