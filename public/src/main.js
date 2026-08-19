@@ -60,10 +60,13 @@ import { initPuzzleCompose } from "./puzzleCompose.js";
 import { createEmptyPuzzle } from "./puzzleComposeTemplate.js";
 import { promptEditPassword } from "./auth.js";
 import { initPageLogo, applyLogoSwatches } from "./logoSwatches.js";
+import { applyPlayTheme, applyNeutralPlayTheme } from "./playTheme.js";
+import { isDesignDebug } from "./designDebug.js";
 import { bindDarkModeSwitch, initColorScheme, onColorSchemeChange } from "./colorScheme.js";
 
 async function bootstrap() {
-  initColorScheme();
+  const scheme = initColorScheme();
+  applyNeutralPlayTheme(scheme);
   watchBottomSheet();
   watchCtaRows();
   const dom = getDom();
@@ -268,6 +271,7 @@ function initializePage(state, session, catalog) {
     setDisplayText(dom.puzzleTitleEl, puzzle.title ?? "");
     setDisplayText(dom.vignetteEl, puzzle.vignette ?? "");
     applyLogoSwatches(puzzle.groups);
+    applyPlayTheme(puzzle);
     syncGlossaryCta(puzzle);
     renderPaletteChips();
     syncPlayControls();
@@ -427,9 +431,12 @@ function initializePage(state, session, catalog) {
     dom.resetPuzzleBtn.toggleAttribute("aria-disabled", unavailable);
   }
 
-  onColorSchemeChange(() => {
+  onColorSchemeChange((scheme) => {
     if (state.activePuzzle?.groups) {
       applyLogoSwatches(state.activePuzzle.groups);
+    }
+    if (state.activePuzzle) {
+      applyPlayTheme(state.activePuzzle, scheme);
     }
     if (puzzleCompose.isComposeMode()) {
       puzzleCompose.refreshSurfaceColors();
@@ -518,7 +525,10 @@ function initializePage(state, session, catalog) {
 
     if (!puzzleComplete) {
       setDisplayText(dom.submitBtn, "Submit");
-      setCtaAvailability(dom.submitBtn, canSubmitSelection(state));
+      setCtaAvailability(
+        dom.submitBtn,
+        isDesignDebug() ? false : canSubmitSelection(state),
+      );
       setCtaAvailability(dom.shuffleBtn, canShuffle(state));
     } else {
       setCtaAvailability(dom.shareBtn, hasGuesses);
