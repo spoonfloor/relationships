@@ -35,7 +35,7 @@
   --puzzle-title-line-height: 20px;
   --puzzle-stack-gap: 24px;
   --play-gap: 10px;
-  --vignette-font-size: 28px;
+  --vignette-font-size: 20px;
   --vignette-line-height: 1.15;
   --vignette-letter-spacing: -0.02em;
   --word-font-size: 0.9rem;
@@ -1822,7 +1822,7 @@ body.edit-mode .play-area {
 }
 
 .glossary-entry__definitions li::before {
-  content: "•";
+  content: '•';
   position: absolute;
   left: 0;
   width: 1.2em;
@@ -2341,7 +2341,7 @@ body.edit-mode .play-area {
 }
 
 .tooltip li::before {
-  content: "•";
+  content: '•';
   position: absolute;
   left: 0;
   width: 1.2em;
