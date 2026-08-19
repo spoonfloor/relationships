@@ -1,7 +1,7 @@
 :root {
-  /* Brand accents — play is shared; edit primary is set per color scheme below */
-  --theme-play-primary: #d65f42;
-  --theme-play-primary-hover: #bf4930;
+  /* Play primary defaults per scheme below until puzzle set 1 is applied in JS */
+  --theme-play-primary: #f0f0f0;
+  --theme-play-primary-hover: #d0d0d0;
   --theme-edit-primary: #2a8efd; /* light default; dark overrides in [data-color-scheme="dark"] */
   --theme-caret-color: var(--theme-edit-primary);
 
@@ -36,7 +36,8 @@
   --puzzle-stack-gap: 24px;
   --play-gap: 10px;
   --vignette-font-size: 20px;
-  --vignette-line-height: 1.15;
+  --vignette-font-weight: 200;
+  --vignette-line-height: 28px;
   --vignette-letter-spacing: -0.02em;
   --word-font-size: 0.9rem;
   --word-font-family: 'Cabin Condensed', var(--font-family);
@@ -116,7 +117,7 @@
   --selected: var(--theme-primary);
   --cta-primary-bg: var(--theme-primary);
   --cta-primary-hover: var(--theme-primary-hover);
-  --cta-primary-color: #fff;
+  --cta-primary-color: #1a1a1a;
   --accent: var(--cta-primary-bg);
   --accent-hover: var(--cta-primary-hover);
   --surface-modal: var(--modal-bg);
@@ -124,6 +125,9 @@
 
 [data-color-scheme='light'] {
   --theme-edit-primary: #2a8efd;
+  --theme-play-primary: #1a1a1a;
+  --theme-play-primary-hover: #3c3c3c;
+  --cta-primary-color: #ffffff;
 
   --surface-mix-base: #ffffff;
   --surface-canvas: #ffffff;
@@ -231,6 +235,9 @@
 
 [data-color-scheme='dark'] {
   --theme-edit-primary: #00bbff;
+  --theme-play-primary: #f0f0f0;
+  --theme-play-primary-hover: #d0d0d0;
+  --cta-primary-color: #1a1a1a;
 
   --surface-mix-base: #121212;
   --surface-canvas: #121212;
@@ -768,6 +775,7 @@ body.edit-mode .app-bar__menu {
 
 .vignette {
   font-size: var(--vignette-font-size);
+  font-weight: var(--vignette-font-weight);
   margin: 0;
   max-width: none;
   color: var(--text-color);
@@ -1052,13 +1060,14 @@ body.edit-mode .app-bar__menu {
 #fixed-footer .btn-primary.btn-block:disabled,
 #fixed-footer .btn-primary.btn-block[aria-disabled='true'] {
   opacity: 1;
-  background: color-mix(in srgb, var(--cta-primary-bg) 85%, transparent);
-  color: color-mix(in srgb, var(--cta-primary-color) 55%, transparent);
+  background: var(--cta-primary-bg);
+  color: var(--cta-primary-color);
+  cursor: not-allowed;
 }
 #fixed-footer .btn-primary.btn-block:disabled:hover,
 #fixed-footer .btn-primary.btn-block[aria-disabled='true']:hover {
-  background: color-mix(in srgb, var(--cta-primary-bg) 85%, transparent);
-  color: color-mix(in srgb, var(--cta-primary-color) 55%, transparent);
+  background: var(--cta-primary-bg);
+  color: var(--cta-primary-color);
 }
 
 .btn-secondary {

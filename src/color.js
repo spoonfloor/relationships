@@ -199,6 +199,15 @@ export function contrastTextColor(hex) {
   return relativeLuminance(hex) > 0.179 ? "#000000" : "#FFFFFF";
 }
 
+/** WCAG contrast ratio (1–21). @param {string} hexA @param {string} hexB */
+export function contrastRatio(hexA, hexB) {
+  const a = relativeLuminance(normalizeHex(hexA));
+  const b = relativeLuminance(normalizeHex(hexB));
+  const lighter = Math.max(a, b);
+  const darker = Math.min(a, b);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 export function rgbToLab(rgb) {
   let r = rgb.r / 255,
     g = rgb.g / 255,
