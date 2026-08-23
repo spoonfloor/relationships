@@ -829,6 +829,10 @@ function initializePage(state, session, catalog) {
     applyResetPlaySession();
   });
 
+  dom.fooBtn?.addEventListener("click", () => {
+    alert("Bar!");
+  });
+
   dom.viewDraftsBtn?.addEventListener("click", () => {
     const drafts = session.getSavedDraftOptions();
     const currentId = drafts.some((entry) => entry.id === getCurrentPuzzleId())
