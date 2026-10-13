@@ -9,10 +9,12 @@ import {
   parseGlossaryText,
   sortGlossaryEntries,
 } from "../public/src/puzzleSchema.js";
+import {
+  SUPABASE_PUBLISHABLE_KEY,
+  SUPABASE_SCHEMA,
+  SUPABASE_URL,
+} from "../public/src/supabaseConfig.js";
 
-const SUPABASE_URL = "https://luwnxayrthtyxgxdidtf.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_aCema0LZQvoWiXViaU0o2g_zggnBjoY";
 const DEBUG_ID = "debug";
 const HEX_RE = /^#[0-9a-fA-F]{6}$/;
 
@@ -140,6 +142,8 @@ async function supabaseRequest(path, { method = "GET", body, prefer } = {}) {
     apikey: SUPABASE_PUBLISHABLE_KEY,
     Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
     "Content-Type": "application/json",
+    "Accept-Profile": SUPABASE_SCHEMA,
+    "Content-Profile": SUPABASE_SCHEMA,
   };
   if (prefer) headers.Prefer = prefer;
 
