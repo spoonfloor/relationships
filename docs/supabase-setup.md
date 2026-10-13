@@ -2,18 +2,17 @@
 
 Puzzles live **only** in Supabase (`published_data` / `draft_data`). The app does not load puzzle JSON files.
 
+The database is a self-hosted Supabase shared with other apps (`https://supabase.erichenry.com`). Relationships’ tables live in their own Postgres schema, `relationships`.
+
 ## 1. Create tables
 
-In [Supabase Dashboard](https://supabase.com/dashboard) → **SQL Editor**, paste and run `supabase/schema.sql`.
+In Studio (`https://supabase.erichenry.com`) → **SQL Editor**, paste and run `supabase/schema.sql`.
 
-If you already ran an older version of the schema, also run:
-
-- `supabase/migrate_password_auth.sql`
-- `supabase/migrate_draft_overlay.sql` (splits live `data` into `published_data` + optional `draft_data`)
+Then expose the schema to the API: on the server, add `relationships` to `PGRST_DB_SCHEMAS` in `~/supabase-project/.env` and run `sh run.sh recreate rest`.
 
 ## 2. Configure the app
 
-Set `SUPABASE_URL` and the publishable key in `public/src/supabaseConfig.js` (or your deployment env).
+Set `SUPABASE_URL`, the public key (the server’s `ANON_KEY`), and `SUPABASE_SCHEMA` in `public/src/supabaseConfig.js`. `scripts/ingest-puzzles.mjs` reads the same file.
 
 ## 3. Set your edit password
 
@@ -29,7 +28,7 @@ The default hash matches the password `change-me` until you replace it.
 
 ## 4. Add puzzles
 
-Use **Add puzzle** in the app, or insert rows directly in the Supabase dashboard. A `debug` row is optional for the debug puzzle shortcut.
+Use **Add puzzle** in the app, or insert rows directly in Studio’s Table Editor (`relationships` schema). A `debug` row is optional for the debug puzzle shortcut.
 
 ## 5. Edit puzzles in the app
 
