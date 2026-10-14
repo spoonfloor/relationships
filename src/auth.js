@@ -1,7 +1,24 @@
-import { ADMIN_PASSWORD_HASH } from "./supabaseConfig.js";
-import { passwordMatchesHash } from "./passwordHash.js";
+import { getSupabase } from "./supabaseClient.js";
 import { openModal } from "./modal.js";
 import { setDisplayText } from "./display.js";
+
+/** Last password entered in the edit prompt; sent with every write. Memory only. */
+let editPassword = "";
+
+export function getEditPassword() {
+  return editPassword;
+}
+
+/** @param {string} password */
+async function passwordIsValid(password) {
+  const supabase = getSupabase();
+  if (!supabase) return false;
+  const { data, error } = await supabase.rpc("verify_edit_password", {
+    p_password: password,
+  });
+  if (error) throw error;
+  return data === true;
+}
 
 function isLocalDev() {
   const host = location.hostname;
@@ -29,8 +46,8 @@ export function promptEditPassword() {
     errorEl.className = "modal__error";
     errorEl.hidden = true;
 
-    function showError() {
-      setDisplayText(errorEl, "Wrong password. Try again.");
+    function showError(message = "Wrong password. Try again.") {
+      setDisplayText(errorEl, message);
       errorEl.hidden = false;
       input.classList.add("modal__input--error");
       input.select();
@@ -43,9 +60,17 @@ export function promptEditPassword() {
 
     async function submitPassword() {
       clearError();
-      const ok =
-        localDev || (await passwordMatchesHash(input.value, ADMIN_PASSWORD_HASH));
+      let ok;
+      try {
+        // Local dev skips the check so the edit UI opens; writes still need the real password.
+        ok = localDev || (await passwordIsValid(input.value));
+      } catch (err) {
+        console.error(err);
+        showError("Could not check the password. Try again.");
+        return;
+      }
       if (ok) {
+        editPassword = input.value;
         settle(true);
         closeModal();
         return;
