@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Parse puzzles-for-upload-formatted.txt and upsert into Supabase.
- * Usage: node scripts/ingest-puzzles.mjs [path-to-formatted.txt]
+ * Parse puzzles-for-upload-formatted.txt and replace all non-debug puzzles in Supabase.
+ * Writes need the server's secret key (the public key is read-only):
+ * Usage: SUPABASE_SECRET_KEY=<SERVICE_ROLE_KEY from the server .env> node scripts/ingest-puzzles.mjs [path-to-formatted.txt]
  */
 import { readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -9,11 +10,9 @@ import {
   parseGlossaryText,
   sortGlossaryEntries,
 } from "../public/src/puzzleSchema.js";
-import {
-  SUPABASE_PUBLISHABLE_KEY,
-  SUPABASE_SCHEMA,
-  SUPABASE_URL,
-} from "../public/src/supabaseConfig.js";
+import { SUPABASE_SCHEMA, SUPABASE_URL } from "../public/src/supabaseConfig.js";
+
+const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 
 const DEBUG_ID = "debug";
 const HEX_RE = /^#[0-9a-fA-F]{6}$/;
@@ -139,8 +138,8 @@ function toPublishedData(puzzle, id) {
 
 async function supabaseRequest(path, { method = "GET", body, prefer } = {}) {
   const headers = {
-    apikey: SUPABASE_PUBLISHABLE_KEY,
-    Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+    apikey: SUPABASE_SECRET_KEY,
+    Authorization: `Bearer ${SUPABASE_SECRET_KEY}`,
     "Content-Type": "application/json",
     "Accept-Profile": SUPABASE_SCHEMA,
     "Content-Profile": SUPABASE_SCHEMA,
@@ -164,6 +163,9 @@ async function supabaseRequest(path, { method = "GET", body, prefer } = {}) {
 }
 
 async function main() {
+  if (!SUPABASE_SECRET_KEY) {
+    throw new Error("Set SUPABASE_SECRET_KEY (SERVICE_ROLE_KEY from the server .env).");
+  }
   const raw = readFileSync(inputPath, "utf8");
   const parsed = parseDocument(raw);
   console.log(`Parsed ${parsed.length} puzzles from ${inputPath}`);

@@ -1,3 +1,4 @@
+import { getEditPassword } from "./auth.js";
 import { getSupabase } from "./supabaseClient.js";
 import { isSupabaseConfigured } from "./supabaseConfig.js";
 import { isPublishedShell } from "./puzzleComposeTemplate.js";
@@ -150,62 +151,47 @@ export async function fetchDebugPuzzle() {
 }
 
 /**
+ * Run a password-checked write function in the database (see supabase/schema.sql).
+ * @param {string} fn
+ * @param {Record<string, unknown>} args
+ */
+async function editorWrite(fn, args) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error("Supabase is not configured");
+
+  const { data, error } = await supabase.rpc(fn, {
+    p_password: getEditPassword(),
+    ...args,
+  });
+  if (error) throw error;
+  return data;
+}
+
+/**
  * @param {object} puzzle Draft puzzle payload (must include id, title).
  * @param {object} publishedShell Minimal published_data for the new row.
  * @param {number} num Catalog sort order.
  */
 export async function createPuzzleRow(puzzle, publishedShell, num) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("puzzles")
-    .insert({
-      id: puzzle.id,
-      num,
-      title: puzzle.title,
-      published_data: publishedShell,
-      draft_data: puzzle,
-      draft_updated_at: now,
-      updated_at: now,
-    })
-    .select("id, num, title, published_data, draft_data, draft_updated_at")
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) throw new Error(`Could not create puzzle "${puzzle.id}"`);
-  return data;
+  return editorWrite("create_puzzle", {
+    p_id: puzzle.id,
+    p_num: num,
+    p_title: puzzle.title,
+    p_published_data: publishedShell,
+    p_draft_data: puzzle,
+  });
 }
 
 export async function savePuzzleDraft(puzzle) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("puzzles")
-    .update({
-      draft_data: puzzle,
-      draft_updated_at: now,
-      updated_at: now,
-    })
-    .eq("id", puzzle.id)
-    .select("id, num, title, published_data, draft_data, draft_updated_at")
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) throw new Error(`Puzzle "${puzzle.id}" not found`);
-  return data;
+  return editorWrite("save_puzzle_draft", {
+    p_id: puzzle.id,
+    p_draft_data: puzzle,
+  });
 }
 
 /** @param {string} id */
 export async function deletePuzzleRow(id) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const { error } = await supabase.from("puzzles").delete().eq("id", id);
-  if (error) throw error;
+  await editorWrite("delete_puzzle", { p_id: id });
 }
 
 /**
@@ -214,106 +200,29 @@ export async function deletePuzzleRow(id) {
  * @param {number} num Catalog sort order.
  */
 export async function insertPublishedPuzzleRow(puzzle, num) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("puzzles")
-    .insert({
-      id: puzzle.id,
-      num,
-      title: puzzle.title,
-      published_data: puzzle,
-      draft_data: null,
-      draft_updated_at: null,
-      updated_at: now,
-    })
-    .select("id, num, title, published_data, draft_data, draft_updated_at")
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) throw new Error(`Could not create puzzle "${puzzle.id}"`);
-  return data;
+  return editorWrite("create_puzzle", {
+    p_id: puzzle.id,
+    p_num: num,
+    p_title: puzzle.title,
+    p_published_data: puzzle,
+    p_draft_data: null,
+  });
 }
 
 /** Publish working content to an existing row; clears any stored draft. */
 export async function updatePublishedPuzzle(puzzle) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("puzzles")
-    .update({
-      published_data: puzzle,
-      title: puzzle.title,
-      draft_data: null,
-      draft_updated_at: null,
-      updated_at: now,
-    })
-    .eq("id", puzzle.id)
-    .select("id, num, title, published_data, draft_data, draft_updated_at")
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) throw new Error(`Puzzle "${puzzle.id}" not found`);
-  return data;
+  return editorWrite("publish_puzzle", {
+    p_id: puzzle.id,
+    p_published_data: puzzle,
+  });
 }
 
 /** Remove stored draft only; published_data is unchanged. */
 export async function clearPuzzleDraft(id) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("puzzles")
-    .update({
-      draft_data: null,
-      draft_updated_at: null,
-      updated_at: now,
-    })
-    .eq("id", id)
-    .select("id, num, title, published_data, draft_data, draft_updated_at")
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) throw new Error(`Puzzle "${id}" not found`);
-  return data;
+  return editorWrite("clear_puzzle_draft", { p_id: id });
 }
 
 /** Promote stored draft (or republish published) when no working copy is supplied. */
 export async function promoteStoredDraft(id) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error("Supabase is not configured");
-
-  const { data: row, error: fetchError } = await supabase
-    .from("puzzles")
-    .select("published_data, draft_data, title")
-    .eq("id", id)
-    .maybeSingle();
-
-  if (fetchError) throw fetchError;
-  if (!row) throw new Error(`Puzzle "${id}" not found`);
-
-  const nextPublished = row.draft_data ?? row.published_data;
-  if (!nextPublished) throw new Error(`Puzzle "${id}" has nothing to publish`);
-
-  const now = new Date().toISOString();
-  const { data, error } = await supabase
-    .from("puzzles")
-    .update({
-      published_data: nextPublished,
-      title: nextPublished.title ?? row.title,
-      draft_data: null,
-      draft_updated_at: null,
-      updated_at: now,
-    })
-    .eq("id", id)
-    .select("id, num, title, published_data, draft_data, draft_updated_at")
-    .maybeSingle();
-
-  if (error) throw error;
-  return data;
+  return editorWrite("promote_puzzle_draft", { p_id: id });
 }

@@ -16,19 +16,19 @@ Set `SUPABASE_URL`, the public key (the server’s `ANON_KEY`), and `SUPABASE_SC
 
 ## 3. Set your edit password
 
-Run this locally (password is not saved anywhere — only the hash is printed):
+In Studio → **SQL Editor**, run (with your password in place of `<password>`):
 
-```bash
-node scripts/hash_admin_password.js
+```sql
+insert into relationships.editor_secret (password_hash)
+values (extensions.crypt('<password>', extensions.gen_salt('bf', 10)))
+on conflict (id) do update set password_hash = excluded.password_hash;
 ```
 
-Copy the hash into `public/src/supabaseConfig.js` as `ADMIN_PASSWORD_HASH`.
-
-The default hash matches the password `change-me` until you replace it.
+Then delete that query from the SQL Editor’s list (Studio autosaves queries). Run it again any time to change the password. Only a bcrypt hash is stored, and the public key can’t read it.
 
 ## 4. Add puzzles
 
-Use **Add puzzle** in the app, or insert rows directly in Studio’s Table Editor (`relationships` schema). A `debug` row is optional for the debug puzzle shortcut.
+Use **Add puzzle** in the app, or `scripts/ingest-puzzles.mjs` for a bulk import (needs `SUPABASE_SECRET_KEY`; see the script). A `debug` row is optional for the debug puzzle shortcut.
 
 ## 5. Edit puzzles in the app
 
@@ -46,10 +46,10 @@ Draft edits live in `draft_data` and do not change the live puzzle until you pub
 4. Re-enter edit → confirm your draft title is still there
 5. **Publish** → live title updates
 
-Password is required every time you enter edit mode.
+Password is required every time you enter edit mode. On `localhost` the prompt accepts anything so the edit UI opens, but saving still needs the real password.
 
 ## Notes
 
-- The password only hides the edit UI. Puzzle writes are open in the database — fine for a solo side project.
+- Anyone can read puzzles. Writes only go through password-checked database functions (`supabase/schema.sql`); the public key can’t insert, update or delete rows directly.
 - Supabase must be configured and reachable; there is no offline or static puzzle fallback.
 - Never commit the Secret / service role key.
