@@ -34,6 +34,7 @@ import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
 import { alert as showAlert, openModal } from "./modal.js";
 import { openSubmitResultsModal } from "./submitResultsModal.js";
+import { openHistorySheet } from "./historySheet.js";
 import { closeActiveOverlay, isOverlayActive } from "./overlay.js";
 import {
   openGlossarySheet,
@@ -527,6 +528,7 @@ function initializePage(state, session, catalog) {
     const hasGuesses = state.guesses.length > 0;
 
     dom.submitBtn.hidden = puzzleComplete;
+    dom.historyBtn.hidden = puzzleComplete || !hasGuesses;
     dom.shareBtn.hidden = !puzzleComplete;
     dom.shuffleBtn.hidden = puzzleComplete;
 
@@ -596,6 +598,9 @@ function initializePage(state, session, catalog) {
   dom.submitBtn.addEventListener("click", () => {
     if (!canSubmitSelection(state)) return;
     handleGameAction(submitSelection(state));
+  });
+  dom.historyBtn.addEventListener("click", () => {
+    openHistorySheet(state.guesses);
   });
   dom.shareBtn.addEventListener("click", () => {
     void handleShareResults();

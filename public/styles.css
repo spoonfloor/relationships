@@ -51,14 +51,18 @@
   --modal-title-font-size: 28px;
   --modal-body-font-size: var(--cta-font-size);
   --cta-comfort-min-width: 120px;
+  --submit-history-width: 50px;
+  --submit-history-divider-opacity: 0.35;
+
+  /* List sheets (glossary, guess history) */
+  --list-sheet-content-margin-h: 36px;
+  --list-sheet-content-margin-v: 36px;
+  --list-sheet-title-gap: 22px;
+  --list-sheet-title-font-family: var(--font-family);
+  --list-sheet-title-font-size: var(--modal-title-font-size);
+  --list-sheet-title-font-weight: 400;
 
   /* Glossary */
-  --glossary-content-margin-h: 36px;
-  --glossary-content-margin-v: 36px;
-  --glossary-title-gap: 22px;
-  --glossary-title-font-family: var(--font-family);
-  --glossary-title-font-size: var(--modal-title-font-size);
-  --glossary-title-font-weight: 400;
   --glossary-term-gap-above: 18px;
   --glossary-term-font-family: var(--word-font-family);
   --glossary-term-font-size: var(--modal-body-font-size);
@@ -68,6 +72,18 @@
   --glossary-definition-font-family: var(--font-family);
   --glossary-definition-font-size: 18px;
   --glossary-definition-font-weight: 200;
+
+  /* Guess history */
+  --history-entry-gap-above: 20px;
+  --history-words-gap-above: 12px;
+  --history-meta-gap: 10px;
+  --history-meta-font-family: var(--font-family);
+  --history-meta-font-size: var(--modal-body-font-size);
+  --history-meta-font-weight: var(--glossary-definition-font-weight);
+  --history-meta-opacity: 0.7;
+  --history-word-font-family: var(--word-font-family);
+  --history-word-font-size: var(--word-font-size);
+  --history-word-font-weight: var(--glossary-term-font-weight);
 
   /* Shared text-input strokes */
   --input-border-width: 1px;
@@ -410,7 +426,7 @@ body::-webkit-scrollbar,
 :is(
   .modal__panel,
   .sheet__panel,
-  .sheet--glossary .sheet__body,
+  .sheet--list .sheet__body,
   .glossary-editor__view,
   .glossary-editor--editing,
   .puzzle-picker,
@@ -1042,6 +1058,51 @@ body.edit-mode .app-bar__menu {
 .btn-secondary[aria-disabled='true']:hover {
   background: var(--cta-secondary-bg);
   color: var(--btn-secondary-disabled-label);
+}
+
+/* History icon reads as part of Submit; a sibling overlay, since buttons can't nest. */
+.submit-split {
+  position: relative;
+}
+
+.submit-split__history {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: var(--submit-history-width);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--cta-primary-color);
+  cursor: pointer;
+}
+
+.submit-split__history[hidden] {
+  display: none;
+}
+
+.submit-split__history::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: currentColor;
+  opacity: var(--submit-history-divider-opacity);
+}
+
+.submit-split__history .material-symbols-outlined {
+  font-variation-settings: 'wght' 300;
+}
+
+/* Submit dims while unavailable; history stays live, so it keeps full-strength text. */
+#submitBtn:disabled + .submit-split__history,
+#submitBtn[aria-disabled='true'] + .submit-split__history {
+  color: var(--text-color);
 }
 
 /* Footer row CTAs share one disabled treatment (play + edit). */
@@ -1765,12 +1826,12 @@ body.edit-mode .play-area {
   line-height: 1.4;
 }
 
-.sheet--glossary .sheet__panel {
+.sheet--list .sheet__panel {
   width: min(100%, var(--page-max-width));
   height: min(70vh, calc(100% - var(--toast-top-gap)));
-  padding: var(--glossary-content-margin-v) var(--glossary-content-margin-h);
+  padding: var(--list-sheet-content-margin-v) var(--list-sheet-content-margin-h);
   padding-bottom: max(
-    var(--glossary-content-margin-v),
+    var(--list-sheet-content-margin-v),
     env(safe-area-inset-bottom)
   );
   display: flex;
@@ -1778,34 +1839,73 @@ body.edit-mode .play-area {
   overflow: hidden;
 }
 
-.sheet--glossary .sheet__header {
+.sheet--list .sheet__header {
   flex-shrink: 0;
-  margin-bottom: var(--glossary-title-gap);
+  margin-bottom: var(--list-sheet-title-gap);
   padding-right: calc(
     var(--toast-close-size) + var(--toast-close-gap-right) * 2
   );
 }
 
-.sheet--glossary .sheet__close {
+.sheet--list .sheet__close {
   position: absolute;
   top: var(--toast-close-gap-top);
   right: var(--toast-close-gap-right);
   z-index: 1;
 }
 
-.sheet--glossary .sheet__title {
-  font-family: var(--glossary-title-font-family);
-  font-size: var(--glossary-title-font-size);
-  font-weight: var(--glossary-title-font-weight);
+.sheet--list .sheet__title {
+  font-family: var(--list-sheet-title-font-family);
+  font-size: var(--list-sheet-title-font-size);
+  font-weight: var(--list-sheet-title-font-weight);
 }
 
-.sheet--glossary .sheet__body {
+.sheet--list .sheet__body {
   min-height: 0;
   flex: 1;
   overflow-y: auto;
+}
+
+.sheet--glossary .sheet__body {
   font-family: var(--glossary-definition-font-family);
   font-size: var(--glossary-definition-font-size);
   font-weight: var(--glossary-definition-font-weight);
+}
+
+.history-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-entry + .history-entry {
+  margin-top: var(--history-entry-gap-above);
+}
+
+.history-entry__meta {
+  display: flex;
+  gap: var(--history-meta-gap);
+  margin: 0;
+  font-family: var(--history-meta-font-family);
+  font-size: var(--history-meta-font-size);
+  font-weight: var(--history-meta-font-weight);
+  font-variant-numeric: tabular-nums;
+  opacity: var(--history-meta-opacity);
+}
+
+/* Four centered columns echo the board grid. */
+.history-entry__words {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: var(--history-words-gap-above);
+  font-family: var(--history-word-font-family);
+  font-size: var(--history-word-font-size);
+  font-weight: var(--history-word-font-weight);
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .glossary-entry + .glossary-entry {

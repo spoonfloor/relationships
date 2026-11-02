@@ -537,7 +537,7 @@ export function openGlossarySheet(puzzle, { editable = false, onChange, title = 
   let closeSheet = null;
   const result = openSheet({
     title,
-    className: "sheet--glossary",
+    className: "sheet--list sheet--glossary",
     onClose: clearActiveGlossaryEditor,
     content(body) {
       if (editable) {

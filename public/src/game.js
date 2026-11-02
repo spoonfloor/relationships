@@ -80,9 +80,9 @@ export function getProximityFeedback(words, wordToGroupMap) {
       return "One away…";
     case "AABB":
     case "AABC":
-      return "Halfway there.";
+      return "Halfway there";
     default:
-      return "Not quite.";
+      return "Not quite";
   }
 }
 
@@ -97,6 +97,7 @@ export function evaluateGuess(state, words) {
       const group = state.wordToGroupMap.get(word);
       return { word, colors: group.colors };
     }),
+    feedback: proximityMessage,
     isCorrect: false,
   };
 
@@ -138,7 +139,7 @@ export function evaluateGuess(state, words) {
 
 function getSetFeedback(result) {
   if (result.ok && result.group) return "Solved!";
-  return result.toastMessage ?? result.message ?? "Not quite.";
+  return result.toastMessage ?? result.message ?? "Not quite";
 }
 
 function resolveSubmitFeedback(results) {
