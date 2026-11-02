@@ -86,7 +86,8 @@ export function getProximityFeedback(words, wordToGroupMap) {
   }
 }
 
-const REPEAT_GUESS_MESSAGE = "You've already tried this. Submit a new guess";
+// Non-breaking space keeps "new guess." together when the line wraps.
+const REPEAT_GUESS_MESSAGE = "You've already tried this. Submit a new guess.";
 
 function isRepeatGuess(state, canonicalWords) {
   return state.guesses.some((guess) =>
