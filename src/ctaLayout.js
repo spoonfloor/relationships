@@ -181,7 +181,43 @@ function isComfortRow(row) {
 }
 
 /**
+ * Spotlight rows: equal columns while the `data-cta-spotlight` button's label
+ * fits one; past that it grows to its natural width and the others split
+ * what's left equally. When the others would no longer fit their labels, the
+ * spotlight wraps onto its own full-width line.
+ *
+ * @param {HTMLElement} row @param {HTMLElement[]} buttons
+ * @param {number} available @param {number} gap
+ */
+function syncSpotlightRow(row, buttons, available, gap) {
+  const spotlight = buttons.find((btn) => btn.hasAttribute("data-cta-spotlight"));
+  const others = buttons.filter((btn) => btn !== spotlight);
+  let wrapped = false;
+
+  if (!spotlight || !others.length) {
+    const width = equalColumnWidth(available, buttons.length, gap);
+    applyCtaRowWidths(buttons, buttons.map(() => width));
+  } else {
+    const [natural, ...otherWidths] = measureNaturalWidths([spotlight, ...others]);
+    const spotlightWidth = Math.max(natural, equalColumnWidth(available, buttons.length, gap));
+    const shared = equalColumnWidth(available - spotlightWidth - gap, others.length, gap);
+    wrapped = shared < Math.max(...otherWidths);
+    const otherWidth = wrapped ? equalColumnWidth(available, others.length, gap) : shared;
+    applyCtaRowWidths(
+      [spotlight, ...others],
+      [wrapped ? available : spotlightWidth, ...others.map(() => otherWidth)]
+    );
+  }
+
+  if (row.classList.contains("cta-row--wrapped") !== wrapped) {
+    row.classList.toggle("cta-row--wrapped", wrapped);
+    syncBottomSheetReserve();
+  }
+}
+
+/**
  * Footer fill rows: equal-width columns across the row.
+ * Spotlight rows: see syncSpotlightRow.
  * Comfort rows (modals/sheets): independent widths — comfort floor for short
  * labels only, full natural width for long labels; equal-pain shrink when tight.
  *
@@ -196,6 +232,11 @@ export function syncCtaRow(row) {
   const gap = getRowGap(row);
   const available = row.clientWidth;
   const count = buttons.length;
+
+  if (row.classList.contains("cta-row--spotlight")) {
+    syncSpotlightRow(row, buttons, available, gap);
+    return;
+  }
 
   if (row.classList.contains("cta-row--fill")) {
     const width = equalColumnWidth(available, count, gap);

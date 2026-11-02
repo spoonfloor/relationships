@@ -526,17 +526,17 @@ function appendGlossaryEditor(parent, puzzle, onChange, onApplyClose) {
 
 /**
  * @param {object} puzzle
- * @param {{ editable?: boolean, onChange?: () => void }} [options]
+ * @param {{ editable?: boolean, onChange?: () => void, title?: string }} [options]
  * @returns {{ close: () => void, dialog: HTMLDialogElement } | null}
  */
-export function openGlossarySheet(puzzle, { editable = false, onChange } = {}) {
+export function openGlossarySheet(puzzle, { editable = false, onChange, title = "Glossary" } = {}) {
   const entries = collectGlossaryEntries(puzzle);
   if (!editable && !entries.length) return null;
 
   /** @type {(() => void) | null} */
   let closeSheet = null;
   const result = openSheet({
-    title: "Glossary",
+    title,
     className: "sheet--glossary",
     onClose: clearActiveGlossaryEditor,
     content(body) {
