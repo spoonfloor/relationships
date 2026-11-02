@@ -23,6 +23,9 @@ export function createInitialState(puzzle) {
     // guesses: array of guess objects
     guesses: [],
 
+    // repeatMessages: rotation for the repeat-guess line; see nextRepeatGuessMessage
+    repeatMessages: { queue: [], last: null },
+
     // glossaryEnabled: boolean
     glossaryEnabled: false,
   };
