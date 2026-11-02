@@ -16,6 +16,7 @@ export function initGameState(state) {
   state.revealedCategories.clear();
   state.revealedWords.clear();
   state.guesses = [];
+  resetRepeatMessages(state);
   clearSelection(state);
   state.wordToGroupMap.clear();
 
@@ -39,6 +40,7 @@ export function resetGameProgress(state) {
   state.revealedCategories.clear();
   state.revealedWords.clear();
   state.guesses = [];
+  resetRepeatMessages(state);
   clearSelection(state);
   for (const item of state.boardWords) {
     item.lockedGroupIndex = null;
@@ -86,8 +88,35 @@ export function getProximityFeedback(words, wordToGroupMap) {
   }
 }
 
-// Non-breaking space keeps "new guess." together when the line wraps.
-const REPEAT_GUESS_MESSAGE = "You've already tried this. Submit a new guess.";
+// The first line's non-breaking space keeps "new guess." together when it wraps.
+const REPEAT_GUESS_MESSAGES = [
+  "You've already tried this. Submit a new guess.",
+  "Déjà vu. Try a different four.",
+  "Something's familiar about that combo… Try again!",
+];
+
+function resetRepeatMessages(state) {
+  state.repeatMessages = { queue: [], last: null };
+}
+
+/**
+ * First pass through the messages is in written order; each later pass is a
+ * fresh shuffle that never opens on the line just shown.
+ */
+function nextRepeatGuessMessage(state) {
+  const rotation = state.repeatMessages;
+  if (!rotation.queue.length) {
+    if (rotation.last == null) {
+      rotation.queue = [...REPEAT_GUESS_MESSAGES];
+    } else {
+      do {
+        rotation.queue = shuffle(REPEAT_GUESS_MESSAGES);
+      } while (rotation.queue[0] === rotation.last);
+    }
+  }
+  rotation.last = rotation.queue.shift();
+  return rotation.last;
+}
 
 function isRepeatGuess(state, canonicalWords) {
   return state.guesses.some((guess) =>
@@ -100,11 +129,8 @@ export function evaluateGuess(state, words) {
 
   // A wrong guess enters history once; resubmitting it is not a new guess.
   if (isRepeatGuess(state, canonicalWordStrings)) {
-    return {
-      ok: false,
-      message: REPEAT_GUESS_MESSAGE,
-      toastMessage: REPEAT_GUESS_MESSAGE,
-    };
+    const message = nextRepeatGuessMessage(state);
+    return { ok: false, message, toastMessage: message };
   }
 
   const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
