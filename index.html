@@ -139,7 +139,12 @@
 
     <footer id="fixed-footer" class="bottom-sheet" aria-label="Game controls">
       <div id="cta-stack-play" class="cta-stack">
-        <button id="submitBtn" class="btn btn-primary btn-block" type="button">Submit</button>
+        <div class="submit-split">
+          <button id="submitBtn" class="btn btn-primary btn-block" type="button">Submit</button>
+          <button id="historyBtn" class="submit-split__history" type="button" aria-label="Guess history" hidden>
+            <span class="material-symbols-outlined" aria-hidden="true">history</span>
+          </button>
+        </div>
         <button id="shareBtn" class="btn btn-primary btn-block" type="button" hidden>Share</button>
         <div class="cta-row cta-row--spotlight">
           <button id="shuffleBtn" class="btn btn-block-half" type="button">Shuffle</button>
