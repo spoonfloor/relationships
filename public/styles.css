@@ -1061,17 +1061,18 @@ body.edit-mode .app-bar__menu {
   background: var(--cta-primary-bg);
 }
 
+/* Disabled primary CTAs drop to the same gray-on-gray as disabled secondaries. */
 #fixed-footer .btn-primary.btn-block:disabled,
 #fixed-footer .btn-primary.btn-block[aria-disabled='true'] {
-  opacity: 1;
-  background: var(--cta-primary-bg);
-  color: var(--cta-primary-color);
+  opacity: 0.68;
+  background: var(--cta-secondary-bg);
+  color: var(--btn-secondary-disabled-label);
   cursor: not-allowed;
 }
 #fixed-footer .btn-primary.btn-block:disabled:hover,
 #fixed-footer .btn-primary.btn-block[aria-disabled='true']:hover {
-  background: var(--cta-primary-bg);
-  color: var(--cta-primary-color);
+  background: var(--cta-secondary-bg);
+  color: var(--btn-secondary-disabled-label);
 }
 
 .btn-secondary {
