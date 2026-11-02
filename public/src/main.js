@@ -40,6 +40,7 @@ import {
   commitActiveGlossaryEditor,
   fillGlossaryDefinitionItem,
 } from "./glossarySheet.js";
+import { initGlossaryLabels, glossaryLabelFor } from "./glossaryLabel.js";
 import { showToast } from "./toast.js";
 import { copyGuessResultsToClipboard } from "./shareResults.js";
 import {
@@ -154,6 +155,7 @@ async function bootstrap() {
     puzzle = createEmptyPuzzle();
   }
 
+  initGlossaryLabels(catalog.puzzles.length);
   const state = createInitialState(puzzle);
   initializePage(state, session, catalog);
   syncAppShellHeight();
@@ -193,9 +195,14 @@ function initializePage(state, session, catalog) {
     dom.glossaryTooltip.style.display = "none";
   }
 
+  function playGlossaryLabel(puzzle) {
+    return glossaryLabelFor(catalog.puzzles.findIndex((entry) => entry.id === puzzle.id));
+  }
+
   function syncGlossaryCta(puzzle) {
     if (!dom.glossaryCtaBtn) return;
     dom.glossaryCtaBtn.hidden = !puzzleHasGlossary(puzzle);
+    setDisplayText(dom.glossaryCtaBtn, playGlossaryLabel(puzzle));
     const row = dom.glossaryCtaBtn.parentElement;
     if (row instanceof HTMLElement) {
       syncCtaRow(row);
@@ -502,7 +509,7 @@ function initializePage(state, session, catalog) {
     applyClear();
   });
   dom.glossaryCtaBtn?.addEventListener("click", () => {
-    openGlossarySheet(state.activePuzzle);
+    openGlossarySheet(state.activePuzzle, { title: playGlossaryLabel(state.activePuzzle) });
   });
   dom.glossaryEditBtn?.addEventListener("click", () => {
     if (!puzzleCompose.isComposeMode()) return;

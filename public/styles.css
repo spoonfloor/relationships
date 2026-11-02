@@ -962,6 +962,10 @@ body.edit-mode .app-bar__menu {
   max-width: 100%;
 }
 
+.cta-row--wrapped {
+  flex-wrap: wrap;
+}
+
 .btn-block {
   width: 100%;
 }
