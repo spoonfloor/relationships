@@ -86,9 +86,27 @@ export function getProximityFeedback(words, wordToGroupMap) {
   }
 }
 
+const REPEAT_GUESS_MESSAGE = "You've already tried this. Submit a new guess";
+
+function isRepeatGuess(state, canonicalWords) {
+  return state.guesses.some((guess) =>
+    guess.canonicalWords.every((word, i) => word === canonicalWords[i]),
+  );
+}
+
 export function evaluateGuess(state, words) {
-  const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
   const canonicalWordStrings = [...words].sort();
+
+  // A wrong guess enters history once; resubmitting it is not a new guess.
+  if (isRepeatGuess(state, canonicalWordStrings)) {
+    return {
+      ok: false,
+      message: REPEAT_GUESS_MESSAGE,
+      toastMessage: REPEAT_GUESS_MESSAGE,
+    };
+  }
+
+  const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
   const shuffledWords = shuffle(words);
 
   const guess = {
