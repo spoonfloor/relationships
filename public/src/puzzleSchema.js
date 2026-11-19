@@ -198,3 +198,51 @@ export function normalizeGlossary(puzzle) {
   sortGlossaryEntries(puzzle.glossary);
   return puzzle;
 }
+
+// Secret set ---------------------------------------------------------------
+// An optional easter-egg set: four board words, usually one decoy from each
+// real set. Stored as positions ({ group, word }) so it survives word edits.
+// Drafts may hold 0–4 picks; play only uses a complete secret set.
+
+export const SECRET_SET_SIZE = 4;
+
+/** @typedef {{ group: number, word: number }} SecretRef */
+
+/** @param {SecretRef} a @param {SecretRef} b */
+export function compareSecretRefs(a, b) {
+  return a.group - b.group || a.word - b.word;
+}
+
+/** "1-B" style label for a board position. @param {SecretRef} ref */
+export function secretRefLabel(ref) {
+  return `${ref.group + 1}-${String.fromCharCode(65 + ref.word)}`;
+}
+
+/** True when the refs are exactly one real set's four words. @param {SecretRef[]} refs */
+export function isWholeSet(refs) {
+  return (
+    refs.length === SECRET_SET_SIZE &&
+    refs.every((ref) => ref.group === refs[0].group)
+  );
+}
+
+/**
+ * The playable secret set, or null when there is none or it is incomplete.
+ * @param {object} puzzle
+ * @returns {{ title: string, words: string[] } | null}
+ */
+export function getPlayableSecret(puzzle) {
+  const refs = puzzle?.secret?.words;
+  if (!Array.isArray(refs) || refs.length !== SECRET_SET_SIZE || isWholeSet(refs)) {
+    return null;
+  }
+  const words = refs.map((ref) => puzzle.groups[ref.group]?.words[ref.word]?.text ?? "");
+  if (words.some((text) => !text.trim())) return null;
+  return { title: puzzle.secret.title ?? "", words };
+}
+
+/** True when the author has picked 1–3 secret words. @param {object} puzzle */
+export function hasPartialSecret(puzzle) {
+  const count = puzzle?.secret?.words?.length ?? 0;
+  return count > 0 && count < SECRET_SET_SIZE;
+}

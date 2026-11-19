@@ -17,6 +17,9 @@ export function createInitialState(puzzle) {
     // foundGroups: array of group objects
     foundGroups: [],
 
+    // secret: { title, canonicalWords } | null — the playable secret set, if any
+    secret: null,
+
     // revealedCategories: Set<number> (indices into puzzle.groups)
     revealedCategories: new Set(),
 

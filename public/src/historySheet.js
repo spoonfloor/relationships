@@ -6,7 +6,7 @@ const compareWords = (a, b) => a.localeCompare(b, undefined, { sensitivity: "bas
 /**
  * Running list of past guesses, newest first. Words only — no group colors,
  * so the sheet never reveals more than each guess's feedback already did.
- * @param {{ canonicalWords: string[], feedback: string }[]} guesses
+ * @param {{ canonicalWords: string[], feedback: string, isSecret?: boolean, secretTitle?: string }[]} guesses
  */
 export function openHistorySheet(guesses) {
   return openSheet({
@@ -17,10 +17,10 @@ export function openHistorySheet(guesses) {
       list.className = "history-list";
 
       for (let i = guesses.length - 1; i >= 0; i--) {
-        const { canonicalWords, feedback } = guesses[i];
+        const { canonicalWords, feedback, isSecret, secretTitle } = guesses[i];
 
         const entry = document.createElement("li");
-        entry.className = "history-entry";
+        entry.className = isSecret ? "history-entry history-entry--secret" : "history-entry";
 
         const meta = document.createElement("p");
         meta.className = "history-entry__meta";
@@ -30,7 +30,9 @@ export function openHistorySheet(guesses) {
         dashEl.setAttribute("aria-hidden", "true");
         dashEl.textContent = "–";
         const feedbackEl = document.createElement("span");
-        setDisplayText(feedbackEl, feedback);
+        // The found dialog already named the secret set, so the title is no spoiler.
+        const title = isSecret ? secretTitle?.trim() : "";
+        setDisplayText(feedbackEl, title ? `${feedback} ${title}` : feedback);
         meta.append(numberEl, dashEl, feedbackEl);
 
         const words = document.createElement("div");

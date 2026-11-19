@@ -1,5 +1,5 @@
 import { shuffle } from "./utils.js";
-import { groupWordTexts, findGroupIndex } from "./puzzleSchema.js";
+import { groupWordTexts, findGroupIndex, getPlayableSecret } from "./puzzleSchema.js";
 import {
   CHUNK_SIZE,
   clearSelection,
@@ -26,8 +26,17 @@ export function initGameState(state) {
     }
   }
 
+  const secret = getPlayableSecret(state.activePuzzle);
+  state.secret = secret ? { title: secret.title, canonicalWords: [...secret.words].sort() } : null;
+
   state.boardWords = pickPuzzleWords(state.activePuzzle)
     .map((word) => ({ word, lockedGroupIndex: null }));
+}
+
+function isSecretGuess(state, canonicalWords) {
+  return Boolean(
+    state.secret?.canonicalWords.every((word, i) => word === canonicalWords[i])
+  );
 }
 
 export function clearSelectionAndReveals(state) {
@@ -88,6 +97,8 @@ export function getProximityFeedback(words, wordToGroupMap) {
   }
 }
 
+const SECRET_FEEDBACK = "Secret set!";
+
 // The first line's non-breaking space keeps "new guess." together when it wraps.
 const REPEAT_GUESS_MESSAGES = [
   "You've already tried this. Submit a new guess.",
@@ -133,8 +144,30 @@ export function evaluateGuess(state, words) {
     return { ok: false, message, toastMessage: message };
   }
 
-  const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
   const shuffledWords = shuffle(words);
+
+  // The secret set is an easter egg: it counts as a guess but solves nothing.
+  if (isSecretGuess(state, canonicalWordStrings)) {
+    state.guesses.push({
+      canonicalWords: canonicalWordStrings,
+      words: shuffledWords.map((word) => ({
+        word,
+        colors: state.wordToGroupMap.get(word).colors,
+      })),
+      feedback: SECRET_FEEDBACK,
+      isCorrect: false,
+      isSecret: true,
+      secretTitle: state.secret.title,
+    });
+    return {
+      ok: false,
+      secret: true,
+      message: "You found the secret set!",
+      toastMessage: SECRET_FEEDBACK,
+    };
+  }
+
+  const proximityMessage = getProximityFeedback(words, state.wordToGroupMap);
 
   const guess = {
     canonicalWords: canonicalWordStrings,
@@ -189,6 +222,10 @@ function getSetFeedback(result) {
 
 function resolveSubmitFeedback(results) {
   if (results.length === 0) {
+    return { mode: /** @type {const} */ ("none") };
+  }
+  // A lone secret set goes straight to its own dialog.
+  if (results.length === 1 && results[0].secret) {
     return { mode: /** @type {const} */ ("none") };
   }
   const allSuccess = results.every((result) => result.ok && result.group);
@@ -286,12 +323,15 @@ export function submitSelection(state) {
 
   const feedback = resolveSubmitFeedback(results);
 
+  const secretFound = results.some((result) => result.secret);
+
   return {
     ok: anySuccess || solved,
     results,
     solved,
     message,
     feedback,
+    secret: secretFound ? { title: state.secret.title } : null,
   };
 }
 

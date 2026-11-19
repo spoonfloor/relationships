@@ -1,4 +1,8 @@
-import { normalizeGlossary } from "./puzzleSchema.js";
+import {
+  SECRET_SET_SIZE,
+  compareSecretRefs,
+  normalizeGlossary,
+} from "./puzzleSchema.js";
 import {
   COMPOSE_PLACEHOLDERS,
   createEmptyPuzzle,
@@ -74,8 +78,47 @@ export function normalizePuzzle(puzzle) {
     normalizeGroup(sourceGroups[gi], gi, template.groups[gi])
   );
 
+  normalizeSecret(puzzle);
   normalizeGlossary(puzzle);
   return puzzle;
+}
+
+function isValidSecretRef(ref) {
+  return (
+    Number.isInteger(ref?.group) && ref.group >= 0 && ref.group < GROUP_COUNT &&
+    Number.isInteger(ref?.word) && ref.word >= 0 && ref.word < WORDS_PER_GROUP
+  );
+}
+
+/**
+ * Keep up to four distinct, in-range picks sorted by set then cell. Drafts may
+ * be partial; play decides playability. An empty secret set is removed.
+ * @param {object} puzzle
+ */
+function normalizeSecret(puzzle) {
+  const base = asObject(puzzle.secret);
+  let title = asString(base.title);
+  if (isPlaceholderValue(title, COMPOSE_PLACEHOLDERS.SECRET_TITLE)) {
+    title = "";
+  }
+
+  const seen = new Set();
+  const words = [];
+  for (const ref of Array.isArray(base.words) ? base.words : []) {
+    if (!isValidSecretRef(ref)) continue;
+    const key = `${ref.group}:${ref.word}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    words.push({ group: ref.group, word: ref.word });
+  }
+  words.sort(compareSecretRefs);
+  words.length = Math.min(words.length, SECRET_SET_SIZE);
+
+  if (!title && words.length === 0) {
+    delete puzzle.secret;
+  } else {
+    puzzle.secret = { title, words };
+  }
 }
 
 /**
