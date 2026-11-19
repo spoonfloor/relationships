@@ -24,6 +24,9 @@ import {
   validateComposePublish,
 } from "./puzzleNormalize.js";
 import { commitActiveGlossaryEditor } from "./glossarySheet.js";
+import { SECRET_SET_SIZE, secretRefLabel } from "./puzzleSchema.js";
+import { openSecretSetPicker } from "./secretSetPicker.js";
+import { setTileText } from "./tileText.js";
 
 /** @typedef {'create' | 'edit'} ComposeVariant */
 
@@ -136,13 +139,16 @@ export function initPuzzleCompose({
 
   function notifyChange() {
     syncComposeWordColors();
+    syncSecretCells();
     syncComposeControls();
     onComposeChange?.();
   }
 
   function syncComposeWordColors() {
     if (!composeVariant) return;
-    const groupBlocks = playAreaEl.querySelectorAll(":scope > .compose-group");
+    const groupBlocks = playAreaEl.querySelectorAll(
+      ":scope > .compose-group:not(.compose-group--secret)"
+    );
     groupBlocks.forEach((block, gi) => {
       const group = getPuzzle().groups[gi];
       const colors = isGroupColorsAssigned(group) ? resolveGroupColors(group) : null;
@@ -285,8 +291,104 @@ export function initPuzzleCompose({
       playAreaEl.appendChild(block);
     }
 
+    playAreaEl.appendChild(renderSecretBlock());
+
     observeTileBoard(puzzleStack);
     syncComposeWordColors();
+    syncSecretCells();
+  }
+
+  /** @type {{ cell: HTMLElement, ref: HTMLElement }[]} */
+  let secretSlots = [];
+
+  /** Fifth row: optional secret set. Cells open the picker instead of editing. */
+  function renderSecretBlock() {
+    const block = document.createElement("div");
+    block.className = "compose-group compose-group--secret";
+
+    const titleRowEl = document.createElement("div");
+    titleRowEl.className = "compose-group-title-row";
+
+    const titleWrapEl = document.createElement("div");
+    titleWrapEl.className = "compose-group-title-wrap";
+
+    const titleEl = document.createElement("div");
+    titleEl.className = "compose-group-title";
+    titleEl.setAttribute("role", "textbox");
+    titleEl.setAttribute("aria-label", "Secret set title");
+    titleWrapEl.appendChild(titleEl);
+
+    bindField({
+      element: titleEl,
+      wrap: titleWrapEl,
+      placeholder: COMPOSE_PLACEHOLDERS.SECRET_TITLE,
+      getValue: () => getPuzzle().secret?.title ?? "",
+      setValue: (value) => {
+        const puzzle = getPuzzle();
+        puzzle.secret = { title: value, words: puzzle.secret?.words ?? [] };
+        notifyChange();
+      },
+    });
+
+    titleRowEl.appendChild(titleWrapEl);
+
+    const wordsRow = document.createElement("div");
+    wordsRow.className = "compose-group-words";
+
+    secretSlots = [];
+    for (let si = 0; si < SECRET_SET_SIZE; si += 1) {
+      const wordWrap = document.createElement("div");
+      wordWrap.className = "compose-word-wrap";
+
+      const cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "word compose-secret-cell";
+      cell.addEventListener("click", openSecretPicker);
+
+      const ref = document.createElement("span");
+      ref.className = "compose-secret-cell__ref";
+      ref.setAttribute("aria-hidden", "true");
+
+      wordWrap.append(cell, ref);
+      wordsRow.appendChild(wordWrap);
+      secretSlots.push({ cell, ref });
+    }
+
+    block.append(titleRowEl, wordsRow);
+    return block;
+  }
+
+  function syncSecretCells() {
+    if (!composeVariant) return;
+    const puzzle = getPuzzle();
+    const refs = puzzle.secret?.words ?? [];
+    secretSlots.forEach(({ cell, ref }, si) => {
+      const pick = refs[si];
+      const text = pick ? puzzle.groups[pick.group]?.words[pick.word]?.text?.trim() : "";
+      const label = pick ? secretRefLabel(pick) : "";
+      cell.classList.toggle("compose-secret-cell--empty", !pick);
+      cell.classList.toggle("compose-secret-cell--placeholder", Boolean(pick) && !text);
+      setTileText(cell, pick ? text || COMPOSE_PLACEHOLDERS.WORD : "+");
+      ref.textContent = label;
+      cell.setAttribute(
+        "aria-label",
+        pick
+          ? `Secret set word ${si + 1}: ${text || "empty"}, ${label}. Change secret set`
+          : `Secret set word ${si + 1}: not picked. Change secret set`
+      );
+    });
+  }
+
+  function openSecretPicker() {
+    commitAllFields();
+    openSecretSetPicker({
+      puzzle: getPuzzle(),
+      onDone: (refs) => {
+        const puzzle = getPuzzle();
+        puzzle.secret = { title: puzzle.secret?.title ?? "", words: refs };
+        notifyChange();
+      },
+    });
   }
 
   function syncAllDisplays() {

@@ -940,6 +940,99 @@ body.edit-mode .app-bar__menu {
   position: relative;
 }
 
+/* Secret set: dashed, unfilled cells that open the picker. */
+.word.compose-secret-cell {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--border);
+  font: inherit;
+  font-family: var(--word-font-family);
+  font-weight: 750;
+  font-size: var(--word-font-size);
+  color: var(--word-tile-text);
+  padding-bottom: 18px;
+}
+
+.word.compose-secret-cell:hover:not(.color-sample):not(.selected) {
+  background: var(--word-tile-bg);
+}
+
+.word.compose-secret-cell--empty,
+.word.compose-secret-cell--placeholder {
+  color: var(--theme-edit-placeholder-blurred);
+}
+
+.word.compose-secret-cell--empty {
+  padding-bottom: 8px;
+}
+
+.compose-secret-cell__ref {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  font-size: 11px;
+  font-weight: 400;
+  text-align: center;
+  color: var(--muted);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.secret-picker__set {
+  margin: 14px 0 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.secret-picker__set:first-child {
+  margin-top: 4px;
+}
+
+.secret-picker__row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.secret-picker__cell {
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 4px;
+  border: none;
+  border-radius: 10px;
+  background: var(--word-tile-bg);
+  color: var(--word-tile-text);
+  font-family: var(--word-font-family);
+  font-size: 13px;
+  font-weight: 750;
+  text-transform: uppercase;
+  line-height: 1.15;
+  hyphens: manual;
+  overflow-wrap: break-word;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.secret-picker__cell--empty {
+  color: var(--theme-edit-placeholder-blurred);
+  font-weight: 400;
+}
+
+.secret-picker__cell--picked {
+  outline: 2px solid var(--theme-edit-primary);
+  outline-offset: 2px;
+}
+
+.secret-picker__cell--error {
+  outline: 2px solid #c0392b;
+  outline-offset: 2px;
+}
+
+.secret-picker__error {
+  line-height: 1.35;
+}
+
 #fixed-footer.bottom-sheet {
   position: fixed;
   left: max(var(--page-column-inset), env(safe-area-inset-left));
@@ -1891,6 +1984,10 @@ body.edit-mode .play-area {
   font-weight: var(--history-meta-font-weight);
   font-variant-numeric: tabular-nums;
   opacity: var(--history-meta-opacity);
+}
+
+.history-entry--secret .history-entry__meta {
+  opacity: 1;
 }
 
 /* Four centered columns echo the board grid. */

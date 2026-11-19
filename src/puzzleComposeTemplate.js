@@ -10,6 +10,7 @@ export const COMPOSE_PLACEHOLDERS = {
   PUZZLE_TITLE: "Add a puzzle title",
   VIGNETTE: "Add a vignette",
   WORD: "?",
+  SECRET_TITLE: "Add title for optional secret set",
 };
 
 /** @param {number} groupIndex 0-based */

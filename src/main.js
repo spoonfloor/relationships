@@ -30,7 +30,11 @@ import {
   clearPlaySurface,
   renderGuesses,
 } from "./render.js";
-import { findGlossaryDefinitions, puzzleHasGlossary } from "./puzzleSchema.js";
+import {
+  findGlossaryDefinitions,
+  hasPartialSecret,
+  puzzleHasGlossary,
+} from "./puzzleSchema.js";
 import { isGroupColorsAssigned, resolveGroupColors, applyGroupColorsToElement } from "./groupColors.js";
 import { alert as showAlert, openModal } from "./modal.js";
 import { openSubmitResultsModal } from "./submitResultsModal.js";
@@ -577,22 +581,33 @@ function initializePage(state, session, catalog) {
     }
     renderStatus(dom, res.message);
 
-    const feedback = res.feedback;
-    if (feedback?.mode === "modal") {
-      openSubmitResultsModal({
-        rows: feedback.rows,
-        onClose: () => {
-          if (isPuzzleComplete(state)) {
-            showResultsPopup();
-          }
-        },
-      });
+    // Dialogs chain: Results → secret set found → Congratulations.
+    const finish = () => {
+      if (isPuzzleComplete(state)) {
+        showResultsPopup();
+      }
+    };
+    const afterResults = res.secret
+      ? () => openSecretFoundModal(res.secret.title, finish)
+      : finish;
+
+    if (res.feedback?.mode === "modal") {
+      openSubmitResultsModal({ rows: res.feedback.rows, onClose: afterResults });
       return;
     }
+    afterResults();
+  }
 
-    if (puzzleComplete) {
-      showResultsPopup();
-    }
+  function openSecretFoundModal(title, onClose) {
+    openModal({
+      title: title.trim()
+        ? `You found the secret set: ${title.trim()}!`
+        : "You found the secret set!",
+      content:
+        "Your picks have something special in common, but alas, they don’t match any of the solutions. Keep going!",
+      actions: [{ label: "Continue", variant: "primary" }],
+      onClose,
+    });
   }
 
   dom.submitBtn.addEventListener("click", () => {
@@ -723,7 +738,11 @@ function initializePage(state, session, catalog) {
       composeReturnTo = null;
       applyPuzzleToUi(result.published);
       renderStatus(dom, "Pick 4–16 words.");
-      showToast("Puzzle published.");
+      showToast(
+        hasPartialSecret(result.published)
+          ? "Published. The secret set wasn’t included — it needs 4 picks. It’s saved in your draft."
+          : "Puzzle published."
+      );
     } catch (err) {
       console.error(err);
       showAlert({ title: "Error", message: err.message });
