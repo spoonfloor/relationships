@@ -23,7 +23,7 @@ export function pickSecretEmoji() {
  * sentence-ending mark. Empty when nothing is left to name the set by.
  * @param {string} title
  */
-function exclaimTitle(title) {
+export function exclaimTitle(title) {
   const trimmed = String(title ?? "").trim();
   if (TERMINAL_PUNCTUATION.test(trimmed.replace(TRAILING_CLOSERS, ""))) return trimmed;
   const stripped = trimmed.replace(DANGLING_PUNCTUATION, "").trimEnd();

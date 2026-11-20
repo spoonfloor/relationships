@@ -48,7 +48,12 @@ import {
 import { initGlossaryLabels, glossaryLabelFor } from "./glossaryLabel.js";
 import { showToast } from "./toast.js";
 import { copyGuessResultsToClipboard, pickShareEmoji } from "./shareResults.js";
-import { formatGuessCount, pickSecretEmoji, secretFoundLine } from "./solveSummary.js";
+import {
+  exclaimTitle,
+  formatGuessCount,
+  pickSecretEmoji,
+  secretFoundLine,
+} from "./solveSummary.js";
 import {
   formatStaticUi,
   setDisplayText,
@@ -601,10 +606,9 @@ function initializePage(state, session, catalog) {
   }
 
   function openSecretFoundModal(title, onClose) {
+    const named = exclaimTitle(title);
     openModal({
-      title: title.trim()
-        ? `You found the secret set: ${title.trim()}!`
-        : "You found the secret set!",
+      title: named ? `You found the secret set: ${named}` : "You found the secret set!",
       content:
         "Your picks have something special in common, but alas, they don’t match any of the solutions. Keep going!",
       actions: [{ label: "Continue", variant: "primary" }],
