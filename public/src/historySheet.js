@@ -30,6 +30,7 @@ export function openHistorySheet(guesses) {
         dashEl.setAttribute("aria-hidden", "true");
         dashEl.textContent = "–";
         const feedbackEl = document.createElement("span");
+        feedbackEl.className = "history-entry__feedback";
         // The found dialog already named the secret set, so the title is no spoiler.
         const title = isSecret ? secretTitle?.trim() : "";
         setDisplayText(feedbackEl, title ? `${feedback} ${title}` : feedback);

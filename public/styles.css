@@ -1347,6 +1347,16 @@ body.edit-mode .play-area {
   display: block;
   white-space: nowrap;
 }
+/* Fallback when no line layout fits at the minimum font size. */
+.word .tile-text--clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--tile-max-lines, 3);
+  line-clamp: var(--tile-max-lines, 3);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
 .word.color-sample:hover:not(.color-sample--separated),
 .word.selected:hover:not(.color-sample) {
   filter: brightness(0.96);
@@ -1463,6 +1473,13 @@ body.edit-mode .play-area {
 .groupTitle {
   font-weight: 900;
   margin-bottom: 6px;
+  /* Titles are capped at input; this only catches older, longer ones. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 .groupWords {
   color: var(--muted);
@@ -1988,6 +2005,16 @@ body.edit-mode .play-area {
 
 .history-entry--secret .history-entry__meta {
   opacity: 1;
+}
+
+/* Feedback carries the secret set title; clamp like other set titles. */
+.history-entry__feedback {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  min-width: 0;
 }
 
 /* Four centered columns echo the board grid. */

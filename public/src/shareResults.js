@@ -1,5 +1,6 @@
 import { resolveGroupColors } from "./groupColors.js";
 import { paintLogoSwatches } from "./logoSwatches.js";
+import { formatGuessCount } from "./solveSummary.js";
 
 /** Layout tokens from share-mockup.html */
 const CONTENT_WIDTH = 420;
@@ -12,6 +13,8 @@ const COUNT_WEIGHT = 400;
 const TITLE_SIZE = 40;
 const COUNT_SIZE = 36;
 const TITLE_LINE_HEIGHT = TITLE_SIZE * 1.2;
+/** Titles are capped at input; this only catches older, longer ones. */
+const MAX_TITLE_LINES = 4;
 
 const LOGO_GAP_BELOW = 38;
 const COUNT_GAP_ABOVE = 26;
@@ -105,6 +108,27 @@ function wrapText(ctx, text, maxWidth) {
   return lines;
 }
 
+/**
+ * Keep the first `maxLines` lines; if any were dropped, end the last kept
+ * line with “…”, trimming words until it fits.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {string[]} lines
+ * @param {number} maxLines
+ * @param {number} maxWidth
+ */
+function clampLines(ctx, lines, maxLines, maxWidth) {
+  if (lines.length <= maxLines) return lines;
+  const kept = lines.slice(0, maxLines);
+  const words = kept[maxLines - 1].split(" ");
+  let last = `${words.join(" ")}…`;
+  while (words.length > 1 && ctx.measureText(last).width > maxWidth) {
+    words.pop();
+    last = `${words.join(" ")}…`;
+  }
+  kept[maxLines - 1] = last;
+  return kept;
+}
+
 async function loadShareLogoSvgText() {
   if (!shareLogoSvgTextPromise) {
     shareLogoSvgTextPromise = fetch(SHARE_LOGO_HREF, { cache: "no-store" }).then(async (res) => {
@@ -171,8 +195,7 @@ export async function renderGuessShareCanvas({ guesses, title = "", groups = [],
 
   const rowCount = guesses.length;
   const resolvedEmoji = emoji ?? pickShareEmoji(rowCount);
-  const guessLabel = rowCount === 1 ? "guess" : "guesses";
-  const countText = `Solved in ${rowCount} ${guessLabel} ${resolvedEmoji}`;
+  const countText = `Solved in ${formatGuessCount(rowCount)} ${resolvedEmoji}`;
 
   await Promise.all([
     document.fonts.load(`${TITLE_WEIGHT} ${TITLE_SIZE}px Inter`),
@@ -186,7 +209,12 @@ export async function renderGuessShareCanvas({ guesses, title = "", groups = [],
   const measureCtx = measureCanvas.getContext("2d");
   if (!measureCtx) throw new Error("Canvas is not supported.");
   measureCtx.font = `${TITLE_WEIGHT} ${TITLE_SIZE}px Inter, sans-serif`;
-  const titleLines = wrapText(measureCtx, title, CONTENT_WIDTH);
+  const titleLines = clampLines(
+    measureCtx,
+    wrapText(measureCtx, title, CONTENT_WIDTH),
+    MAX_TITLE_LINES,
+    CONTENT_WIDTH
+  );
   const titleBlockHeight = titleLines.length
     ? titleLines.length * TITLE_LINE_HEIGHT
     : 0;
