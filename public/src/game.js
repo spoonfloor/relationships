@@ -28,7 +28,9 @@ export function initGameState(state) {
   }
 
   const secret = getPlayableSecret(state.activePuzzle);
-  state.secret = secret ? { title: secret.title, canonicalWords: [...secret.words].sort() } : null;
+  state.secret = secret
+    ? { title: secret.title, emoji: secret.emoji, canonicalWords: [...secret.words].sort() }
+    : null;
 
   state.boardWords = pickPuzzleWords(state.activePuzzle)
     .map((word) => ({ word, lockedGroupIndex: null }));
@@ -160,6 +162,7 @@ export function evaluateGuess(state, words) {
       isCorrect: false,
       isSecret: true,
       secretTitle: state.secret.title,
+      secretEmoji: state.secret.emoji,
     });
     return {
       ok: false,

@@ -14,6 +14,11 @@ export function formatGuessCount(n) {
   return `${n.toLocaleString("en-US")} ${n === 1 ? "guess" : "guesses"}`;
 }
 
+/** The random pool as one string, for copy that lists it. */
+export function formatSecretEmojiPool() {
+  return SECRET_EMOJIS.join("");
+}
+
 export function pickSecretEmoji() {
   return SECRET_EMOJIS[Math.floor(Math.random() * SECRET_EMOJIS.length)];
 }

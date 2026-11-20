@@ -90,6 +90,16 @@ function isValidSecretRef(ref) {
   );
 }
 
+/** @param {string} text */
+function isSingleGrapheme(text) {
+  const segments = new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(text);
+  let count = 0;
+  for (const _ of segments) {
+    if (++count > 1) return false;
+  }
+  return count === 1;
+}
+
 /**
  * Keep up to four distinct, in-range picks sorted by set then cell. Drafts may
  * be partial; play decides playability. An empty secret set is removed.
@@ -114,10 +124,14 @@ function normalizeSecret(puzzle) {
   words.sort(compareSecretRefs);
   words.length = Math.min(words.length, SECRET_SET_SIZE);
 
-  if (!title && words.length === 0) {
+  // One emoji (a single grapheme) or nothing; anything else is dropped.
+  const emoji = asString(base.emoji).trim();
+  const hasEmoji = emoji !== "" && isSingleGrapheme(emoji);
+
+  if (!title && words.length === 0 && !hasEmoji) {
     delete puzzle.secret;
   } else {
-    puzzle.secret = { title, words };
+    puzzle.secret = { title, words, ...(hasEmoji ? { emoji } : {}) };
   }
 }
 
