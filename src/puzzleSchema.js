@@ -199,6 +199,14 @@ export function normalizeGlossary(puzzle) {
   return puzzle;
 }
 
+// Text limits --------------------------------------------------------------
+// Character caps enforced in compose. Sized so display never truncates
+// conforming text; display clamps only catch older data that predates them.
+
+export const MAX_WORD_LENGTH = 30;
+export const MAX_SET_TITLE_LENGTH = 80;
+export const MAX_PUZZLE_TITLE_LENGTH = 60;
+
 // Secret set ---------------------------------------------------------------
 // An optional easter-egg set: four board words, usually one decoy from each
 // real set. Stored as positions ({ group, word }) so it survives word edits.

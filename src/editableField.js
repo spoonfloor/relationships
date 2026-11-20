@@ -23,6 +23,7 @@ import { resetTileTextFit, setTileText } from "./tileText.js";
  *   isActive?: () => boolean,
  *   tileText?: boolean,
  *   onFocusChange?: (focused: boolean) => void,
+ *   maxLength?: number,
  * }} options
  */
 export function bindEditableField({
@@ -35,6 +36,7 @@ export function bindEditableField({
   isActive = () => true,
   tileText = false,
   onFocusChange,
+  maxLength = Infinity,
 }) {
   const abort = new AbortController();
   const { signal } = abort;
@@ -42,6 +44,42 @@ export function bindEditableField({
   let destroyed = false;
   /** Set when beforeinput clears a placeholder ahead of the paste event. */
   let replacePlaceholderOnPaste = false;
+
+  const isLimited = Number.isFinite(maxLength);
+
+  /** Counts code points, so an emoji is one character, not two. */
+  function countChars(text) {
+    return Array.from(text).length;
+  }
+
+  function clampChars(text, limit) {
+    const chars = Array.from(text);
+    return chars.length > limit ? chars.slice(0, limit).join("") : text;
+  }
+
+  /** Characters that still fit at the caret, counting a selection as replaced. */
+  function remainingCapacity() {
+    const current = countChars(element.textContent ?? "");
+    const sel = window.getSelection();
+    const selected =
+      sel && sel.rangeCount > 0 && element.contains(sel.anchorNode)
+        ? countChars(sel.toString())
+        : 0;
+    return Math.max(0, maxLength - (current - selected));
+  }
+
+  function normalizeLineBreaks(text) {
+    return allowMultiline ? text : text.replace(/\r?\n/g, " ");
+  }
+
+  /** Fallback for inserts the beforeinput guard can't size (drop, IME). */
+  function enforceMaxLength() {
+    if (!isLimited || isShowingPlaceholder()) return;
+    const text = element.textContent ?? "";
+    if (countChars(text) <= maxLength) return;
+    element.textContent = clampChars(text, maxLength);
+    placeCaretAtEnd(element);
+  }
 
   element.contentEditable = "true";
   element.dataset.placeholder = placeholder;
@@ -94,14 +132,11 @@ export function bindEditableField({
     // textContent reads DOM text as stored; innerText reflects CSS such as text-transform.
     const raw = (element.textContent ?? "").replace(/\n$/, "").trim();
     if (!raw || raw.toLowerCase() === placeholder.toLowerCase()) return "";
-    return raw;
+    return clampChars(raw, maxLength);
   }
 
   function applyEditedText(text) {
-    let next = text ?? "";
-    if (!allowMultiline) {
-      next = next.replace(/\r?\n/g, " ");
-    }
+    const next = clampChars(normalizeLineBreaks(text ?? ""), maxLength);
     element.classList.remove("editable-field--placeholder");
     element.textContent = next;
     placeCaretAtEnd(element);
@@ -260,10 +295,44 @@ export function bindEditableField({
     { signal }
   );
 
+  if (isLimited) {
+    // Typing past the cap inserts only what fits; whole-text paste is trimmed
+    // to the room left at the caret, so the overflow never lands.
+    element.addEventListener(
+      "beforeinput",
+      (event) => {
+        if (event.defaultPrevented || !isActive() || isShowingPlaceholder()) return;
+        if (event.isComposing) return;
+        if (!event.inputType.startsWith("insert") || typeof event.data !== "string") return;
+        const room = remainingCapacity();
+        if (countChars(event.data) <= room) return;
+        event.preventDefault();
+        if (room > 0) document.execCommand("insertText", false, clampChars(event.data, room));
+      },
+      { signal }
+    );
+
+    element.addEventListener(
+      "paste",
+      (event) => {
+        // The placeholder paste handler above already took this one.
+        if (event.defaultPrevented || !isActive() || isShowingPlaceholder()) return;
+        event.preventDefault();
+        const text = normalizeLineBreaks(event.clipboardData?.getData("text/plain") ?? "");
+        const fitted = clampChars(text, remainingCapacity());
+        if (fitted) document.execCommand("insertText", false, fitted);
+      },
+      { signal }
+    );
+
+    element.addEventListener("compositionend", enforceMaxLength, { signal });
+  }
+
   element.addEventListener(
     "input",
-    () => {
+    (event) => {
       if (!isActive() || isShowingPlaceholder()) return;
+      if (!(event instanceof InputEvent && event.isComposing)) enforceMaxLength();
       const committed = readCommittedText();
       if (!committed) {
         showPlaceholder();

@@ -24,7 +24,13 @@ import {
   validateComposePublish,
 } from "./puzzleNormalize.js";
 import { commitActiveGlossaryEditor } from "./glossarySheet.js";
-import { SECRET_SET_SIZE, secretRefLabel } from "./puzzleSchema.js";
+import {
+  MAX_PUZZLE_TITLE_LENGTH,
+  MAX_SET_TITLE_LENGTH,
+  MAX_WORD_LENGTH,
+  SECRET_SET_SIZE,
+  secretRefLabel,
+} from "./puzzleSchema.js";
 import { openSecretSetPicker } from "./secretSetPicker.js";
 import { setTileText } from "./tileText.js";
 
@@ -221,6 +227,7 @@ export function initPuzzleCompose({
         element: titleEl,
         wrap: titleWrapEl,
         placeholder: groupTitlePlaceholder(gi),
+        maxLength: MAX_SET_TITLE_LENGTH,
         getValue: () => getPuzzle().groups[gi].title ?? "",
         setValue: (value) => {
           getPuzzle().groups[gi].title = value;
@@ -270,6 +277,7 @@ export function initPuzzleCompose({
           wrap: wordWrap,
           placeholder: wordPlaceholder(gi, wi),
           tileText: true,
+          maxLength: MAX_WORD_LENGTH,
           onFocusChange: () => syncComposeWordColors(),
           getValue: () => {
             const text = getPuzzle().groups[gi].words[wi].text ?? "";
@@ -322,6 +330,7 @@ export function initPuzzleCompose({
       element: titleEl,
       wrap: titleWrapEl,
       placeholder: COMPOSE_PLACEHOLDERS.SECRET_TITLE,
+      maxLength: MAX_SET_TITLE_LENGTH,
       getValue: () => getPuzzle().secret?.title ?? "",
       setValue: (value) => {
         const puzzle = getPuzzle();
@@ -405,6 +414,7 @@ export function initPuzzleCompose({
         element: puzzleTitleEl,
         wrap: titleWrap,
         placeholder: COMPOSE_PLACEHOLDERS.PUZZLE_TITLE,
+        maxLength: MAX_PUZZLE_TITLE_LENGTH,
         getValue: () => getPuzzle().title ?? "",
         setValue: (value) => {
           getPuzzle().title = value;

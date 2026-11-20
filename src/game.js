@@ -16,6 +16,7 @@ export function initGameState(state) {
   state.revealedCategories.clear();
   state.revealedWords.clear();
   state.guesses = [];
+  state.solveEmoji = null;
   resetRepeatMessages(state);
   clearSelection(state);
   state.wordToGroupMap.clear();
@@ -49,6 +50,7 @@ export function resetGameProgress(state) {
   state.revealedCategories.clear();
   state.revealedWords.clear();
   state.guesses = [];
+  state.solveEmoji = null;
   resetRepeatMessages(state);
   clearSelection(state);
   for (const item of state.boardWords) {

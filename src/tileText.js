@@ -83,6 +83,18 @@ function renderTileLines(element, lines) {
   element.appendChild(textWrap);
 }
 
+/** @param {HTMLElement} element @param {string} word */
+function renderClampedTileText(element, word) {
+  clearTileLayout(element);
+  const { height: maxHeight } = readTileContentBox(element);
+  const maxLines = Math.max(1, Math.floor(maxHeight / readTileLineHeightPx(element)));
+  const textWrap = document.createElement("span");
+  textWrap.className = `${TILE_TEXT_CLASS} ${TILE_TEXT_CLASS}--clamped`;
+  textWrap.style.setProperty("--tile-max-lines", String(maxLines));
+  textWrap.textContent = word;
+  element.appendChild(textWrap);
+}
+
 /** @param {HTMLElement} element */
 function readTileLineHeightPx(element) {
   const lineHeight = parseFloat(getComputedStyle(element).lineHeight);
@@ -168,8 +180,10 @@ export function fitTileText(element) {
     renderTileLines(element, bestLayout);
     element.style.fontSize = `${sizePx}px`;
   } else {
-    renderTileLines(element, [word]);
+    // Too long even at the floor size: wrap freely and end in an ellipsis
+    // rather than clipping mid-glyph.
     element.style.fontSize = `${MIN_TILE_FONT_PX}px`;
+    renderClampedTileText(element, word);
   }
 
   element.dataset.tileFitted = "true";

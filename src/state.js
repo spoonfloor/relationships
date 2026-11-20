@@ -26,6 +26,10 @@ export function createInitialState(puzzle) {
     // guesses: array of guess objects
     guesses: [],
 
+    // solveEmoji: string | null — picked once on solve so the win modal and
+    // every share of that solve show the same emoji
+    solveEmoji: null,
+
     // repeatMessages: rotation for the repeat-guess line; see nextRepeatGuessMessage
     repeatMessages: { queue: [], last: null },
 

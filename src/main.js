@@ -47,7 +47,8 @@ import {
 } from "./glossarySheet.js";
 import { initGlossaryLabels, glossaryLabelFor } from "./glossaryLabel.js";
 import { showToast } from "./toast.js";
-import { copyGuessResultsToClipboard } from "./shareResults.js";
+import { copyGuessResultsToClipboard, pickShareEmoji } from "./shareResults.js";
+import { formatGuessCount, pickSecretEmoji, secretFoundLine } from "./solveSummary.js";
 import {
   formatStaticUi,
   setDisplayText,
@@ -559,6 +560,7 @@ function initializePage(state, session, catalog) {
         guesses: state.guesses,
         title: state.activePuzzle?.title ?? "",
         groups: state.activePuzzle?.groups ?? [],
+        emoji: getSolveEmoji(),
       });
       showToast("Results copied to clipboard");
     } catch (err) {
@@ -631,6 +633,12 @@ function initializePage(state, session, catalog) {
     winModalTimer = null;
   }
 
+  /** Share and the win modal only appear once solved, so the count is final. */
+  function getSolveEmoji() {
+    state.solveEmoji ??= pickShareEmoji(state.guesses.length);
+    return state.solveEmoji;
+  }
+
   function showResultsPopup() {
     cancelWinModalTimer();
     const generation = playSessionGeneration;
@@ -643,8 +651,21 @@ function initializePage(state, session, catalog) {
         title: "Congratulations!",
         content: (bodyEl) => {
           const summary = document.createElement("p");
-          setDisplayText(summary, `You solved the puzzle in ${guesses.length} guesses.`);
+          setDisplayText(
+            summary,
+            `Solved in ${formatGuessCount(guesses.length)}. ${getSolveEmoji()}`
+          );
           bodyEl.appendChild(summary);
+
+          const secretGuess = guesses.find((guess) => guess.isSecret);
+          if (secretGuess) {
+            const secretEl = document.createElement("p");
+            setDisplayText(
+              secretEl,
+              secretFoundLine(secretGuess.secretTitle ?? "", pickSecretEmoji())
+            );
+            bodyEl.appendChild(secretEl);
+          }
 
           const guessesEl = document.createElement("div");
           guessesEl.className = "minigrid";
