@@ -237,7 +237,7 @@ export function isWholeSet(refs) {
 /**
  * The playable secret set, or null when there is none or it is incomplete.
  * @param {object} puzzle
- * @returns {{ title: string, words: string[] } | null}
+ * @returns {{ title: string, words: string[], emoji: string } | null}
  */
 export function getPlayableSecret(puzzle) {
   const refs = puzzle?.secret?.words;
@@ -246,7 +246,7 @@ export function getPlayableSecret(puzzle) {
   }
   const words = refs.map((ref) => puzzle.groups[ref.group]?.words[ref.word]?.text ?? "");
   if (words.some((text) => !text.trim())) return null;
-  return { title: puzzle.secret.title ?? "", words };
+  return { title: puzzle.secret.title ?? "", words, emoji: puzzle.secret.emoji ?? "" };
 }
 
 /** True when the author has picked 1–3 secret words. @param {object} puzzle */

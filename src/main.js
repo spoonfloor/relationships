@@ -666,7 +666,10 @@ function initializePage(state, session, catalog) {
             const secretEl = document.createElement("p");
             setDisplayText(
               secretEl,
-              secretFoundLine(secretGuess.secretTitle ?? "", pickSecretEmoji())
+              secretFoundLine(
+                secretGuess.secretTitle ?? "",
+                secretGuess.secretEmoji || pickSecretEmoji()
+              )
             );
             bodyEl.appendChild(secretEl);
           }

@@ -905,6 +905,16 @@ body.edit-mode .app-bar__menu {
   background: var(--word-tile-bg);
 }
 
+/* Secret set emoji button: the picked emoji replaces the icon, outlined. */
+.compose-group-emoji-btn--picked {
+  box-shadow: 0 0 0 2px var(--input-focus-stroke-color, var(--accent));
+}
+
+.compose-group-emoji-btn__glyph {
+  font-size: 24px;
+  line-height: 1;
+}
+
 .compose-group-title {
   font-size: calc(var(--puzzle-title-font-size) + 0.5px);
   font-weight: var(--puzzle-title-font-weight);
@@ -1974,6 +1984,167 @@ body.edit-mode .play-area {
   min-height: 0;
   flex: 1;
   overflow-y: auto;
+}
+
+/* Secret set emoji picker. Subtitle, pick bar and search stay put; only
+   the grid scrolls. */
+/* Taller than other list sheets so the grid shows more than a few rows. */
+.sheet--emoji .sheet__panel {
+  height: min(88vh, calc(100% - var(--toast-top-gap)));
+  max-height: min(88vh, calc(100% - var(--toast-top-gap)));
+}
+
+.emoji-sheet__pool {
+  white-space: nowrap;
+}
+
+.sheet--emoji .sheet__body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.emoji-sheet__subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.emoji-sheet__pinned {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.emoji-sheet__pick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+}
+
+.emoji-sheet__pick-tile {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--word-tile-bg);
+  box-shadow: 0 0 0 2px var(--input-focus-stroke-color, var(--accent));
+  font-size: 30px;
+  line-height: 1;
+}
+
+.emoji-sheet__pick-tile--empty {
+  background: transparent;
+  box-shadow: none;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.emoji-sheet__pick-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.emoji-sheet__pick-name {
+  font-size: 16px;
+}
+
+.emoji-sheet__pick-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.emoji-sheet__clear {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  font-size: 15px;
+}
+
+.emoji-sheet__search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-color);
+  font: inherit;
+  font-size: 16px; /* 16px keeps iOS from zooming on focus */
+  outline: none;
+}
+
+.emoji-sheet__search:focus {
+  border-color: var(--input-focus-stroke-color, var(--text-color));
+}
+
+.emoji-sheet__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 8px;
+}
+
+.emoji-sheet__section {
+  margin: 16px 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* As many 44px tap targets as fit; wider screens get more columns, not
+   wider cells. */
+.emoji-sheet__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 2px;
+}
+
+.emoji-sheet__cell {
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.emoji-sheet__cell:hover {
+  background: var(--word-tile-bg);
+}
+
+.emoji-sheet__cell--picked,
+.emoji-sheet__cell--picked:hover {
+  background: var(--word-tile-bg);
+  box-shadow: inset 0 0 0 2px var(--input-focus-stroke-color, var(--accent));
+}
+
+.emoji-sheet__empty {
+  margin: 0;
+  padding: 40px 12px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.emoji-sheet__footer {
+  flex-shrink: 0;
+  padding-top: 12px;
 }
 
 .sheet--glossary .sheet__body {

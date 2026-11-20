@@ -32,6 +32,7 @@ import {
   secretRefLabel,
 } from "./puzzleSchema.js";
 import { openSecretSetPicker } from "./secretSetPicker.js";
+import { openSecretEmojiSheet } from "./secretEmojiSheet.js";
 import { setTileText } from "./tileText.js";
 
 /** @typedef {'create' | 'edit'} ComposeVariant */
@@ -308,6 +309,18 @@ export function initPuzzleCompose({
 
   /** @type {{ cell: HTMLElement, ref: HTMLElement }[]} */
   let secretSlots = [];
+  /** @type {HTMLButtonElement | null} */
+  let secretEmojiBtn = null;
+
+  // “Add reaction” (smiley with +). Inline because the bundled icon font is a
+  // subset without that glyph.
+  const ADD_EMOJI_ICON =
+    '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">' +
+    '<path d="M20.5 11.5a8.5 8.5 0 1 1-8-8.49"/>' +
+    '<circle cx="9" cy="10" r="0.6" fill="currentColor"/>' +
+    '<circle cx="15" cy="10" r="0.6" fill="currentColor"/>' +
+    '<path d="M8.5 14.5c.9 1.3 2.1 2 3.5 2s2.6-.7 3.5-2"/>' +
+    '<path d="M19 2.5v5M16.5 5h5"/></svg>';
 
   /** Fifth row: optional secret set. Cells open the picker instead of editing. */
   function renderSecretBlock() {
@@ -334,12 +347,21 @@ export function initPuzzleCompose({
       getValue: () => getPuzzle().secret?.title ?? "",
       setValue: (value) => {
         const puzzle = getPuzzle();
-        puzzle.secret = { title: value, words: puzzle.secret?.words ?? [] };
+        puzzle.secret = { ...puzzle.secret, title: value, words: puzzle.secret?.words ?? [] };
         notifyChange();
       },
     });
 
-    titleRowEl.appendChild(titleWrapEl);
+    // Same slot as a standard set’s palette button.
+    const emojiWrapEl = document.createElement("div");
+    emojiWrapEl.className = "compose-group-colors-wrap";
+    secretEmojiBtn = document.createElement("button");
+    secretEmojiBtn.type = "button";
+    secretEmojiBtn.className = "compose-group-colors-btn compose-group-emoji-btn";
+    secretEmojiBtn.addEventListener("click", openSecretEmojiPicker);
+    emojiWrapEl.appendChild(secretEmojiBtn);
+
+    titleRowEl.append(titleWrapEl, emojiWrapEl);
 
     const wordsRow = document.createElement("div");
     wordsRow.className = "compose-group-words";
@@ -367,8 +389,42 @@ export function initPuzzleCompose({
     return block;
   }
 
+  function syncSecretEmojiButton() {
+    if (!secretEmojiBtn) return;
+    const emoji = getPuzzle().secret?.emoji ?? "";
+    secretEmojiBtn.classList.toggle("compose-group-emoji-btn--picked", Boolean(emoji));
+    if (emoji) {
+      const glyph = document.createElement("span");
+      glyph.className = "compose-group-emoji-btn__glyph";
+      glyph.setAttribute("aria-hidden", "true");
+      glyph.textContent = emoji;
+      secretEmojiBtn.replaceChildren(glyph);
+      secretEmojiBtn.setAttribute("aria-label", `Secret set emoji: ${emoji}. Change`);
+    } else {
+      secretEmojiBtn.innerHTML = ADD_EMOJI_ICON;
+      secretEmojiBtn.setAttribute("aria-label", "Pick secret set emoji");
+    }
+  }
+
+  function openSecretEmojiPicker() {
+    commitAllFields();
+    openSecretEmojiSheet({
+      title: getPuzzle().secret?.title ?? "",
+      getEmoji: () => getPuzzle().secret?.emoji ?? "",
+      setEmoji: (emoji) => {
+        const puzzle = getPuzzle();
+        const next = { title: "", words: [], ...puzzle.secret };
+        if (emoji) next.emoji = emoji;
+        else delete next.emoji;
+        puzzle.secret = next;
+        notifyChange();
+      },
+    });
+  }
+
   function syncSecretCells() {
     if (!composeVariant) return;
+    syncSecretEmojiButton();
     const puzzle = getPuzzle();
     const refs = puzzle.secret?.words ?? [];
     secretSlots.forEach(({ cell, ref }, si) => {
@@ -394,7 +450,7 @@ export function initPuzzleCompose({
       puzzle: getPuzzle(),
       onDone: (refs) => {
         const puzzle = getPuzzle();
-        puzzle.secret = { title: puzzle.secret?.title ?? "", words: refs };
+        puzzle.secret = { ...puzzle.secret, title: puzzle.secret?.title ?? "", words: refs };
         notifyChange();
       },
     });
