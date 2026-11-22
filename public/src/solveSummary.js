@@ -36,12 +36,22 @@ export function exclaimTitle(title) {
 }
 
 /**
+ * Joins with a no-break space so the emoji wraps with the last word
+ * instead of landing alone on its own line.
+ * @param {string} text
+ * @param {string} emoji
+ */
+export function withTrailingEmoji(text, emoji) {
+  return `${text}\u00A0${emoji}`;
+}
+
+/**
  * @param {string} title secret set title (may be empty)
  * @param {string} emoji
  */
 export function secretFoundLine(title, emoji) {
   const named = exclaimTitle(title);
   return named
-    ? `Found the secret set: ${named} ${emoji}`
-    : `Found the secret set! ${emoji}`;
+    ? withTrailingEmoji(`Found the secret set: ${named}`, emoji)
+    : withTrailingEmoji("Found the secret set!", emoji);
 }
