@@ -2120,7 +2120,7 @@ body.edit-mode .play-area {
 }
 
 .emoji-sheet__cell {
-  height: 44px;
+  aspect-ratio: 1;
   padding: 0;
   border: none;
   border-radius: 10px;
