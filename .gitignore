@@ -84,3 +84,6 @@ firebase.json
 .firebaserc
 public/404.html
 
+
+# Local design mockups (not deployed)
+public/mockups/
