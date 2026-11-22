@@ -153,15 +153,17 @@ function searchEmoji(entries, query) {
 }
 
 /**
- * Pick the secret set’s emoji. Taps save immediately; Done, ✕, Escape and
- * the backdrop all just close.
+ * Pick the secret set’s emoji. Taps and Clear only change the sheet’s draft;
+ * Done saves it. ✕, Escape and the backdrop close without saving.
  * @param {object} options
  * @param {string} options.title secret set title, for suggestions
- * @param {() => string} options.getEmoji
- * @param {(emoji: string) => void} options.setEmoji "" clears the pick
+ * @param {string} options.emoji the saved pick; "" when nothing is picked
+ * @param {(emoji: string) => void} options.onDone called only when the pick
+ *   changed; "" clears it
  * @param {() => void} [options.onClose]
  */
-export function openSecretEmojiSheet({ title, getEmoji, setEmoji, onClose }) {
+export function openSecretEmojiSheet({ title, emoji: savedEmoji, onDone, onClose }) {
+  let draftEmoji = savedEmoji;
   /** @type {Map<string, EmojiEntry>} */
   let byEmoji = new Map();
   /** @type {EmojiEntry[]} */
@@ -208,13 +210,16 @@ export function openSecretEmojiSheet({ title, getEmoji, setEmoji, onClose }) {
       doneBtn.type = "button";
       doneBtn.className = "btn btn-primary btn-block";
       setDisplayText(doneBtn, "Done");
-      doneBtn.addEventListener("click", () => sheet.close());
+      doneBtn.addEventListener("click", () => {
+        if (draftEmoji !== savedEmoji) onDone(draftEmoji);
+        sheet.close();
+      });
       footer.appendChild(doneBtn);
 
       body.append(subtitle, pinned, scroll, footer);
 
       function renderPickBar() {
-        const emoji = getEmoji();
+        const emoji = draftEmoji;
         pickBar.replaceChildren();
 
         const tile = document.createElement("span");
@@ -251,7 +256,7 @@ export function openSecretEmojiSheet({ title, getEmoji, setEmoji, onClose }) {
       }
 
       function syncPickedCells() {
-        const emoji = getEmoji();
+        const emoji = draftEmoji;
         for (const cell of scroll.querySelectorAll(".emoji-sheet__cell")) {
           const picked = cell.dataset.emoji === emoji;
           cell.classList.toggle("emoji-sheet__cell--picked", picked);
@@ -261,7 +266,7 @@ export function openSecretEmojiSheet({ title, getEmoji, setEmoji, onClose }) {
 
       /** @param {string} emoji */
       function choose(emoji) {
-        setEmoji(emoji);
+        draftEmoji = emoji;
         renderPickBar();
         syncPickedCells();
       }

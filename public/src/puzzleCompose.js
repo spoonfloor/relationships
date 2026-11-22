@@ -410,8 +410,8 @@ export function initPuzzleCompose({
     commitAllFields();
     openSecretEmojiSheet({
       title: getPuzzle().secret?.title ?? "",
-      getEmoji: () => getPuzzle().secret?.emoji ?? "",
-      setEmoji: (emoji) => {
+      emoji: getPuzzle().secret?.emoji ?? "",
+      onDone: (emoji) => {
         const puzzle = getPuzzle();
         const next = { title: "", words: [], ...puzzle.secret };
         if (emoji) next.emoji = emoji;
