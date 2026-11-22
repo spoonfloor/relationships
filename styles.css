@@ -1623,8 +1623,14 @@ body.edit-mode .play-area {
   overflow: hidden;
 }
 
+/* Win modal: the title stands apart; the summary lines read as one group. */
 .modal__panel:has(.minigrid) .modal__title {
   flex-shrink: 0;
+  margin-bottom: 20px;
+}
+
+.modal__panel:has(.minigrid) .modal__body > p {
+  margin-bottom: 4px;
 }
 
 .modal__panel:has(.minigrid) .modal__body {

@@ -53,6 +53,7 @@ import {
   formatGuessCount,
   pickSecretEmoji,
   secretFoundLine,
+  withTrailingEmoji,
 } from "./solveSummary.js";
 import {
   formatStaticUi,
@@ -657,7 +658,10 @@ function initializePage(state, session, catalog) {
           const summary = document.createElement("p");
           setDisplayText(
             summary,
-            `Solved in ${formatGuessCount(guesses.length)}. ${getSolveEmoji()}`
+            withTrailingEmoji(
+              `Solved in ${formatGuessCount(guesses.length)}.`,
+              getSolveEmoji()
+            )
           );
           bodyEl.appendChild(summary);
 
